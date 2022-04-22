@@ -11,6 +11,10 @@ public class OrderLine
     private Product product;
     private int quantity;
 
+    /**
+     * Get the total price of the order line
+     * @return the total price of the order line
+     */
     public double getTotalPrice(){
         return product.getPrice() * quantity;
     }

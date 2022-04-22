@@ -8,6 +8,10 @@ public class Cart
 {
     private List<Product> products;
 
+    /**
+     * Get the total price of a cart
+     * @return the value of all the products in the cart
+     */
     public double getTotalPrice()
     {
         return products.stream().mapToDouble(Product::getPrice).sum();

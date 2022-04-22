@@ -14,6 +14,10 @@ public class Order
     @Getter
     private List<OrderLine> lines;
 
+    /**
+     * Get the total price of an order
+     * @return the total price of an order
+     */
     public double getTotalPrice(){
         return lines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }

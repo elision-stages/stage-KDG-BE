@@ -6,5 +6,9 @@ public abstract class DynamicAttributeValue
 {
     private String attributeName;
 
+    /**
+     * Get the value of the attribute
+     * @return the value in string format
+     */
     public abstract String getValue();
 }
