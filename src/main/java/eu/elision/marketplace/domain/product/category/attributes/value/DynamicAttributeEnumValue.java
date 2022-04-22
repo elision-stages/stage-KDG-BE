@@ -1,10 +1,14 @@
 package eu.elision.marketplace.domain.product.category.attributes.value;
 
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
-
-public class DynamicAttributeEnumValue extends DynamicAttributeValue
+/**
+ * Used when the attribute has an enum value
+ */
+@Getter
+@Setter
+public class DynamicAttributeEnumValue extends DynamicAttributeValue<String>
 {
     private String value;
 

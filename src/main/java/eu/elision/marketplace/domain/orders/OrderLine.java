@@ -2,7 +2,16 @@ package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+/**
+ * An orderline contains the product and the quantity and the ordernumber of the order it belongs to.
+ */
+@Getter
+@Setter
+@AllArgsConstructor
 public class OrderLine
 {
     private int orderLineNumber;

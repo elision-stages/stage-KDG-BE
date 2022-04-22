@@ -1,7 +1,14 @@
 package eu.elision.marketplace.domain.users;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+/**
+ * This class contains the basic information of any user
+ */
+@Getter @Setter
 public class User
 {
     private String name;

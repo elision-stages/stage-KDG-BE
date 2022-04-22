@@ -1,19 +1,32 @@
 package eu.elision.marketplace.domain.users;
 
-import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.orders.OrderLine;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The cart contains the orderLines of an customer that aren't bought yet
+ */
+@Getter
+@Setter
 public class Cart
 {
-    private List<Product> products;
+    private List<OrderLine> orderLines;
+
+    public Cart()
+    {
+        orderLines = new ArrayList<>();
+    }
 
     /**
      * Get the total price of a cart
-     * @return the value of all the products in the cart
+     * @return the value of all the orderLines in the cart
      */
     public double getTotalPrice()
     {
-        return products.stream().mapToDouble(Product::getPrice).sum();
+        return orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 }

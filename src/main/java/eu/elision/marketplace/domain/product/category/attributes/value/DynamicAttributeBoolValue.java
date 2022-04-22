@@ -1,12 +1,19 @@
 package eu.elision.marketplace.domain.product.category.attributes.value;
 
-public class DynamicAttributeBoolValue extends DynamicAttributeValue
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Used when the attribute is a boolean
+ */
+@Getter @Setter
+public class DynamicAttributeBoolValue extends DynamicAttributeValue <Boolean>
 {
     private boolean value;
 
     @Override
-    public String getValue()
+    public Boolean getValue()
     {
-        return value ? "Ja" : "Nee";
+        return value;
     }
 }

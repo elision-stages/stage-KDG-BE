@@ -1,8 +1,15 @@
 package eu.elision.marketplace.domain.product.category.attributes.value;
 
-import eu.elision.marketplace.domain.product.category.attributes.Type;
+import lombok.Getter;
+import lombok.Setter;
 
-public abstract class DynamicAttributeValue
+/**
+ * This class contains the name and value of the attribute of the category
+ * @param <T> The value of the attribute
+ */
+@Getter
+@Setter
+public abstract class DynamicAttributeValue<T>
 {
     private String attributeName;
 
@@ -10,5 +17,5 @@ public abstract class DynamicAttributeValue
      * Get the value of the attribute
      * @return the value in string format
      */
-    public abstract String getValue();
+    public abstract T getValue();
 }

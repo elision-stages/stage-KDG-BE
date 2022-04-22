@@ -1,12 +1,20 @@
 package eu.elision.marketplace.domain.product.category.attributes.value;
 
-public class DynamicAttributeDoubleValue extends DynamicAttributeValue
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Used when an attribute has a double value
+ */
+@Getter
+@Setter
+public class DynamicAttributeDoubleValue extends DynamicAttributeValue <Double>
 {
     private double value;
 
     @Override
-    public String getValue()
+    public Double getValue()
     {
-        return String.valueOf(value);
+        return value;
     }
 }

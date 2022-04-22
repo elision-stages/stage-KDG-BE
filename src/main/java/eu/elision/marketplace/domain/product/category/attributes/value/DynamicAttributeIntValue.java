@@ -1,12 +1,20 @@
 package eu.elision.marketplace.domain.product.category.attributes.value;
 
-public class DynamicAttributeIntValue extends DynamicAttributeValue
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * Used when the attribute has an integer value
+ */
+@Getter
+@Setter
+public class DynamicAttributeIntValue extends DynamicAttributeValue<Integer>
 {
     private int value;
 
     @Override
-    public String getValue()
+    public Integer getValue()
     {
-        return String.valueOf(value);
+        return value;
     }
 }
