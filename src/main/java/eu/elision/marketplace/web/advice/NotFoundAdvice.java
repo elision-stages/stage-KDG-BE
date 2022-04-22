@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class NotFoundAdvice
 {
+    /**
+     * An exception handler for the NotFoundException
+     * @param ex the exception that is thrown
+     * @return the message of the exception
+     */
     @ResponseBody
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
