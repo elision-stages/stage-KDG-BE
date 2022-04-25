@@ -10,16 +10,7 @@ import lombok.Setter;
 @Setter
 public class DynamicAttributeEnumValue extends DynamicAttributeValue<String>
 {
-    private String value;
-
     public DynamicAttributeEnumValue(String attributeName, String value) {
-        super(attributeName);
-        this.value = value;
-    }
-
-    @Override
-    public String getValue()
-    {
-        return value;
+        super(attributeName, value);
     }
 }

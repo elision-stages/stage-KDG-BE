@@ -13,10 +13,13 @@ import lombok.Setter;
 public abstract class DynamicAttributeValue<T>
 {
     private String attributeName;
+    private T value;
 
     /**
      * Get the value of the attribute
-     * @return the value in string format
+     * @return the value of the attribute
      */
-    public abstract T getValue();
+    public T getValue(){
+        return value;
+    }
 }

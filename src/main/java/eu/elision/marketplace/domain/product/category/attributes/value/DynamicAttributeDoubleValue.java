@@ -8,18 +8,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DynamicAttributeDoubleValue extends DynamicAttributeValue <Double>
-{
-    private double value;
+public class DynamicAttributeDoubleValue extends DynamicAttributeValue<Double> {
 
     public DynamicAttributeDoubleValue(String attributeName, double value) {
-        super(attributeName);
-        this.value = value;
-    }
-
-    @Override
-    public Double getValue()
-    {
-        return value;
+        super(attributeName, value);
     }
 }
