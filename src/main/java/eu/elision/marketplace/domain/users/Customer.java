@@ -2,8 +2,8 @@ package eu.elision.marketplace.domain.users;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.tomcat.jni.Address;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,9 +11,12 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Customer
-{
+public class Customer {
     private Cart cart;
     private Address mainAddress;
     private List<Address> otherAddresses;
+
+    public Customer() {
+        this.otherAddresses = new ArrayList<>();
+    }
 }

@@ -4,9 +4,9 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.users.Vendor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +15,6 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class Product
 {
     private double price;
@@ -24,4 +23,9 @@ public class Product
     private List<String> images;
 
     private List<DynamicAttributeValue<?>> attributes;
+
+    public Product() {
+        this.images = new ArrayList<>();
+        this.attributes = new ArrayList<>();
+    }
 }

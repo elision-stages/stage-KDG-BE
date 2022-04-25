@@ -12,6 +12,11 @@ public class DynamicAttributeDoubleValue extends DynamicAttributeValue <Double>
 {
     private double value;
 
+    public DynamicAttributeDoubleValue(String attributeName, double value) {
+        super(attributeName);
+        this.value = value;
+    }
+
     @Override
     public Double getValue()
     {

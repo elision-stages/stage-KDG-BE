@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * This class contains the basic information of any user
  */
 @Getter @Setter
-public class User
+public abstract class User
 {
     private String name;
     private String email;

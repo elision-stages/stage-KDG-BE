@@ -18,7 +18,7 @@ public class OrderLine
 {
     private int orderLineNumber;
     private Vendor vendor;
-    private String ordernumber;
+    private String orderNumber;
     private Product product;
     private int quantity;
 

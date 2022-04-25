@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +8,7 @@ import lombok.Setter;
  * This class is used to dynamicly assign attributes to a category
  */
 @Getter
-@Setter
+@Setter @AllArgsConstructor
 public class DynamicAttribute
 {
     private String name;

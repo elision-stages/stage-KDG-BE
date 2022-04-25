@@ -12,6 +12,11 @@ public class DynamicAttributeIntValue extends DynamicAttributeValue<Integer>
 {
     private int value;
 
+    public DynamicAttributeIntValue(String attributeName, int value) {
+        super(attributeName);
+        this.value = value;
+    }
+
     @Override
     public Integer getValue()
     {

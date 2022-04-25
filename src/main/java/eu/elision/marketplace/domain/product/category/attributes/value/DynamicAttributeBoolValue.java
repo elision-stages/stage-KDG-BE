@@ -11,6 +11,11 @@ public class DynamicAttributeBoolValue extends DynamicAttributeValue <Boolean>
 {
     private boolean value;
 
+    public DynamicAttributeBoolValue(String name, boolean value) {
+        super(name);
+        this.value = value;
+    }
+
     @Override
     public Boolean getValue()
     {

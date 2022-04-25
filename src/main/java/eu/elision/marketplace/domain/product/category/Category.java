@@ -4,16 +4,23 @@ import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribut
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This class is used to categorise orderLines
  */
 @Getter
-@Setter
+
 public class Category
 {
+    @Setter
     private String name;
-    private List<Category> subCategories;
-    private List<DynamicAttribute> characteristics;
+    private final List<Category> subCategories;
+    private final List<DynamicAttribute> characteristics;
+
+    public Category() {
+        subCategories = new ArrayList<>();
+        characteristics = new ArrayList<>();
+    }
 }

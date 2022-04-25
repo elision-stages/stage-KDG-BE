@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product.category.attributes.value;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import lombok.Setter;
  * @param <T> The value of the attribute
  */
 @Getter
-@Setter
+@Setter@AllArgsConstructor
 public abstract class DynamicAttributeValue<T>
 {
     private String attributeName;
