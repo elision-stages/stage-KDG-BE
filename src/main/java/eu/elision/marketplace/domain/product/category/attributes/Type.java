@@ -7,6 +7,6 @@ public enum Type
 {
     INTEGER,
     DECIMAL,
-    ENUMMERATION,
+    ENUMERATION,
     BOOL
 }

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class CategoryTest {
 
@@ -33,7 +32,7 @@ class CategoryTest {
         sub1.setName("Sub1");
         sub1.getCharacteristics().add(new DynamicAttribute("first", true, Type.DECIMAL, null));
         sub1.getCharacteristics().add(new DynamicAttribute("second", false, Type.INTEGER, null));
-        sub1.getCharacteristics().add(new DynamicAttribute("third", true, Type.ENUMMERATION, pickList));
+        sub1.getCharacteristics().add(new DynamicAttribute("third", true, Type.ENUMERATION, pickList));
 
         category.getSubCategories().add(sub1);
 
@@ -54,7 +53,7 @@ class CategoryTest {
 
         assertThat(actual.getCharacteristics().get(2).getName()).isEqualTo("third");
         assertThat(actual.getCharacteristics().get(2).isRequired()).isTrue();
-        assertThat(actual.getCharacteristics().get(2).getType()).isEqualTo(Type.ENUMMERATION);
+        assertThat(actual.getCharacteristics().get(2).getType()).isEqualTo(Type.ENUMERATION);
         assertThat(actual.getCharacteristics().get(2).getEnumList().getItems()).hasSize(3);
     }
 }

@@ -31,9 +31,9 @@ class TestCart
     @Test
     void cartTotalPrice()
     {
-        var product = new Product(2, new Vendor(), "product", new ArrayList<>(), new ArrayList<>());
-        var ol = new OrderLine(1, new Vendor(), "1", product, 2);
-        var ol2 = new OrderLine(1, new Vendor(), "1", product, 3);
+        Product product = new Product(2, new Vendor(), "product", new ArrayList<>(), new ArrayList<>());
+        OrderLine ol = new OrderLine(1, new Vendor(), "1", product, 2);
+        OrderLine ol2 = new OrderLine(1, new Vendor(), "1", product, 3);
 
         var cart = new Cart();
 

@@ -2,9 +2,7 @@ package eu.elision.marketplace.domain.product;
 
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +10,7 @@ import java.util.List;
 /**
  * This product contains the info of a product
  */
-@Getter
-@Setter
-@AllArgsConstructor
+@Data @AllArgsConstructor
 public class Product
 {
     private double price;

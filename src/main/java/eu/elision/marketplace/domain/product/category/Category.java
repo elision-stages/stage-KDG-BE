@@ -11,7 +11,6 @@ import java.util.List;
  * This class is used to categorise orderLines
  */
 @Getter
-
 public class Category
 {
     @Setter

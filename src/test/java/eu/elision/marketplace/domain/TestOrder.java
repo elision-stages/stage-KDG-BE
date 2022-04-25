@@ -25,8 +25,8 @@ class TestOrder
     void testGetterSetter(){
         Order order = new Order();
 
-        order.setOrdernumber("1");
-        assertThat(order.getOrdernumber()).isEqualTo("1");
+        order.setOrderNumber("1");
+        assertThat(order.getOrderNumber()).isEqualTo("1");
 
         User user = new Vendor();
         order.setUser(user);
