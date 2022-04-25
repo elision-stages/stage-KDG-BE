@@ -13,24 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TestControllerTest
-{
+class TestControllerTest {
+    private static final String BASE_URL = "http://localhost:";
     @Autowired
     private TestRestTemplate testRestTemplate;
     @LocalServerPort
     private Integer port;
-    private static final String BASE_URL = "http://localhost:";
 
     @Test
-    void hello()
-    {
+    void hello() {
         String response = testRestTemplate.getForObject(String.format("%s%s/hello", BASE_URL, port.toString()), String.class);
         assertThat(response).isEqualTo("hello");
     }
 
     @Test
-    void testException()
-    {
+    void testException() {
         ResponseEntity<String> respent = testRestTemplate.getForEntity(String.format("%s%s/testException", BASE_URL, port.toString()), String.class);
         assertThat(respent.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(respent.getBody()).isEqualTo("not found");
