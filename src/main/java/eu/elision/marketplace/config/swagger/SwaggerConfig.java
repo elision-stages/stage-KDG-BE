@@ -15,13 +15,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.Set;
 
-//@Configuration
+@Configuration
 public class SwaggerConfig {
 
 //    private final ApplicationProperties applicationProperties;
 
-    //@Bean
-    public Docket createDocket(){
+    @Bean
+    public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
