@@ -82,5 +82,24 @@ class OrderLineTest {
         OrderLine ol2 = new OrderLine(1, vendor, "1", product, 1);
 
         assertThat(ol1.equals(ol2)).isTrue();
+
+        ol2.setOrderLineNumber(2);
+        assertThat(ol1.equals(ol2)).isFalse();
+
+        ol2.setOrderLineNumber(1);
+        ol2.setQuantity(2);
+        assertThat(ol1.equals(ol2)).isFalse();
+
+        ol2.setQuantity(1);
+        final Product product1 = new Product();
+        product1.setDescription("test");
+        ol2.setProduct(product1);
+        assertThat(ol1.equals(ol2)).isFalse();
+
+        ol2.setProduct(product);
+        final Vendor vendor1 = new Vendor();
+        vendor1.setName("test");
+        ol2.setVendor(vendor1);
+        assertThat(ol1.equals(ol2)).isFalse();
     }
 }
