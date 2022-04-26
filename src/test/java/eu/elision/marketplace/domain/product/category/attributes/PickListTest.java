@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
+import eu.elision.marketplace.services.helpers.HelperMethods;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -13,9 +14,10 @@ class PickListTest {
     @Test
     void getSetCode() {
         PickList pickList = new PickList();
+        final String code = HelperMethods.randomString(3);
 
-        pickList.setCode("test");
-        assertThat(pickList.getCode()).hasToString("test");
+        pickList.setCode(code);
+        assertThat(pickList.getCode()).hasToString(code);
     }
 
     @Test

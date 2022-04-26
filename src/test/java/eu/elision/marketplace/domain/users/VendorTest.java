@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.users;
 
+import eu.elision.marketplace.services.helpers.HelperMethods;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -10,32 +11,36 @@ class VendorTest {
     @Test
     void getSetLogo() {
         Vendor vendor = new Vendor();
-        vendor.setLogo("test");
+        final String logo = HelperMethods.randomString(4);
+        vendor.setLogo(logo);
 
-        assertThat(vendor.getLogo()).isEqualTo("test");
+        assertThat(vendor.getLogo()).isEqualTo(logo);
     }
 
     @Test
     void getSetTheme() {
         Vendor vendor = new Vendor();
-        vendor.setTheme("test");
+        final String theme = HelperMethods.randomString(4);
+        vendor.setTheme(theme);
 
-        assertThat(vendor.getTheme()).isEqualTo("test");
+        assertThat(vendor.getTheme()).isEqualTo(theme);
     }
 
     @Test
     void getSetIntroduction() {
         Vendor vendor = new Vendor();
-        vendor.setIntroduction("test");
+        final String introduction = HelperMethods.randomString(4);
+        vendor.setIntroduction(introduction);
 
-        assertThat(vendor.getIntroduction()).isEqualTo("test");
+        assertThat(vendor.getIntroduction()).isEqualTo(introduction);
     }
 
     @Test
     void getSetVatNumber() {
         Vendor vendor = new Vendor();
-        vendor.setVatNumber("test");
+        final String vatNumber = HelperMethods.randomString(4);
+        vendor.setVatNumber(vatNumber);
 
-        assertThat(vendor.getVatNumber()).isEqualTo("test");
+        assertThat(vendor.getVatNumber()).isEqualTo(vatNumber);
     }
 }

@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.users;
 
+import eu.elision.marketplace.services.helpers.HelperMethods;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,25 +14,28 @@ class UserTest {
     @Test
     void getName() {
         User vendor = new Vendor();
-        vendor.setName("vendor");
+        final String name = HelperMethods.randomString(4);
+        vendor.setName(name);
 
-        assertThat(vendor.getName()).isEqualTo("vendor");
+        assertThat(vendor.getName()).isEqualTo(name);
     }
 
     @Test
     void getEmail() {
         User vendor = new Vendor();
-        vendor.setEmail("vendor");
+        final String email = HelperMethods.randomString(4);
+        vendor.setEmail(email);
 
-        assertThat(vendor.getEmail()).isEqualTo("vendor");
+        assertThat(vendor.getEmail()).isEqualTo(email);
     }
 
     @Test
     void getPassword() {
         User vendor = new Vendor();
-        vendor.setPassword("vendor");
+        final String password = HelperMethods.randomString(4);
+        vendor.setPassword(password);
 
-        assertThat(vendor.getPassword()).isEqualTo("vendor");
+        assertThat(vendor.getPassword()).isEqualTo(password);
     }
 
     @Test
@@ -46,8 +50,9 @@ class UserTest {
     @Test
     void isValidated() {
         User vendor = new Vendor();
-        vendor.setValidated(true);
+        final boolean validated = HelperMethods.randomInt(1) == 1;
+        vendor.setValidated(validated);
 
-        assertThat(vendor.isValidated()).isTrue();
+        assertThat(vendor.isValidated()).isEqualTo(validated);
     }
 }

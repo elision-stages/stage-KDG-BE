@@ -2,8 +2,10 @@ package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.services.helpers.HelperMethods;
 import org.junit.jupiter.api.Test;
 
+import javax.print.attribute.standard.PrinterURI;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -14,18 +16,23 @@ class OrderLineTest {
     @Test
     void getTotalPrice() {
         OrderLine orderLine = new OrderLine();
-        orderLine.setProduct(new Product(2, new Vendor(), "desc", new ArrayList<>(), new ArrayList<>()));
-        orderLine.setQuantity(2);
 
-        assertThat(orderLine.getTotalPrice()).isEqualTo(4);
+        double price = Math.random();
+        int quantity = HelperMethods.randomInt();
+
+        orderLine.setProduct(new Product(price, new Vendor(), HelperMethods.randomString(4), new ArrayList<>(), new ArrayList<>()));
+        orderLine.setQuantity(quantity);
+
+        assertThat(orderLine.getTotalPrice()).isEqualTo(price * quantity);
     }
 
     @Test
     void getOrderLineNumber() {
         OrderLine ol = new OrderLine();
-        ol.setOrderLineNumber(1);
+        final int orderLineNumber = HelperMethods.randomInt();
+        ol.setOrderLineNumber(orderLineNumber);
 
-        assertThat(ol.getOrderLineNumber()).isEqualTo(1);
+        assertThat(ol.getOrderLineNumber()).isEqualTo(orderLineNumber);
     }
 
     @Test
@@ -40,9 +47,11 @@ class OrderLineTest {
     @Test
     void getOrderNumber() {
         OrderLine ol = new OrderLine();
-        ol.setOrderLineNumber(1);
+        final int orderLineNumber = HelperMethods.randomInt();
 
-        assertThat(ol.getOrderLineNumber()).isEqualTo(1);
+        ol.setOrderLineNumber(orderLineNumber);
+
+        assertThat(ol.getOrderLineNumber()).isEqualTo(orderLineNumber);
     }
 
     @Test
@@ -58,47 +67,61 @@ class OrderLineTest {
     @Test
     void getQuantity() {
         OrderLine ol = new OrderLine();
-        ol.setQuantity(1);
+        int quantity = HelperMethods.randomInt();
 
-        assertThat(ol.getQuantity()).isEqualTo(1);
+        ol.setQuantity(quantity);
+
+        assertThat(ol.getQuantity()).isEqualTo(quantity);
     }
 
     @Test
     void testToString() {
         OrderLine ol = new OrderLine();
-        ol.setOrderNumber("1");
-        ol.setQuantity(2);
-        ol.setProduct(new Product(1, null, "desc", new ArrayList<>(), new ArrayList<>()));
-        ol.setVendor(null);
-        ol.setOrderLineNumber(1);
+        final String orderNumber = String.valueOf(HelperMethods.randomInt(100));
+        final String description = HelperMethods.randomString(10);
+        final int orderLineNumber = HelperMethods.randomInt(100);
+        final int quantity = HelperMethods.randomInt();
+        final double price = HelperMethods.randomDouble();
 
-        assertThat(ol.toString()).hasToString("OrderLine(orderLineNumber=1, vendor=null, orderNumber=1, product=Product(price=1.0, vendor=null, description=desc, images=[], attributes=[]), quantity=2)");
+        ol.setOrderNumber(orderNumber);
+        ol.setQuantity(quantity);
+        ol.setProduct(new Product(price, null, description, new ArrayList<>(), new ArrayList<>()));
+        ol.setVendor(null);
+        ol.setOrderLineNumber(orderLineNumber);
+
+        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(price=%s, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)", orderLineNumber, orderNumber, price, description, quantity));
     }
+
     @Test
-    void testEquals(){
+    void testEquals() {
         Vendor vendor = new Vendor();
         Product product = new Product();
-        OrderLine ol1 = new OrderLine(1, vendor, "1", product, 1);
-        OrderLine ol2 = new OrderLine(1, vendor, "1", product, 1);
+
+        final String orderNumber = String.valueOf(HelperMethods.randomInt(100));
+        final int orderLineNumber = HelperMethods.randomInt(100);
+        final int quantity = HelperMethods.randomInt(100);
+
+        OrderLine ol1 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
+        OrderLine ol2 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
 
         assertThat(ol1.equals(ol2)).isTrue();
 
-        ol2.setOrderLineNumber(2);
+        ol2.setOrderLineNumber(HelperMethods.randomInt(100));
         assertThat(ol1.equals(ol2)).isFalse();
 
-        ol2.setOrderLineNumber(1);
-        ol2.setQuantity(2);
+        ol2.setOrderLineNumber(orderLineNumber);
+        ol2.setQuantity(HelperMethods.randomInt(100));
         assertThat(ol1.equals(ol2)).isFalse();
 
-        ol2.setQuantity(1);
+        ol2.setQuantity(quantity);
         final Product product1 = new Product();
-        product1.setDescription("test");
+        product1.setDescription(HelperMethods.randomString(10));
         ol2.setProduct(product1);
         assertThat(ol1.equals(ol2)).isFalse();
 
         ol2.setProduct(product);
         final Vendor vendor1 = new Vendor();
-        vendor1.setName("test");
+        vendor1.setName(HelperMethods.randomString(10));
         ol2.setVendor(vendor1);
         assertThat(ol1.equals(ol2)).isFalse();
 
@@ -107,7 +130,7 @@ class OrderLineTest {
     }
 
     @Test
-    void testHashCode(){
+    void testHashCode() {
         OrderLine ol = new OrderLine();
         assertThat(ol.hashCode()).isNotZero();
     }

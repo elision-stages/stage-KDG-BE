@@ -6,6 +6,7 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.services.helpers.HelperMethods;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -25,8 +26,9 @@ class TestOrder
     void testGetterSetter(){
         Order order = new Order();
 
-        order.setOrderNumber("1");
-        assertThat(order.getOrderNumber()).isEqualTo("1");
+        final String orderNumber = String.valueOf(HelperMethods.randomInt());
+        order.setOrderNumber(orderNumber);
+        assertThat(order.getOrderNumber()).isEqualTo(orderNumber);
 
         User user = new Vendor();
         order.setUser(user);
@@ -42,16 +44,19 @@ class TestOrder
     @Test
     void orderTotalPrice()
     {
-        var product = new Product(2, new Vendor(), "product", new ArrayList<>(), new ArrayList<>());
-        var ol = new OrderLine(1, new Vendor(), "1", product, 2);
-        var ol2 = new OrderLine(1, new Vendor(), "1", product, 3);
+        final double price = HelperMethods.randomInt();
+        final int quantity1 = HelperMethods.randomInt();
+        final int quantity2 = HelperMethods.randomInt();
+
+        var product = new Product(price, new Vendor(), HelperMethods.randomString(5), new ArrayList<>(), new ArrayList<>());
+        var ol = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), product, quantity1);
+        var ol2 = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), product, quantity2);
 
         var order = new Order();
 
         order.getLines().add(ol);
         order.getLines().add(ol2);
 
-        assertEquals("5 orderLines of price 2 should be 10", 10.0, order.getTotalPrice());
-        assertThat(order.getTotalPrice()).isEqualTo(10.0);
+        assertThat(order.getTotalPrice()).isEqualTo((quantity1 + quantity2) * price);
     }
 }
