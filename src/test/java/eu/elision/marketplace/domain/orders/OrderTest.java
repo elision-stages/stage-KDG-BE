@@ -33,6 +33,30 @@ class OrderTest {
         order2.setShippingAddress(address);
 
         assertThat(order1.equals(order2)).isTrue();
+
+        order2.setOrderNumber("2");
+        assertThat(order1.equals(order2)).isFalse();
+        order2.setOrderNumber("1");
+        assertThat(order1.equals(order2)).isTrue();
+
+        order2.setLines(new ArrayList<>(List.of(new OrderLine())));
+        assertThat(order1.equals(order2)).isFalse();
+        order2.setLines(lines);
+        assertThat(order1.equals(order2)).isTrue();
+
+        Customer customer1 = new Customer();
+        customer1.setName("test");
+        order2.setUser(customer1);
+        assertThat(order1.equals(order2)).isFalse();
+        order2.setUser(customer);
+        assertThat(order1.equals(order2)).isTrue();
+
+        Address address1 = new Address();
+        address1.setCity("test");
+        order2.setShippingAddress(address1);
+        assertThat(order1.equals(order2)).isFalse();
+        order2.setShippingAddress(address);
+        assertThat(order1.equals(order2)).isTrue();
     }
 
     @Test

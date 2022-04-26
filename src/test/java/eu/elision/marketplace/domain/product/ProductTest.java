@@ -8,6 +8,7 @@ import eu.elision.marketplace.domain.users.Vendor;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -76,6 +77,34 @@ class ProductTest {
         Product product2 = new Product(2, vendor, "desc", new ArrayList<>(), new ArrayList<>());
 
         assertThat(product1.equals(product2)).isTrue();
+
+        product2.setPrice(1);
+        assertThat(product1.equals(product2)).isFalse();
+        product2.setPrice(2);
+        assertThat(product1.equals(product2)).isTrue();
+
+        Vendor vendor1 = new Vendor();
+        vendor1.setName("test");
+        product2.setVendor(vendor1);
+        assertThat(product1.equals(product2)).isFalse();
+        product2.setVendor(vendor);
+        assertThat(product1.equals(product2)).isTrue();
+
+        product2.setDescription("test");
+        assertThat(product1.equals(product2)).isFalse();
+        product2.setDescription("desc");
+        assertThat(product1.equals(product2)).isTrue();
+
+        product2.setImages(new ArrayList<>(List.of("image")));
+        assertThat(product1.equals(product2)).isFalse();
+        product2.setImages(new ArrayList<>());
+        assertThat(product1.equals(product2)).isTrue();
+
+        product2.setAttributes(new ArrayList<>(List.of(new DynamicAttributeBoolValue("test", true))));
+        assertThat(product1.equals(product2)).isFalse();
+        product2.setAttributes(new ArrayList<>());
+        assertThat(product1.equals(product2)).isTrue();
+
     }
 
     @Test
