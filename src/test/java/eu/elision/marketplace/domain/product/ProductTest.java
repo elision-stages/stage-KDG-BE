@@ -67,4 +67,28 @@ class ProductTest {
         assertThat(product.getAttributes().get(3).getAttributeName()).isEqualTo("enum");
         assertThat(product.getAttributes().get(3).getValue()).isEqualTo("xxl");
     }
+
+    @Test
+    void testEquals() {
+        Vendor vendor = new Vendor();
+
+        Product product1 = new Product(2, vendor, "desc", new ArrayList<>(), new ArrayList<>());
+        Product product2 = new Product(2, vendor, "desc", new ArrayList<>(), new ArrayList<>());
+
+        assertThat(product1.equals(product2)).isTrue();
+    }
+
+    @Test
+    void testHashCode() {
+        Product product = new Product();
+
+        assertThat(product.hashCode()).isNotZero();
+    }
+
+    @Test
+    void testToString() {
+        Product product = new Product();
+
+        assertThat(product.toString()).hasToString("Product(price=0.0, vendor=null, description=null, images=[], attributes=[])");
+    }
 }

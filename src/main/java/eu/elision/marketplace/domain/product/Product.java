@@ -10,7 +10,8 @@ import java.util.List;
 /**
  * This product contains the info of a product
  */
-@Data @AllArgsConstructor
+@Data
+@AllArgsConstructor
 public class Product
 {
     private double price;

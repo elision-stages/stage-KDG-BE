@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Customer {
+public class Customer extends User{
     private Cart cart;
     private Address mainAddress;
     private List<Address> otherAddresses;
