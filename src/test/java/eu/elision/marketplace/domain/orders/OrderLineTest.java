@@ -101,5 +101,8 @@ class OrderLineTest {
         vendor1.setName("test");
         ol2.setVendor(vendor1);
         assertThat(ol1.equals(ol2)).isFalse();
+
+        assertThat(ol1.equals(ol1)).isTrue();
+        assertThat(ol1.equals(new Vendor())).isFalse();
     }
 }

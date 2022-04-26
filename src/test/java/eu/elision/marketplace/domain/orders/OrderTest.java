@@ -3,6 +3,7 @@ package eu.elision.marketplace.domain.orders;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Vendor;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -57,6 +58,10 @@ class OrderTest {
         assertThat(order1.equals(order2)).isFalse();
         order2.setShippingAddress(address);
         assertThat(order1.equals(order2)).isTrue();
+
+        assertThat(order1.equals(order1)).isTrue();
+        assertThat(order1.equals(new Vendor())).isFalse();
+
     }
 
     @Test

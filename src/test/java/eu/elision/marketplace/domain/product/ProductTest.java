@@ -105,6 +105,10 @@ class ProductTest {
         product2.setAttributes(new ArrayList<>());
         assertThat(product1.equals(product2)).isTrue();
 
+        assertThat(product1.equals(product1)).isTrue();
+        assertThat(product1.equals(new Vendor())).isFalse();
+
+
     }
 
     @Test
