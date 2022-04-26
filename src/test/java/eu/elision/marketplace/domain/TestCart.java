@@ -30,7 +30,7 @@ class TestCart {
 
     @Test
     void cartTotalPrice() {
-        final double price = HelperMethods.randomDouble();
+        final double price = HelperMethods.randomInt();
         final int quantity1 = HelperMethods.randomInt();
         final int quantity2 = HelperMethods.randomInt();
 
