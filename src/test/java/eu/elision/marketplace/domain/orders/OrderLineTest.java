@@ -105,4 +105,10 @@ class OrderLineTest {
         assertThat(ol1.equals(ol1)).isTrue();
         assertThat(ol1.equals(new Vendor())).isFalse();
     }
+
+    @Test
+    void testHashCode(){
+        OrderLine ol = new OrderLine();
+        assertThat(ol.hashCode()).isNotZero();
+    }
 }
