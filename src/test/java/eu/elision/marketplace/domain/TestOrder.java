@@ -44,9 +44,9 @@ class TestOrder
     @Test
     void orderTotalPrice()
     {
-        final double price = RandomUtils.nextInt();
-        final int quantity1 = RandomUtils.nextInt();
-        final int quantity2 = RandomUtils.nextInt();
+        final double price = Math.round(RandomUtils.nextDouble(1, 100));
+        final int quantity1 = RandomUtils.nextInt(1, 10);
+        final int quantity2 = RandomUtils.nextInt(1, 10);
 
         var product = new Product(price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>());
         var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);

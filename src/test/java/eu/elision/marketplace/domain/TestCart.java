@@ -30,9 +30,9 @@ class TestCart {
 
     @Test
     void cartTotalPrice() {
-        final double price = RandomUtils.nextInt();
-        final int quantity1 = RandomUtils.nextInt();
-        final int quantity2 = RandomUtils.nextInt();
+        final double price = RandomUtils.nextDouble(1, 100);
+        final int quantity1 = RandomUtils.nextInt(1, 10);
+        final int quantity2 = RandomUtils.nextInt(1, 10);
 
         Product product = new Product(price, new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
         OrderLine ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
