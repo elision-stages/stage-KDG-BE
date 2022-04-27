@@ -4,7 +4,8 @@ import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribut
 import eu.elision.marketplace.domain.product.category.attributes.PickList;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ class CategoryTest {
     @Test
     void getSetName() {
         Category category = new Category();
-        final String name = HelperMethods.randomString(5);
+        final String name = RandomStringUtils.random(5);
         category.setName(name);
 
         assertThat(category.getName()).isEqualTo(name);
@@ -27,15 +28,15 @@ class CategoryTest {
     void getSubCategories() {
         Category category = new Category();
 
-        final String subName = HelperMethods.randomString(5);
-        final String firstName = HelperMethods.randomString(5);
-        final String secondName = HelperMethods.randomString(5);
-        final String thirdName = HelperMethods.randomString(5);
+        final String subName = RandomStringUtils.random(5);
+        final String firstName = RandomStringUtils.random(5);
+        final String secondName = RandomStringUtils.random(5);
+        final String thirdName = RandomStringUtils.random(5);
 
         Category sub1 = new Category();
         PickList pickList = new PickList();
-        pickList.setCode(String.valueOf(HelperMethods.randomInt()));
-        pickList.setItems(new ArrayList<>(List.of(new PickListItem(HelperMethods.randomString(1)), new PickListItem(HelperMethods.randomString(1)), new PickListItem(HelperMethods.randomString(1)))));
+        pickList.setCode(String.valueOf(RandomUtils.nextInt(1,1000)));
+        pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomStringUtils.random(1)), new PickListItem(RandomStringUtils.random(1)), new PickListItem(RandomStringUtils.random(1)))));
         sub1.setName(subName);
         sub1.getCharacteristics().add(new DynamicAttribute(firstName, true, Type.DECIMAL, null));
         sub1.getCharacteristics().add(new DynamicAttribute(secondName, false, Type.INTEGER, null));

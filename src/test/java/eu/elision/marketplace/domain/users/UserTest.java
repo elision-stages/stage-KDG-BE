@@ -1,20 +1,19 @@
 package eu.elision.marketplace.domain.users;
 
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
     @Test
     void getName() {
         User vendor = new Vendor();
-        final String name = HelperMethods.randomString(4);
+        final String name = RandomStringUtils.random(4);
         vendor.setName(name);
 
         assertThat(vendor.getName()).isEqualTo(name);
@@ -23,7 +22,7 @@ class UserTest {
     @Test
     void getEmail() {
         User vendor = new Vendor();
-        final String email = HelperMethods.randomString(4);
+        final String email = RandomStringUtils.random(4);
         vendor.setEmail(email);
 
         assertThat(vendor.getEmail()).isEqualTo(email);
@@ -32,7 +31,7 @@ class UserTest {
     @Test
     void getPassword() {
         User vendor = new Vendor();
-        final String password = HelperMethods.randomString(4);
+        final String password = RandomStringUtils.random(4);
         vendor.setPassword(password);
 
         assertThat(vendor.getPassword()).isEqualTo(password);
@@ -50,7 +49,7 @@ class UserTest {
     @Test
     void isValidated() {
         User vendor = new Vendor();
-        final boolean validated = HelperMethods.randomInt(1) == 1;
+        final boolean validated = RandomUtils.nextInt(0,2) == 1;
         vendor.setValidated(validated);
 
         assertThat(vendor.isValidated()).isEqualTo(validated);

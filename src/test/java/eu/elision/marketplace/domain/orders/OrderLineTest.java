@@ -2,7 +2,8 @@ package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.print.attribute.standard.PrinterURI;
@@ -18,9 +19,9 @@ class OrderLineTest {
         OrderLine orderLine = new OrderLine();
 
         double price = Math.random();
-        int quantity = HelperMethods.randomInt();
+        int quantity = RandomUtils.nextInt();
 
-        orderLine.setProduct(new Product(price, new Vendor(), HelperMethods.randomString(4), new ArrayList<>(), new ArrayList<>()));
+        orderLine.setProduct(new Product(price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
         orderLine.setQuantity(quantity);
 
         assertThat(orderLine.getTotalPrice()).isEqualTo(price * quantity);
@@ -29,7 +30,7 @@ class OrderLineTest {
     @Test
     void getOrderLineNumber() {
         OrderLine ol = new OrderLine();
-        final int orderLineNumber = HelperMethods.randomInt();
+        final int orderLineNumber = RandomUtils.nextInt();
         ol.setOrderLineNumber(orderLineNumber);
 
         assertThat(ol.getOrderLineNumber()).isEqualTo(orderLineNumber);
@@ -47,7 +48,7 @@ class OrderLineTest {
     @Test
     void getOrderNumber() {
         OrderLine ol = new OrderLine();
-        final int orderLineNumber = HelperMethods.randomInt();
+        final int orderLineNumber = RandomUtils.nextInt();
 
         ol.setOrderLineNumber(orderLineNumber);
 
@@ -67,7 +68,7 @@ class OrderLineTest {
     @Test
     void getQuantity() {
         OrderLine ol = new OrderLine();
-        int quantity = HelperMethods.randomInt();
+        int quantity = RandomUtils.nextInt();
 
         ol.setQuantity(quantity);
 
@@ -77,11 +78,11 @@ class OrderLineTest {
     @Test
     void testToString() {
         OrderLine ol = new OrderLine();
-        final String orderNumber = String.valueOf(HelperMethods.randomInt(100));
-        final String description = HelperMethods.randomString(10);
-        final int orderLineNumber = HelperMethods.randomInt(100);
-        final int quantity = HelperMethods.randomInt();
-        final double price = HelperMethods.randomDouble();
+        final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
+        final String description = RandomStringUtils.random(10);
+        final int orderLineNumber = RandomUtils.nextInt(1,100);
+        final int quantity = RandomUtils.nextInt(1, 100);
+        final double price = RandomUtils.nextDouble(1, 100);
 
         ol.setOrderNumber(orderNumber);
         ol.setQuantity(quantity);
@@ -97,31 +98,31 @@ class OrderLineTest {
         Vendor vendor = new Vendor();
         Product product = new Product();
 
-        final String orderNumber = String.valueOf(HelperMethods.randomInt(100));
-        final int orderLineNumber = HelperMethods.randomInt(100);
-        final int quantity = HelperMethods.randomInt(100);
+        final String orderNumber = String.valueOf(RandomUtils.nextInt(1,100));
+        final int orderLineNumber = RandomUtils.nextInt(1,100);
+        final int quantity = RandomUtils.nextInt(1,100);
 
         OrderLine ol1 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
         OrderLine ol2 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
 
         assertThat(ol1.equals(ol2)).isTrue();
 
-        ol2.setOrderLineNumber(HelperMethods.randomInt(100));
+        ol2.setOrderLineNumber(RandomUtils.nextInt(1,100));
         assertThat(ol1.equals(ol2)).isFalse();
 
         ol2.setOrderLineNumber(orderLineNumber);
-        ol2.setQuantity(HelperMethods.randomInt(100));
+        ol2.setQuantity(RandomUtils.nextInt(1,100));
         assertThat(ol1.equals(ol2)).isFalse();
 
         ol2.setQuantity(quantity);
         final Product product1 = new Product();
-        product1.setDescription(HelperMethods.randomString(10));
+        product1.setDescription(RandomStringUtils.random(10));
         ol2.setProduct(product1);
         assertThat(ol1.equals(ol2)).isFalse();
 
         ol2.setProduct(product);
         final Vendor vendor1 = new Vendor();
-        vendor1.setName(HelperMethods.randomString(10));
+        vendor1.setName(RandomStringUtils.random(10));
         ol2.setVendor(vendor1);
         assertThat(ol1.equals(ol2)).isFalse();
 

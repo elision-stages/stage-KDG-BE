@@ -3,7 +3,8 @@ package eu.elision.marketplace.domain;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,10 +16,10 @@ class TestOrderLine
     @Test
     void orderLineTotalPrice()
     {
-        final double price = HelperMethods.randomDouble();
-        final int quantity = HelperMethods.randomInt();
+        final double price = RandomUtils.nextDouble(1, 100);
+        final int quantity = RandomUtils.nextInt();
 
-        var ol = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), new Product(price, new Vendor(), HelperMethods.randomString(5), new ArrayList<>(), new ArrayList<>()), quantity);
+        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()), quantity);
         assertThat(ol.getTotalPrice()).isEqualTo(price * quantity);
     }
 }

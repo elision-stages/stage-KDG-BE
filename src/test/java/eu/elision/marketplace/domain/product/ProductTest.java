@@ -5,7 +5,8 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeEnumValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeIntValue;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ class ProductTest {
     @Test
     void getSetPrice() {
         Product product = new Product();
-        final int price = HelperMethods.randomInt();
+        final int price = RandomUtils.nextInt();
         product.setPrice(price);
         assertThat(product.getPrice()).isEqualTo(price);
     }
@@ -35,7 +36,7 @@ class ProductTest {
     @Test
     void getSetDescription() {
         Product product = new Product();
-        final String desc =HelperMethods.randomString(5);
+        final String desc =RandomStringUtils.random(5);
         product.setDescription(desc);
 
         assertThat(product.getDescription()).isEqualTo(desc);
@@ -44,7 +45,7 @@ class ProductTest {
     @Test
     void getImages() {
         Product product = new Product();
-        product.getImages().add(HelperMethods.randomString(5));
+        product.getImages().add(RandomStringUtils.random(5));
 
         assertThat(product.getImages()).hasSize(1);
     }
@@ -53,10 +54,10 @@ class ProductTest {
     void getSetAttributes() {
         Product product = new Product();
 
-        final boolean bool = HelperMethods.randomInt(1) == 1;
-        final int intValue = HelperMethods.randomInt() ;
-        final double doubleValue = HelperMethods.randomDouble();
-        final String enumValue = HelperMethods.randomString(4);
+        final boolean bool = RandomUtils.nextInt(0,2) == 1;
+        final int intValue = RandomUtils.nextInt() ;
+        final double doubleValue = RandomUtils.nextDouble();
+        final String enumValue = RandomStringUtils.random(4);
 
         product.getAttributes().add(new DynamicAttributeBoolValue("bool", bool));
         product.getAttributes().add(new DynamicAttributeIntValue("int", intValue));
@@ -81,7 +82,7 @@ class ProductTest {
     void testEquals() {
         Vendor vendor = new Vendor();
 
-        final String description = HelperMethods.randomString(4);
+        final String description = RandomStringUtils.random(4);
 
         Product product1 = new Product(2, vendor, description, new ArrayList<>(), new ArrayList<>());
         Product product2 = new Product(2, vendor, description, new ArrayList<>(), new ArrayList<>());
@@ -94,23 +95,23 @@ class ProductTest {
         assertThat(product1.equals(product2)).isTrue();
 
         Vendor vendor1 = new Vendor();
-        vendor1.setName(HelperMethods.randomString(4));
+        vendor1.setName(RandomStringUtils.random(4));
         product2.setVendor(vendor1);
         assertThat(product1.equals(product2)).isFalse();
         product2.setVendor(vendor);
         assertThat(product1.equals(product2)).isTrue();
 
-        product2.setDescription(HelperMethods.randomString(4));
+        product2.setDescription(RandomStringUtils.random(4));
         assertThat(product1.equals(product2)).isFalse();
         product2.setDescription(description);
         assertThat(product1.equals(product2)).isTrue();
 
-        product2.setImages(new ArrayList<>(List.of(HelperMethods.randomString(5))));
+        product2.setImages(new ArrayList<>(List.of(RandomStringUtils.random(5))));
         assertThat(product1.equals(product2)).isFalse();
         product2.setImages(new ArrayList<>());
         assertThat(product1.equals(product2)).isTrue();
 
-        product2.setAttributes(new ArrayList<>(List.of(new DynamicAttributeBoolValue(HelperMethods.randomString(4), HelperMethods.randomInt(1) == 1))));
+        product2.setAttributes(new ArrayList<>(List.of(new DynamicAttributeBoolValue(RandomStringUtils.random(4), RandomUtils.nextInt(0,2) == 1))));
         assertThat(product1.equals(product2)).isFalse();
         product2.setAttributes(new ArrayList<>());
         assertThat(product1.equals(product2)).isTrue();

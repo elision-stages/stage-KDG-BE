@@ -2,7 +2,8 @@ package eu.elision.marketplace.domain.users;
 
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,11 +16,11 @@ class CustomerTest {
 
         Cart cart = new Cart();
         OrderLine ol = new OrderLine();
-        ol.setOrderNumber(String.valueOf(HelperMethods.randomInt()));
+        ol.setOrderNumber(String.valueOf(RandomUtils.nextInt()));
         ol.setProduct(new Product());
-        ol.setQuantity(HelperMethods.randomInt());
+        ol.setQuantity(RandomUtils.nextInt());
         ol.setVendor(new Vendor());
-        ol.setOrderLineNumber(HelperMethods.randomInt());
+        ol.setOrderLineNumber(RandomUtils.nextInt());
         cart.getOrderLines().add(ol);
         customer.setCart(cart);
 
@@ -29,10 +30,10 @@ class CustomerTest {
     @Test
     void getSetMainAddress() {
         Address address = new Address();
-        address.setCity(HelperMethods.randomString(5));
-        address.setNumber(HelperMethods.randomString(2));
-        address.setPostalCode(HelperMethods.randomString(4));
-        address.setStreet(HelperMethods.randomString(5));
+        address.setCity(RandomStringUtils.random(5));
+        address.setNumber(RandomStringUtils.random(2));
+        address.setPostalCode(RandomStringUtils.random(4));
+        address.setStreet(RandomStringUtils.random(5));
 
         Customer customer = new Customer();
         customer.setMainAddress(address);
@@ -43,16 +44,16 @@ class CustomerTest {
     @Test
     void getSetOtherAddresses() {
         Address address1 = new Address();
-        address1.setCity(HelperMethods.randomString(5));
-        address1.setNumber(HelperMethods.randomString(2));
-        address1.setPostalCode(HelperMethods.randomString(4));
-        address1.setStreet(HelperMethods.randomString(5));
+        address1.setCity(RandomStringUtils.random(5));
+        address1.setNumber(RandomStringUtils.random(2));
+        address1.setPostalCode(RandomStringUtils.random(4));
+        address1.setStreet(RandomStringUtils.random(5));
 
         Address address2 = new Address();
-        address2.setCity(HelperMethods.randomString(5));
-        address2.setNumber(HelperMethods.randomString(2));
-        address2.setPostalCode(HelperMethods.randomString(4));
-        address2.setStreet(HelperMethods.randomString(5));
+        address2.setCity(RandomStringUtils.random(5));
+        address2.setNumber(RandomStringUtils.random(2));
+        address2.setPostalCode(RandomStringUtils.random(4));
+        address2.setStreet(RandomStringUtils.random(5));
 
         Customer customer = new Customer();
         customer.getOtherAddresses().add(address1);

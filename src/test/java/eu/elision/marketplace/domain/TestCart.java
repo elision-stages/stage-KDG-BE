@@ -4,13 +4,13 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Cart;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 class TestCart {
     @Test
@@ -23,20 +23,20 @@ class TestCart {
     @Test
     void testGetter() {
         var cart = new Cart();
-        cart.getOrderLines().add(new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), new Product(), HelperMethods.randomInt()));
+        cart.getOrderLines().add(new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(), RandomUtils.nextInt()));
 
         assertThat(cart.getOrderLines()).hasSize(1);
     }
 
     @Test
     void cartTotalPrice() {
-        final double price = HelperMethods.randomInt();
-        final int quantity1 = HelperMethods.randomInt();
-        final int quantity2 = HelperMethods.randomInt();
+        final double price = RandomUtils.nextInt();
+        final int quantity1 = RandomUtils.nextInt();
+        final int quantity2 = RandomUtils.nextInt();
 
-        Product product = new Product(price, new Vendor(), HelperMethods.randomString(5), new ArrayList<>(), new ArrayList<>());
-        OrderLine ol = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), product, quantity1);
-        OrderLine ol2 = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), product, quantity2);
+        Product product = new Product(price, new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
+        OrderLine ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
+        OrderLine ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 
         var cart = new Cart();
 

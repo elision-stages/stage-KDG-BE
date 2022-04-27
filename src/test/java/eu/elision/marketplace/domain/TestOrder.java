@@ -6,13 +6,13 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 class TestOrder
 {
@@ -26,7 +26,7 @@ class TestOrder
     void testGetterSetter(){
         Order order = new Order();
 
-        final String orderNumber = String.valueOf(HelperMethods.randomInt());
+        final String orderNumber = String.valueOf(RandomUtils.nextInt());
         order.setOrderNumber(orderNumber);
         assertThat(order.getOrderNumber()).isEqualTo(orderNumber);
 
@@ -44,13 +44,13 @@ class TestOrder
     @Test
     void orderTotalPrice()
     {
-        final double price = HelperMethods.randomInt();
-        final int quantity1 = HelperMethods.randomInt();
-        final int quantity2 = HelperMethods.randomInt();
+        final double price = RandomUtils.nextInt();
+        final int quantity1 = RandomUtils.nextInt();
+        final int quantity2 = RandomUtils.nextInt();
 
-        var product = new Product(price, new Vendor(), HelperMethods.randomString(5), new ArrayList<>(), new ArrayList<>());
-        var ol = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), product, quantity1);
-        var ol2 = new OrderLine(HelperMethods.randomInt(), new Vendor(), String.valueOf(HelperMethods.randomInt()), product, quantity2);
+        var product = new Product(price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>());
+        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
+        var ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 
         var order = new Order();
 

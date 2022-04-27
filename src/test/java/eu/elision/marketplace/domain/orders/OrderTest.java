@@ -4,7 +4,8 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ class OrderTest {
         List<OrderLine> lines = new ArrayList<>();
         Address address = new Address();
 
-        final String orderNumber = String.valueOf(Math.random());
+        final String orderNumber = String.valueOf(RandomUtils.nextInt(1,100));
 
         order1.setOrderNumber(orderNumber);
         order1.setUser(customer);
@@ -48,14 +49,14 @@ class OrderTest {
         assertThat(order1.equals(order2)).isTrue();
 
         Customer customer1 = new Customer();
-       customer1.setName(HelperMethods.randomString(5));
+       customer1.setName(RandomStringUtils.random(4));
         order2.setUser(customer1);
         assertThat(order1.equals(order2)).isFalse();
         order2.setUser(customer);
         assertThat(order1.equals(order2)).isTrue();
 
         Address address1 = new Address();
-        address1.setCity(HelperMethods.randomString(5));
+        address1.setCity(RandomStringUtils.random(4));
         order2.setShippingAddress(address1);
         assertThat(order1.equals(order2)).isFalse();
         order2.setShippingAddress(address);

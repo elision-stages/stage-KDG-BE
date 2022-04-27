@@ -1,6 +1,6 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
-import eu.elision.marketplace.services.helpers.HelperMethods;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
@@ -14,7 +14,7 @@ class PickListTest {
     @Test
     void getSetCode() {
         PickList pickList = new PickList();
-        final String code = HelperMethods.randomString(3);
+        final String code = RandomStringUtils.random(4);
 
         pickList.setCode(code);
         assertThat(pickList.getCode()).hasToString(code);
