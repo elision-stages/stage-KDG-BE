@@ -17,6 +17,8 @@ class AddressServiceTest
 
     @Test
     void testSave(){
+        final int initRepoSize = addressService.findAll().size();
+
         final Address address = new Address();
 
         final String city = RandomStringUtils.randomAlphabetic(5);
@@ -31,7 +33,7 @@ class AddressServiceTest
 
         final long id = addressService.save(address).getId();
 
-        assertThat(addressService.findAll()).hasSize(1);
+        assertThat(addressService.findAll()).hasSize(1 + initRepoSize);
         assertThat(addressService.findById(id)).isNotNull();
 
         final Address addressFromRepo = addressService.findById(id);

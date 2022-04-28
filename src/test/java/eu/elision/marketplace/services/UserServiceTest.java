@@ -20,6 +20,7 @@ class UserServiceTest
     @Test
     void testSaveUser()
     {
+        final int initRepoSize = userService.findAllUsers().size();
         final Customer customer = new Customer();
 
         final String name = RandomStringUtils.randomAlphabetic(5);
@@ -30,7 +31,7 @@ class UserServiceTest
 
         final long id = userService.save(customer).getId();
 
-        assertThat(userService.findAllUsers()).hasSize(1);
+        assertThat(userService.findAllUsers()).hasSize(1 + initRepoSize);
 
         final User userWithId = userService.findUserById(id);
         assertThat(userWithId).isNotNull();

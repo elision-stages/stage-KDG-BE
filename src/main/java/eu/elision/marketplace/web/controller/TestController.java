@@ -9,6 +9,7 @@ public class TestController
 {
     /**
      * Get mapping to test the rest api
+     *
      * @return returns the string "hello"
      */
     @GetMapping("/hello")
@@ -18,10 +19,23 @@ public class TestController
     }
 
     /**
+     * Get mapping to test the rest api
+     *
+     * @return returns the string "hello"
+     */
+    //@Secured("ROLE_ADMIN")
+    @GetMapping("/hellosecured")
+    String helloSecured()
+    {
+        return "hello, but safe";
+    }
+
+    /**
      * Test the case when an exception is thrown. Should return "not found"
      */
     @GetMapping("/testException")
-    void testException(){
+    void testException()
+    {
         throw new NotFoundException();
     }
 }

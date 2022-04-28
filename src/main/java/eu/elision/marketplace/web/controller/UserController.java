@@ -1,7 +1,9 @@
 package eu.elision.marketplace.web.controller;
 
+import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.web.dtos.CustomerDto;
+import eu.elision.marketplace.web.dtos.VendorDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,15 +22,21 @@ public class UserController
         this.controller = controller;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/registercustomer")
     void registerCustomer(@RequestBody CustomerDto customerDto)
     {
         controller.saveCustomer(customerDto);
     }
 
-    @GetMapping("/allUsers")
-    List<CustomerDto> findAllUsers()
+    @PostMapping("/registervendor")
+    void registerVendor(@RequestBody VendorDto vendorDto)
     {
-        return controller.findAllCustomerDto();
+        controller.saveVendor(vendorDto);
+    }
+
+    @GetMapping("/allUsers")
+    List<User> findAllUsers()
+    {
+        return controller.findAllUsers();
     }
 }

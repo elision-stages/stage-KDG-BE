@@ -4,6 +4,7 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.web.dtos.CustomerDto;
+import eu.elision.marketplace.web.dtos.VendorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,15 @@ public class Controller
         return userService.findAllUsers();
     }
 
+    public List<CustomerDto> findAllCustomerDto()
+    {
+        return findAllUsers().stream()
+                .filter(Customer.class::isInstance)
+                .map(user -> userService.toCustomerDto((Customer) user))
+                .toList();
+    }
     //--------------------------------- Save
+
     public Address saveAddress(Address address)
     {
         return addressService.save(address);
@@ -43,19 +52,11 @@ public class Controller
     {
         return userService.save(user);
     }
-
     public void saveCustomer(CustomerDto customerDto)
     {
         Customer customer = userService.toCustomer(customerDto);
         saveAddress(customer.getMainAddress());
         saveUser(customer);
-    }
-    public List<CustomerDto> findAllCustomerDto()
-    {
-        return findAllUsers().stream()
-                .filter(Customer.class::isInstance)
-                .map(user -> userService.toCustomerDto((Customer) user))
-                .toList();
     }
 
     //--------------------------------- findById
@@ -68,5 +69,15 @@ public class Controller
     public User findUserById(long id)
     {
         return userService.findUserById(id);
+    }
+
+    public void saveVendor(VendorDto vendorDto)
+    {
+        userService.save(vendorDto);
+    }
+
+    public User findUserByEmailAndPassword(String email, String password)
+    {
+        return userService.findUserByEmailAndPassword(email, password);
     }
 }

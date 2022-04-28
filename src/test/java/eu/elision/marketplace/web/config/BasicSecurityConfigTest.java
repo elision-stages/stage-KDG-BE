@@ -27,7 +27,7 @@ class BasicSecurityConfigTest {
     @BeforeEach
     void setUp() throws MalformedURLException {
         restTemplate = new TestRestTemplate("user", "password");
-        base = new URL(String.format("http://localhost:%s/hello", port));
+        base = new URL(String.format("http://localhost:%s/hellosecured", port));
     }
 
     @Test
