@@ -19,7 +19,7 @@ class TestOrderLine
         final double price = RandomUtils.nextDouble(1, 100);
         final int quantity = RandomUtils.nextInt();
 
-        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()), quantity);
+        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(RandomUtils.nextLong(1,100), price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()), quantity);
         assertThat(ol.getTotalPrice()).isEqualTo(price * quantity);
     }
 }

@@ -13,10 +13,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CategoryTest {
+class CategoryTest
+{
 
     @Test
-    void getSetName() {
+    void getSetName()
+    {
         Category category = new Category();
         final String name = RandomStringUtils.random(5);
         category.setName(name);
@@ -25,7 +27,8 @@ class CategoryTest {
     }
 
     @Test
-    void getSubCategories() {
+    void getSubCategories()
+    {
         Category category = new Category();
 
         final String subName = RandomStringUtils.random(5);
@@ -35,12 +38,12 @@ class CategoryTest {
 
         Category sub1 = new Category();
         PickList pickList = new PickList();
-        pickList.setCode(String.valueOf(RandomUtils.nextInt(1,1000)));
-        pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomStringUtils.random(1)), new PickListItem(RandomStringUtils.random(1)), new PickListItem(RandomStringUtils.random(1)))));
+        pickList.setCode(String.valueOf(RandomUtils.nextInt(1, 1000)));
+        pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1,100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1,100), RandomStringUtils.random(1)))));
         sub1.setName(subName);
-        sub1.getCharacteristics().add(new DynamicAttribute(firstName, true, Type.DECIMAL, null));
-        sub1.getCharacteristics().add(new DynamicAttribute(secondName, false, Type.INTEGER, null));
-        sub1.getCharacteristics().add(new DynamicAttribute(thirdName, true, Type.ENUMERATION, pickList));
+        sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), firstName, true, Type.DECIMAL, null));
+        sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, null));
+        sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), thirdName, true, Type.ENUMERATION, pickList));
 
         category.getSubCategories().add(sub1);
         final Category actual = category.getSubCategories().get(0);

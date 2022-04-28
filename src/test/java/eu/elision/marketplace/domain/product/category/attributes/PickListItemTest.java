@@ -1,6 +1,7 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -21,7 +22,7 @@ class PickListItemTest {
     void allArgsConstructor(){
         final String value = RandomStringUtils.random(4);
 
-        PickListItem pli = new PickListItem(value);
+        PickListItem pli = new PickListItem(RandomUtils.nextLong(1,10), value);
         assertThat(pli.getValue()).hasToString(value);
     }
 }

@@ -3,6 +3,7 @@ package eu.elision.marketplace.domain.product.category.attributes;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -10,8 +11,12 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Entity
 public class PickList
 {
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String code;
+    @OneToMany
     private List<PickListItem> items;
 }

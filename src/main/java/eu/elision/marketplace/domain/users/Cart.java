@@ -3,6 +3,7 @@ package eu.elision.marketplace.domain.users;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import lombok.Getter;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,12 @@ import java.util.List;
  * The cart contains the orderLines of an customer that aren't bought yet
  */
 @Getter
+@Entity
 public class Cart
 {
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @OneToMany
     private final List<OrderLine> orderLines;
 
     public Cart()
