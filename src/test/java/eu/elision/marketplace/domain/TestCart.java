@@ -30,7 +30,7 @@ class TestCart {
 
     @Test
     void cartTotalPrice() {
-        final double price = RandomUtils.nextDouble(1, 100);
+        final double price = Math.round(RandomUtils.nextDouble(1, 100));
         final int quantity1 = RandomUtils.nextInt(1, 10);
         final int quantity2 = RandomUtils.nextInt(1, 10);
 
