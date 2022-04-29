@@ -92,6 +92,8 @@ class UserControllerTest {
         final String theme = RandomStringUtils.randomAlphabetic(4);
         final String introduction = RandomStringUtils.randomAlphabetic(4);
         final String vatNumber = RandomStringUtils.randomAlphabetic(4);
+        final String phoneNumber = RandomStringUtils.random(10, false, true);
+        final String businessName = RandomStringUtils.randomAlphabetic(10);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registervendor", base),
@@ -103,11 +105,14 @@ class UserControllerTest {
                         logo,
                         theme,
                         introduction,
-                        vatNumber
+                        vatNumber,
+                        phoneNumber,
+                        businessName
                 ),
                 String.class
         );
 
+        assertThat(response.getBody()).isEqualTo("Vendor is valid");
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         User vendor = controller.findUserByEmailAndPassword(email, password);
@@ -121,6 +126,8 @@ class UserControllerTest {
         assertThat(((Vendor) vendor).getTheme()).isEqualTo(theme);
         assertThat(((Vendor) vendor).getIntroduction()).isEqualTo(introduction);
         assertThat(((Vendor) vendor).getVatNumber()).isEqualTo(vatNumber);
+        assertThat(((Vendor) vendor).getPhoneNumber()).isEqualTo(phoneNumber);
+        assertThat(((Vendor) vendor).getBusinessName()).isEqualTo(businessName);
     }
 
     @Test

@@ -32,8 +32,9 @@ public class UserController
     }
 
     @PostMapping("/registervendor")
-    void registerVendor(@RequestBody VendorDto vendorDto) {
+    ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto) {
         controller.saveVendor(vendorDto);
+        return ResponseEntity.ok("Vendor is valid");
     }
 
     @GetMapping("/allUsers")

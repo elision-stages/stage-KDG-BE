@@ -34,4 +34,7 @@ public abstract class User {
     private LocalDateTime createdDate;
     private boolean validated;
 
+    protected User() {
+        validated = false;
+    }
 }
