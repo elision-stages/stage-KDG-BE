@@ -44,8 +44,8 @@ class UserControllerTest
     void testAddCustomer()
     {
         final String name = RandomStringUtils.randomAlphabetic(4);
-        final String email = RandomStringUtils.randomAlphabetic(4);
-        final String password = RandomStringUtils.randomAlphabetic(4);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = RandomStringUtils.random(10, true, true);
         final boolean validated = RandomUtils.nextBoolean();
 
         final String street = RandomStringUtils.randomAlphabetic(4);
@@ -85,11 +85,10 @@ class UserControllerTest
     }
 
     @Test
-    void testAddVendor()
-    {
+    void testAddVendor() {
         final String name = RandomStringUtils.randomAlphabetic(4);
-        final String email = RandomStringUtils.randomAlphabetic(4);
-        final String password = RandomStringUtils.randomAlphabetic(4);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = RandomStringUtils.random(10, true, true);
         final boolean validated = RandomUtils.nextBoolean();
         final String logo = RandomStringUtils.randomAlphabetic(4);
         final String theme = RandomStringUtils.randomAlphabetic(4);

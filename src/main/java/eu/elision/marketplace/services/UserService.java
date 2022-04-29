@@ -12,37 +12,47 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @NoArgsConstructor
 public class UserService
 {
     private UserRepository userRepository;
+    private Validator validator;
 
     @Autowired
-    public UserService(UserRepository userRepository)
-    {
+    public UserService(UserRepository userRepository, Validator validator) {
         this.userRepository = userRepository;
+        this.validator = validator;
     }
 
-    public List<User> findAllUsers()
-    {
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
-    public User save(User user)
-    {
+    public User save(User user) {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        if (!violations.isEmpty()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (ConstraintViolation<User> constraintViolation : violations)
+                stringBuilder.append(constraintViolation.getMessage());
+
+            throw new ConstraintViolationException("Error occurred: " + stringBuilder, violations);
+        }
         return userRepository.save(user);
     }
 
-    public User findUserById(long id)
-    {
+    public User findUserById(long id) {
         return userRepository.findById(id).orElse(null);
     }
 
-    public Customer toCustomer(CustomerDto customerDto)
-    {
+    public Customer toCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
 
         final Address address = new Address();

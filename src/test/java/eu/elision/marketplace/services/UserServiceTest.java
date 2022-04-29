@@ -24,10 +24,12 @@ class UserServiceTest
         final Customer customer = new Customer();
 
         final String name = RandomStringUtils.randomAlphabetic(5);
-        final String email = RandomStringUtils.randomAlphabetic(10);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = RandomStringUtils.random(10, true, true);
 
         customer.setName(name);
         customer.setEmail(email);
+        customer.setPassword(password);
 
         final long id = userService.save(customer).getId();
 
