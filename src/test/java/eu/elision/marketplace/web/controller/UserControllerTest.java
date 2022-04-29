@@ -4,7 +4,6 @@ import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.AddressDto;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -44,25 +43,12 @@ class UserControllerTest {
         final String name = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-        final boolean validated = RandomUtils.nextBoolean();
-
-        final String street = RandomStringUtils.randomAlphabetic(4);
-        final String number = String.valueOf(RandomUtils.nextInt(1, 100));
-        final String postalCode = String.valueOf(RandomUtils.nextInt(1, 9999));
-        final String city = RandomStringUtils.randomAlphabetic(10);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registercustomer", base),
                 new CustomerDto(name,
                         email,
-                        password,
-                        validated,
-                        new AddressDto(
-                                street,
-                                number,
-                                postalCode,
-                                city
-                        )),
+                        password),
                 String.class
         );
 
@@ -73,13 +59,7 @@ class UserControllerTest {
         assertThat(customer.getName()).hasToString(name);
         assertThat(customer.getEmail()).hasToString(email);
         assertThat(customer.getPassword()).hasToString(password);
-        assertThat(customer.isValidated()).isEqualTo(validated);
         assertThat(customer).isInstanceOf(Customer.class);
-
-        assertThat(((Customer) customer).getMainAddress().getStreet()).hasToString(street);
-        assertThat(((Customer) customer).getMainAddress().getCity()).hasToString(city);
-        assertThat(((Customer) customer).getMainAddress().getNumber()).hasToString(number);
-        assertThat(((Customer) customer).getMainAddress().getPostalCode()).hasToString(postalCode);
     }
 
     @Test
