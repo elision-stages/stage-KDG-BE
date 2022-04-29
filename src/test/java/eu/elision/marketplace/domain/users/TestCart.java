@@ -1,9 +1,7 @@
-package eu.elision.marketplace.domain;
+package eu.elision.marketplace.domain.users;
 
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.domain.users.Cart;
-import eu.elision.marketplace.domain.users.Vendor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -44,5 +42,14 @@ class TestCart {
         cart.getOrderLines().add(ol2);
 
         assertThat(cart.getTotalPrice()).isEqualTo((quantity1 + quantity2) * price);
+    }
+
+    @Test
+    void getSetId() {
+        Cart cart = new Cart();
+        long id = RandomUtils.nextLong();
+        cart.setId(id);
+
+        assertThat(cart.getId()).isEqualTo(id);
     }
 }

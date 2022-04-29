@@ -67,4 +67,13 @@ class CategoryTest
         assertThat(actual.getCharacteristics().get(2).getType()).isEqualTo(Type.ENUMERATION);
         assertThat(actual.getCharacteristics().get(2).getEnumList().getItems()).hasSize(3);
     }
+
+    @Test
+    void getSetId() {
+        Category category = new Category();
+        final long id = RandomUtils.nextLong();
+        category.setId(id);
+
+        assertThat(category.getId()).isEqualTo(id);
+    }
 }

@@ -25,8 +25,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerTest
-{
+class UserControllerTest {
     private static URL base;
     private TestRestTemplate restTemplate;
     @LocalServerPort
@@ -35,15 +34,13 @@ class UserControllerTest
     private Controller controller;
 
     @BeforeEach
-    void setUp() throws MalformedURLException
-    {
+    void setUp() throws MalformedURLException {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void testAddCustomer()
-    {
+    void testAddCustomer() {
         final String name = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
@@ -124,5 +121,18 @@ class UserControllerTest
         assertThat(((Vendor) vendor).getTheme()).isEqualTo(theme);
         assertThat(((Vendor) vendor).getIntroduction()).isEqualTo(introduction);
         assertThat(((Vendor) vendor).getVatNumber()).isEqualTo(vatNumber);
+    }
+
+    @Test
+    void testFindAll() {
+        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/allUsers", base), String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testUserNotValidated() {
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                String.format("%s/registervendor", base), new Vendor(), String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

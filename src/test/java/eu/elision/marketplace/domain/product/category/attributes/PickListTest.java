@@ -1,13 +1,12 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PickListTest {
 
@@ -26,5 +25,14 @@ class PickListTest {
 
         pickList.setItems(new ArrayList<>());
         assertThat(pickList.getItems()).isNotNull();
+    }
+
+    @Test
+    void getSetId() {
+        PickList pl = new PickList();
+        final long id = RandomUtils.nextLong();
+        pl.setId(id);
+
+        assertThat(pl.getId()).isEqualTo(id);
     }
 }
