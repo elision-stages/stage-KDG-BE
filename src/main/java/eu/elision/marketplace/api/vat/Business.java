@@ -19,7 +19,7 @@ public class Business {
     }
 
     public void setCountryCode(String countryCode) {
-        this.name = countryCode;
+        this.countryCode = countryCode;
     }
 
     public String getVatNumber() {
