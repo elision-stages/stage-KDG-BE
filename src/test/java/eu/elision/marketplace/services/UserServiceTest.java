@@ -3,9 +3,12 @@ package eu.elision.marketplace.services;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +28,7 @@ class UserServiceTest
 
         final String name = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = RandomStringUtils.random(10, true, true);
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
 
         customer.setName(name);
         customer.setEmail(email);

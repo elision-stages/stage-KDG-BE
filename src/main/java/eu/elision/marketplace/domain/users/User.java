@@ -29,7 +29,7 @@ public abstract class User {
     @Email(message = "Email format is wrong")
     private String email;
     @NotBlank(message = "Password is required")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", message = "Password must have at lest 8 characters, at least one uppercase and one lowercase letter and one number")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", message = "Password must have at least 8 characters, at least one uppercase and one lowercase letter and one number")
     private String password;
     private LocalDateTime createdDate;
     private boolean validated;

@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class ControllerTest
-{
+class ControllerTest {
     @Autowired
     Controller controller;
 
     @Test
-    void saveCostumerWithAddress()
-    {
+    void saveCostumerWithAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
         final int initAddressRepoSize = controller.findAllAddresses().size();
 
@@ -32,7 +32,7 @@ class ControllerTest
 
         final String name = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = RandomStringUtils.random(10, true, true);
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
 
         address.setPostalCode(postalCode);
         address.setStreet(street);

@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +46,7 @@ class UserControllerTest
     {
         final String name = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = RandomStringUtils.random(10, true, true);
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
         final boolean validated = RandomUtils.nextBoolean();
 
         final String street = RandomStringUtils.randomAlphabetic(4);
@@ -88,7 +89,7 @@ class UserControllerTest
     void testAddVendor() {
         final String name = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = RandomStringUtils.random(10, true, true);
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
         final boolean validated = RandomUtils.nextBoolean();
         final String logo = RandomStringUtils.randomAlphabetic(4);
         final String theme = RandomStringUtils.randomAlphabetic(4);
