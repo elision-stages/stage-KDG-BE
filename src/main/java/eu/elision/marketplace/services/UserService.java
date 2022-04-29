@@ -54,17 +54,9 @@ public class UserService {
     public Customer toCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
 
-        final Address address = new Address();
-        address.setCity(customerDto.mainAddress().city());
-        address.setStreet(customerDto.mainAddress().street());
-        address.setPostalCode(customerDto.mainAddress().postalCode());
-        address.setNumber(customerDto.mainAddress().number());
-
         customer.setName(customerDto.name());
         customer.setEmail(customerDto.email());
         customer.setPassword(customerDto.password());
-        customer.setValidated(customerDto.validated());
-        customer.setMainAddress(address);
 
         return customer;
     }
@@ -74,7 +66,7 @@ public class UserService {
     }
 
     public CustomerDto toCustomerDto(Customer customer) {
-        return new CustomerDto(customer.getName(), customer.getEmail(), customer.getPassword(), customer.isValidated(), toAddressDto(customer.getMainAddress()));
+        return new CustomerDto(customer.getName(), customer.getEmail(), customer.getPassword());
     }
 
     public void save(VendorDto vendorDto) {

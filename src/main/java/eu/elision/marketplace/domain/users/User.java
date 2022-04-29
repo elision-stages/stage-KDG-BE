@@ -36,5 +36,6 @@ public abstract class User {
 
     protected User() {
         validated = false;
+        createdDate = LocalDateTime.now();
     }
 }
