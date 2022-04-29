@@ -15,13 +15,13 @@ public class VendorController {
 
     @GetMapping("/vat/{vat}")
     @ResponseBody
-    ResponseEntity vat(@PathVariable("vat") String vat) throws IOException {
+    ResponseEntity<Business> vat(@PathVariable("vat") String vat) {
         vat = vat.replaceAll("[^a-zA-Z0-9]", "");
-        if(vat.length() < 10) return new ResponseEntity(HttpStatus.NOT_FOUND); // Save some bandwidth
+        if(vat.length() < 10) return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Save some bandwidth
         String country = vat.split("[0-9]")[0];
         String number = vat.substring(country.length());
         Business result = vatClient.checkVatService(country, number);
-        if(result == null) return new ResponseEntity(HttpStatus.NOT_FOUND);
-        return new ResponseEntity(result, HttpStatus.OK);
+        if(result == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

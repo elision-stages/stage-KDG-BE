@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class VATClient {
@@ -37,10 +36,10 @@ public class VATClient {
             String result = this.request(new URL(this.getCheckVatServiceURL), out);
             if(!result.contains("<valid>true</valid>")) return null;
             Business vendor = new Business();
-            vendor.countryCode = StringUtils.substringBetween(result, "<countryCode>", "</countryCode>");
-            vendor.vatNumber = StringUtils.substringBetween(result, "<vatNumber>", "</vatNumber>");
-            vendor.name = StringUtils.substringBetween(result, "<name>", "</name>");
-            vendor.address = StringUtils.substringBetween(result, "<address>", "</address>");
+            vendor.setCountryCode(StringUtils.substringBetween(result, "<countryCode>", "</countryCode>"));
+            vendor.setVatNumber(StringUtils.substringBetween(result, "<vatNumber>", "</vatNumber>"));
+            vendor.setName(StringUtils.substringBetween(result, "<name>", "</name>"));
+            vendor.setAddress(StringUtils.substringBetween(result, "<address>", "</address>"));
             return vendor;
         }catch(IOException e) {
             return null;
