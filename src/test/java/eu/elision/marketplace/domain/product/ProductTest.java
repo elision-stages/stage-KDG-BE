@@ -14,10 +14,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductTest {
+class ProductTest
+{
 
     @Test
-    void getSetPrice() {
+    void getSetPrice()
+    {
         Product product = new Product();
         final int price = RandomUtils.nextInt();
         product.setPrice(price);
@@ -25,7 +27,8 @@ class ProductTest {
     }
 
     @Test
-    void getSetVendor() {
+    void getSetVendor()
+    {
         Vendor vendor = new Vendor();
         Product product = new Product();
         product.setVendor(vendor);
@@ -34,16 +37,18 @@ class ProductTest {
     }
 
     @Test
-    void getSetDescription() {
+    void getSetDescription()
+    {
         Product product = new Product();
-        final String desc =RandomStringUtils.random(5);
+        final String desc = RandomStringUtils.random(5);
         product.setDescription(desc);
 
         assertThat(product.getDescription()).isEqualTo(desc);
     }
 
     @Test
-    void getImages() {
+    void getImages()
+    {
         Product product = new Product();
         product.getImages().add(RandomStringUtils.random(5));
 
@@ -51,18 +56,19 @@ class ProductTest {
     }
 
     @Test
-    void getSetAttributes() {
+    void getSetAttributes()
+    {
         Product product = new Product();
 
-        final boolean bool = RandomUtils.nextInt(0,2) == 1;
-        final int intValue = RandomUtils.nextInt() ;
+        final boolean bool = RandomUtils.nextInt(0, 2) == 1;
+        final int intValue = RandomUtils.nextInt();
         final double doubleValue = RandomUtils.nextDouble();
         final String enumValue = RandomStringUtils.random(4);
 
-        product.getAttributes().add(new DynamicAttributeBoolValue("bool", bool));
-        product.getAttributes().add(new DynamicAttributeIntValue("int", intValue));
-        product.getAttributes().add(new DynamicAttributeDoubleValue("double", doubleValue));
-        product.getAttributes().add(new DynamicAttributeEnumValue("enum", enumValue));
+        product.getAttributes().add(new DynamicAttributeBoolValue(RandomUtils.nextLong(1, 100), "bool", bool));
+        product.getAttributes().add(new DynamicAttributeIntValue(RandomUtils.nextLong(1, 100), "int", intValue));
+        product.getAttributes().add(new DynamicAttributeDoubleValue(RandomUtils.nextLong(1, 100), "double", doubleValue));
+        product.getAttributes().add(new DynamicAttributeEnumValue(RandomUtils.nextLong(1, 100), "enum", enumValue));
 
 
         assertThat(product.getAttributes().get(0).getAttributeName()).isEqualTo("bool");
@@ -79,13 +85,14 @@ class ProductTest {
     }
 
     @Test
-    void testEquals() {
+    void testEquals()
+    {
         Vendor vendor = new Vendor();
 
         final String description = RandomStringUtils.random(4);
 
-        Product product1 = new Product(2, vendor, description, new ArrayList<>(), new ArrayList<>());
-        Product product2 = new Product(2, vendor, description, new ArrayList<>(), new ArrayList<>());
+        Product product1 = new Product(1L, 2, vendor, description, new ArrayList<>(), new ArrayList<>());
+        Product product2 = new Product(1L, 2, vendor, description, new ArrayList<>(), new ArrayList<>());
 
         assertThat(product1.equals(product2)).isTrue();
 
@@ -111,7 +118,7 @@ class ProductTest {
         product2.setImages(new ArrayList<>());
         assertThat(product1.equals(product2)).isTrue();
 
-        product2.setAttributes(new ArrayList<>(List.of(new DynamicAttributeBoolValue(RandomStringUtils.random(4), RandomUtils.nextInt(0,2) == 1))));
+        product2.setAttributes(new ArrayList<>(List.of(new DynamicAttributeBoolValue(RandomUtils.nextLong(1, 100), RandomStringUtils.random(4), RandomUtils.nextInt(0, 2) == 1))));
         assertThat(product1.equals(product2)).isFalse();
         product2.setAttributes(new ArrayList<>());
         assertThat(product1.equals(product2)).isTrue();
@@ -123,15 +130,17 @@ class ProductTest {
     }
 
     @Test
-    void testHashCode() {
+    void testHashCode()
+    {
         Product product = new Product();
 
         assertThat(product.hashCode()).isNotZero();
     }
 
     @Test
-    void testToString() {
+    void testToString()
+    {
         Product product = new Product();
-        assertThat(product.toString()).hasToString("Product(price=0.0, vendor=null, description=null, images=[], attributes=[])");
+        assertThat(product.toString()).hasToString("Product(id=null, price=0.0, vendor=null, description=null, images=[], attributes=[])");
     }
 }

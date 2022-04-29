@@ -12,23 +12,26 @@ import java.util.ArrayList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class OrderLineTest {
+class OrderLineTest
+{
 
     @Test
-    void getTotalPrice() {
+    void getTotalPrice()
+    {
         OrderLine orderLine = new OrderLine();
 
         double price = Math.random();
         int quantity = RandomUtils.nextInt();
 
-        orderLine.setProduct(new Product(price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
+        orderLine.setProduct(new Product(RandomUtils.nextLong(1, 100), price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
         orderLine.setQuantity(quantity);
 
         assertThat(orderLine.getTotalPrice()).isEqualTo(price * quantity);
     }
 
     @Test
-    void getOrderLineNumber() {
+    void getOrderLineNumber()
+    {
         OrderLine ol = new OrderLine();
         final int orderLineNumber = RandomUtils.nextInt();
         ol.setOrderLineNumber(orderLineNumber);
@@ -37,7 +40,8 @@ class OrderLineTest {
     }
 
     @Test
-    void getVendor() {
+    void getVendor()
+    {
         OrderLine ol = new OrderLine();
         Vendor vendor = new Vendor();
         ol.setVendor(vendor);
@@ -46,7 +50,8 @@ class OrderLineTest {
     }
 
     @Test
-    void getOrderNumber() {
+    void getOrderNumber()
+    {
         OrderLine ol = new OrderLine();
         final int orderLineNumber = RandomUtils.nextInt();
 
@@ -56,7 +61,8 @@ class OrderLineTest {
     }
 
     @Test
-    void getProduct() {
+    void getProduct()
+    {
         OrderLine ol = new OrderLine();
         Product product = new Product();
 
@@ -66,7 +72,8 @@ class OrderLineTest {
     }
 
     @Test
-    void getQuantity() {
+    void getQuantity()
+    {
         OrderLine ol = new OrderLine();
         int quantity = RandomUtils.nextInt();
 
@@ -76,42 +83,46 @@ class OrderLineTest {
     }
 
     @Test
-    void testToString() {
+    void testToString()
+    {
         OrderLine ol = new OrderLine();
         final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
         final String description = RandomStringUtils.random(10);
-        final int orderLineNumber = RandomUtils.nextInt(1,100);
+        final int orderLineNumber = RandomUtils.nextInt(1, 100);
         final int quantity = RandomUtils.nextInt(1, 100);
         final double price = RandomUtils.nextDouble(1, 100);
+        final long id = RandomUtils.nextLong(1, 100);
 
         ol.setOrderNumber(orderNumber);
         ol.setQuantity(quantity);
-        ol.setProduct(new Product(price, null, description, new ArrayList<>(), new ArrayList<>()));
+        ol.setProduct(new Product(id, price, null, description, new ArrayList<>(), new ArrayList<>()));
         ol.setVendor(null);
         ol.setOrderLineNumber(orderLineNumber);
 
-        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(price=%s, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)", orderLineNumber, orderNumber, price, description, quantity));
+        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, price=%s, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
+                orderLineNumber, orderNumber, id, price, description, quantity));
     }
 
     @Test
-    void testEquals() {
+    void testEquals()
+    {
         Vendor vendor = new Vendor();
         Product product = new Product();
 
-        final String orderNumber = String.valueOf(RandomUtils.nextInt(1,100));
-        final int orderLineNumber = RandomUtils.nextInt(1,100);
-        final int quantity = RandomUtils.nextInt(1,100);
+        final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
+        final int orderLineNumber = RandomUtils.nextInt(1, 100);
+        final int quantity = RandomUtils.nextInt(1, 100);
 
         OrderLine ol1 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
         OrderLine ol2 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
 
         assertThat(ol1.equals(ol2)).isTrue();
 
-        ol2.setOrderLineNumber(RandomUtils.nextInt(1,100));
+        ol2.setOrderLineNumber(RandomUtils.nextInt(1, 100));
         assertThat(ol1.equals(ol2)).isFalse();
 
         ol2.setOrderLineNumber(orderLineNumber);
-        ol2.setQuantity(RandomUtils.nextInt(1,100));
+        ol2.setQuantity(RandomUtils.nextInt(1, 100));
         assertThat(ol1.equals(ol2)).isFalse();
 
         ol2.setQuantity(quantity);
@@ -131,7 +142,8 @@ class OrderLineTest {
     }
 
     @Test
-    void testHashCode() {
+    void testHashCode()
+    {
         OrderLine ol = new OrderLine();
         assertThat(ol.hashCode()).isNotZero();
     }

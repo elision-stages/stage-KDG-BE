@@ -5,6 +5,7 @@ import eu.elision.marketplace.domain.users.Vendor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,16 +14,23 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
+@Entity
 public class Product
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private double price;
+    @ManyToOne
     private Vendor vendor;
     private String description;
+    @ElementCollection
     private List<String> images;
-
+    @OneToMany
     private List<DynamicAttributeValue<?>> attributes;
 
-    public Product() {
+    public Product()
+    {
         this.images = new ArrayList<>();
         this.attributes = new ArrayList<>();
     }

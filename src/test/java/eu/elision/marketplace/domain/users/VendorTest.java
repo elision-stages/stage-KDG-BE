@@ -42,4 +42,22 @@ class VendorTest {
 
         assertThat(vendor.getVatNumber()).isEqualTo(vatNumber);
     }
+
+    @Test
+    void getSetPhoneNumber() {
+        Vendor vendor = new Vendor();
+        final String phoneNumber = RandomStringUtils.random(10, false, true);
+        vendor.setPhoneNumber(phoneNumber);
+
+        assertThat(vendor.getPhoneNumber()).isEqualTo(phoneNumber);
+    }
+
+    @Test
+    void getSetBusinessName() {
+        Vendor vendor = new Vendor();
+        final String businessName = RandomStringUtils.randomAlphabetic(10);
+        vendor.setBusinessName(businessName);
+
+        assertThat(vendor.getBusinessName()).isEqualTo(businessName);
+    }
 }

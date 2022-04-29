@@ -1,4 +1,4 @@
-package eu.elision.marketplace.config.swagger;
+package eu.elision.marketplace.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

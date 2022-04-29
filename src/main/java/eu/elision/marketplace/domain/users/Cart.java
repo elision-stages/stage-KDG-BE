@@ -2,7 +2,9 @@ package eu.elision.marketplace.domain.users;
 
 import eu.elision.marketplace.domain.orders.OrderLine;
 import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,21 +12,25 @@ import java.util.List;
  * The cart contains the orderLines of an customer that aren't bought yet
  */
 @Getter
-public class Cart
-{
+@Entity
+public class Cart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter
+    private Long id;
+    @OneToMany
     private final List<OrderLine> orderLines;
 
-    public Cart()
-    {
+    public Cart() {
         orderLines = new ArrayList<>();
     }
 
     /**
      * Get the total price of a cart
+     *
      * @return the value of all the orderLines in the cart
      */
-    public double getTotalPrice()
-    {
+    public double getTotalPrice() {
         return orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 }
