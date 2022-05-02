@@ -6,11 +6,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
-import javax.print.attribute.standard.PrinterURI;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class OrderLineTest
 {
@@ -133,7 +131,8 @@ class OrderLineTest
 
         ol2.setProduct(product);
         final Vendor vendor1 = new Vendor();
-        vendor1.setName(RandomStringUtils.random(10));
+        vendor1.setFirstName(RandomStringUtils.random(10));
+        vendor1.setLastName(RandomStringUtils.random(10));
         ol2.setVendor(vendor1);
         assertThat(ol1.equals(ol2)).isFalse();
 

@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class Controller
-{
+public class Controller {
     private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
@@ -28,8 +27,7 @@ public class Controller
     }
 
     //---------------------------------- Find all - only for testing
-    public List<Address> findAllAddresses()
-    {
+    public List<Address> findAllAddresses() {
         return addressService.findAll();
     }
 
@@ -60,7 +58,9 @@ public class Controller
 
     public void saveCustomer(CustomerDto customerDto) {
         Customer customer = userService.toCustomer(customerDto);
-        saveAddress(customer.getMainAddress());
+        if (customer.getMainAddress() != null) {
+            saveAddress(customer.getMainAddress());
+        }
         saveUser(customer);
     }
 
@@ -70,8 +70,7 @@ public class Controller
         return addressService.findById(id);
     }
 
-    public User findUserById(long id)
-    {
+    public User findUserById(long id) {
         return userService.findUserById(id);
     }
 

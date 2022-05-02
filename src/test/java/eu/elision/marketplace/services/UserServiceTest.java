@@ -26,11 +26,13 @@ class UserServiceTest
         final int initRepoSize = userService.findAllUsers().size();
         final Customer customer = new Customer();
 
-        final String name = RandomStringUtils.randomAlphabetic(5);
+        final String firstName = RandomStringUtils.randomAlphabetic(5);
+        final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
 
-        customer.setName(name);
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
         customer.setEmail(email);
         customer.setPassword(password);
 
@@ -42,7 +44,8 @@ class UserServiceTest
         assertThat(userWithId).isNotNull();
 
         assertThat(userWithId.getEmail()).hasToString(email);
-        assertThat(userWithId.getName()).hasToString(name);
+        assertThat(userWithId.getFirstName()).hasToString(firstName);
+        assertThat(userWithId.getLastName()).hasToString(lastName);
 
     }
 }
