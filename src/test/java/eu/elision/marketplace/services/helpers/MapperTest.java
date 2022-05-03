@@ -23,7 +23,9 @@ class MapperTest
         String childName = RandomStringUtils.randomAlphabetic(5);
 
         parent.setName(parentName);
+        parent.setId(RandomUtils.nextLong());
         child.setName(childName);
+        child.setId(RandomUtils.nextLong());
         parent.getSubCategories().add(child);
 
         List<CategoryDto> categoryDtos = Mapper.toCategoryDtoList(List.of(parent));
