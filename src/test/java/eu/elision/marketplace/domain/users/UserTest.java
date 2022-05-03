@@ -14,9 +14,9 @@ class UserTest {
     void getName() {
         User vendor = new Vendor();
         final String name = RandomStringUtils.random(4);
-        vendor.setName(name);
+        vendor.setFirstName(name);
 
-        assertThat(vendor.getName()).isEqualTo(name);
+        assertThat(vendor.getFirstName()).isEqualTo(name);
     }
 
     @Test

@@ -54,34 +54,39 @@ public class UserService {
     public Customer toCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
 
-        customer.setName(customerDto.name());
+        customer.setFirstName(customerDto.firstName());
+        customer.setLastName(customerDto.lastName());
         customer.setEmail(customerDto.email());
         customer.setPassword(customerDto.password());
 
         return customer;
     }
 
-    public AddressDto toAddressDto(Address address) {
+    public AddressDto toAddressDto(Address address)
+    {
         return address == null ? null : new AddressDto(address.getStreet(), address.getNumber(), address.getPostalCode(), address.getCity());
     }
 
-    public CustomerDto toCustomerDto(Customer customer) {
-        return new CustomerDto(customer.getName(), customer.getEmail(), customer.getPassword());
+    public CustomerDto toCustomerDto(Customer customer)
+    {
+        return new CustomerDto(customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getPassword());
     }
 
-    public void save(VendorDto vendorDto) {
+    public void save(VendorDto vendorDto)
+    {
         userRepository.save(toVendor(vendorDto));
     }
 
-    private Vendor toVendor(VendorDto vendorDto) {
+    private Vendor toVendor(VendorDto vendorDto)
+    {
         Vendor vendor = new Vendor();
         vendor.setIntroduction(vendorDto.introduction());
         vendor.setLogo(vendorDto.logo());
         vendor.setTheme(vendorDto.theme());
         vendor.setEmail(vendorDto.email());
-        vendor.setName(vendorDto.name());
+        vendor.setFirstName(vendorDto.firstName());
+        vendor.setLastName(vendorDto.lastName());
         vendor.setPassword(vendorDto.password());
-        vendor.setValidated(vendorDto.validated());
         vendor.setVatNumber(vendorDto.vatNumber());
         vendor.setPhoneNumber(vendorDto.phoneNumber());
         vendor.setBusinessName(vendorDto.businessName());

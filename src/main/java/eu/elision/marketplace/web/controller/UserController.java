@@ -26,28 +26,33 @@ public class UserController
     }
 
     @PostMapping("/registercustomer")
-    ResponseEntity<String> registerCustomer(@RequestBody @Valid CustomerDto customerDto) {
+    ResponseEntity<String> registerCustomer(@RequestBody @Valid CustomerDto customerDto)
+    {
         controller.saveCustomer(customerDto);
-        return ResponseEntity.ok("Customer is valid");
+        return ResponseEntity.ok("{success: \"ok\"}");
     }
 
     @PostMapping("/registervendor")
-    ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto) {
+    ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto)
+    {
         controller.saveVendor(vendorDto);
-        return ResponseEntity.ok("Vendor is valid");
+        return ResponseEntity.ok("{success: \"ok\"}");
     }
 
     @GetMapping("/allUsers")
-    List<User> findAllUsers() {
+    List<User> findAllUsers()
+    {
         return controller.findAllUsers();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public Map<String, String> handleValidationExceptions(ConstraintViolationException ex) {
+    public Map<String, String> handleValidationExceptions(ConstraintViolationException ex)
+    {
         Map<String, String> errors = new HashMap<>();
 
-        for (var constraintViolation : ex.getConstraintViolations()) {
+        for (var constraintViolation : ex.getConstraintViolations())
+        {
             errors.put(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
         }
 
