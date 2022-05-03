@@ -2,11 +2,8 @@ package eu.elision.marketplace.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -19,15 +16,12 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true,
-        securedEnabled = true
-)
 public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
 {
 
     private static final String[] AUTH_WHITELIST = {
-            "/hello"
+            "/hello",
+            "/swagger-ui/"
     };
 
     @Override
@@ -44,12 +38,6 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
                 .withUser("admin")
                 .password(encoder.encode("admin"))
                 .roles("USER", "ADMIN");
-    }
-
-    @Override
-    public void configure(WebSecurity web)
-    {
-        web.ignoring().antMatchers(HttpMethod.POST, "/**");
     }
 
     @Override
