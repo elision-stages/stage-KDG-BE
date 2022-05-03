@@ -67,4 +67,40 @@ class ControllerTest {
         assertThat(customerFromRepo.getLastName()).hasToString(lastName);
     }
 
+    @Test
+    void saveCustomerWithoutAddress()
+    {
+        final int initUserRepoSize = controller.findAllUsers().size();
+
+        final Customer customer = new Customer();
+
+        final String firstName = RandomStringUtils.randomAlphabetic(5);
+        final String lastName = RandomStringUtils.randomAlphabetic(5);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+
+
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setEmail(email);
+        customer.setPassword(password);
+
+        long customerId = controller.saveUser(customer).getId();
+
+        assertThat(controller.findAllUsers()).hasSize(1 + initUserRepoSize);
+
+        Customer customerFromRepo = (Customer) controller.findUserById(customerId);
+        assertThat(customerFromRepo).isNotNull();
+
+        assertThat(customerFromRepo.getEmail()).hasToString(email);
+        assertThat(customerFromRepo.getFirstName()).hasToString(firstName);
+        assertThat(customerFromRepo.getLastName()).hasToString(lastName);
+    }
+
+    @Test
+    void findAllCategoriesTest()
+    {
+        assertThat(controller.findAllCategories()).isNotNull();
+    }
+
 }

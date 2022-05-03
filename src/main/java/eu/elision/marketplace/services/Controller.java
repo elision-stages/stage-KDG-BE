@@ -35,13 +35,6 @@ public class Controller {
         return userService.findAllUsers();
     }
 
-    public List<CustomerDto> findAllCustomerDto() {
-        return findAllUsers().stream()
-                .filter(Customer.class::isInstance)
-                .map(user -> userService.toCustomerDto((Customer) user))
-                .toList();
-    }
-
     //--------------------------------- FindAll
     public List<Category> findAllCategories() {
         return categoryService.findAll();
@@ -78,12 +71,19 @@ public class Controller {
         userService.save(vendorDto);
     }
 
-    public User findUserByEmailAndPassword(String email, String password) {
+    public User findUserByEmailAndPassword(String email, String password)
+    {
         return userService.findUserByEmailAndPassword(email, password);
     }
 
 
-    public void saveCategory(CategoryMakeDto categoryMakeDto) {
+    public void saveCategory(CategoryMakeDto categoryMakeDto)
+    {
         categoryService.save(Mapper.toCategory(categoryMakeDto), categoryMakeDto.parentId());
+    }
+
+    public Category findCategoryByName(String name)
+    {
+        return categoryService.findByName(name);
     }
 }

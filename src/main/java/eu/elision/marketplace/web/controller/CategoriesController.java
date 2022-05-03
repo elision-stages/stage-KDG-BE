@@ -32,7 +32,7 @@ public class CategoriesController {
     @PostMapping("/createCategory")
     ResponseEntity<String> createCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
         controller.saveCategory(categoryMakeDto);
-        return ResponseEntity.ok("Category added");
+        return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 
 }
