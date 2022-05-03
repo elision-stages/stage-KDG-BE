@@ -31,11 +31,12 @@ public class Mapper
 
         for (Category category : categories)
         {
-            if (category.getSubCategories().isEmpty()) dtoList.add(toCategoryDto(category));
-            else
+            if (!categoryInDtoList(dtoList, category))
             {
-                if (!categoryInDtoList(dtoList, category))
+                if (category.getSubCategories().isEmpty()) dtoList.add(toCategoryDto(category));
+                else
                 {
+
                     List<CategoryDto> sub = toCategoryDtoList(category.getSubCategories());
                     CategoryDto parent = toCategoryDto(category);
                     parent.subcategories().addAll(sub);
@@ -52,6 +53,8 @@ public class Mapper
         for (CategoryDto categoryDto : list)
         {
             if (categoryDto.id() == category.getId()) return true;
+            if (categoryDto.subcategories().stream().anyMatch(categoryDto1 -> categoryDto1.id() == category.getId()))
+                return true;
         }
         return false;
     }
