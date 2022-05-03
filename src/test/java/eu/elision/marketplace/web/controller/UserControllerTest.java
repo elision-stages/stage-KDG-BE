@@ -97,7 +97,7 @@ class UserControllerTest
                 String.class
         );
 
-        assertThat(response.getBody()).isEqualTo("{success: \"ok\"}");
+        assertThat(response.getBody()).isEqualTo("{\"status\": \"ok\"}");
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         User vendor = controller.findUserByEmailAndPassword(email, password);
