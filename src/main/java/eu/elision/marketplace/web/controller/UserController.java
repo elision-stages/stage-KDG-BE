@@ -29,14 +29,14 @@ public class UserController
     ResponseEntity<String> registerCustomer(@RequestBody @Valid CustomerDto customerDto)
     {
         controller.saveCustomer(customerDto);
-        return ResponseEntity.ok("{success: \"ok\"}");
+        return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 
     @PostMapping("/registervendor")
     ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto)
     {
         controller.saveVendor(vendorDto);
-        return ResponseEntity.ok("{success: \"ok\"}");
+        return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 
     @GetMapping("/allUsers")
