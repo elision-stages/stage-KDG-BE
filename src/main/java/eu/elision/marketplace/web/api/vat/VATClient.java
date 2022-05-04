@@ -8,11 +8,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class VATClient
-{
+public class VATClient {
 
-    private String request(URL url, String data) throws IOException
-    {
+    private String request(URL url, String data) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
@@ -24,18 +22,15 @@ public class VATClient
         StringBuilder sb = new StringBuilder();
 
         InputStream inputStream = conn.getInputStream();
-        for (int ch; (ch = inputStream.read()) != -1; )
-        {
+        for (int ch; (ch = inputStream.read()) != -1; ) {
             sb.append((char) ch);
         }
         return sb.toString();
     }
 
-    public Business checkVatService(String country, String number)
-    {
+    public Business checkVatService(String country, String number) {
         // Probably faster than parsing the whole XML result and having extra dependencies
-        try
-        {
+        try {
             String requestXml =
                     "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns1=\"urn:ec.europa.eu:taxud:vies:services:checkVat:types\" xmlns:impl=\"urn:ec.europa.eu:taxud:vies:services:checkVat\"><soap:Header></soap:Header><soap:Body><tns1:checkVat xmlns:tns1=\"urn:ec.europa.eu:taxud:vies:services:checkVat:types\" xmlns=\"urn:ec.europa.eu:taxud:vies:services:checkVat:types\"><tns1:countryCode>{{country}}</tns1:countryCode><tns1:vatNumber>{{vat}}</tns1:vatNumber></tns1:checkVat></soap:Body></soap:Envelope>"
                             .replace("{{country}}", country)
@@ -54,19 +49,16 @@ public class VATClient
             business.setAddress(StringUtils.substringBetween(result, "<address>", "</address>"));
 
             return business;
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             return null;
         }
 
 
     }
 
-    public Business checkVatService(String vatNumber)
-    {
-        String[] country = vatNumber. ("(\\d*)(\\D*)");
-
-        return checkVatService(vatNumber.split("\\d")[0]);
+    public Business checkVatService(String vatNumber) {
+        if (vatNumber.replaceAll("[^a-zA-Z\\d]", "").length() < 10) return null;
+        return checkVatService(vatNumber.substring(0, 2), vatNumber.substring(2));
     }
 }
 
