@@ -144,6 +144,6 @@ class ProductTest
     void testToString()
     {
         Product product = new Product();
-        assertThat(product.toString()).hasToString("Product(id=null, price=0.0, vendor=null, description=null, images=[], attributes=[])");
+        assertThat(product.toString()).hasToString("Product(id=null, name=null, price=0.0, category=null, vendor=null, description=null, images=[], attributes=[])");
     }
 }
