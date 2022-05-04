@@ -8,6 +8,7 @@ import eu.elision.marketplace.repositories.UserRepository;
 import eu.elision.marketplace.web.dtos.AddressDto;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,9 @@ public class UserService {
     }
 
     public User findUserById(long id) {
-        return userRepository.findById(id).orElse(null);
+        final User user = userRepository.findById(id).orElse(null);
+        if (user == null) throw new NotFoundException(String.format("User with id %s not found", id));
+        return user;
     }
 
     public Customer toCustomer(CustomerDto customerDto) {

@@ -9,13 +9,16 @@ import javax.persistence.Entity;
 /**
  * Used when the attribute is a boolean
  */
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
-public class DynamicAttributeBoolValue extends DynamicAttributeValue <Boolean>
-{
-    public DynamicAttributeBoolValue(Long id, String attributeName, Boolean value)
-    {
+public class DynamicAttributeBoolValue extends DynamicAttributeValue<Boolean> {
+    public DynamicAttributeBoolValue(Long id, String attributeName, Boolean value) {
         super(id, attributeName, value);
+    }
+
+    public DynamicAttributeBoolValue(String attributeName, Boolean value) {
+        super(attributeName, value);
     }
 }

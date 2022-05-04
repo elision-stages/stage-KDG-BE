@@ -1,11 +1,14 @@
 package eu.elision.marketplace.web.webexceptions;
 
-public class NotFoundException extends RuntimeException
-{
+public class NotFoundException extends RuntimeException {
     /**
      * Exception used when something is not found
      */
-    public NotFoundException(){
+    public NotFoundException() {
         super("not found");
+    }
+
+    public NotFoundException(String message) {
+        super(message);
     }
 }

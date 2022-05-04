@@ -13,9 +13,12 @@ import javax.persistence.Entity;
 @Setter
 @Entity
 @NoArgsConstructor
-public class DynamicAttributeEnumValue extends DynamicAttributeValue<String>
-{
+public class DynamicAttributeEnumValue extends DynamicAttributeValue<String> {
     public DynamicAttributeEnumValue(Long id, String attributeName, String value) {
         super(id, attributeName, value);
+    }
+
+    public DynamicAttributeEnumValue(String attributeName, String value) {
+        super(attributeName, value);
     }
 }

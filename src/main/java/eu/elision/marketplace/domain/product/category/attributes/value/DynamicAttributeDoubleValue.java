@@ -18,4 +18,8 @@ public class DynamicAttributeDoubleValue extends DynamicAttributeValue<Double> {
     public DynamicAttributeDoubleValue(Long id, String attributeName, double value) {
         super(id, attributeName, value);
     }
+
+    public DynamicAttributeDoubleValue(String attributeName, double value) {
+        super(attributeName, value);
+    }
 }

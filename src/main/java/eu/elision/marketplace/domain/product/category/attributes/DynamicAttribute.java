@@ -19,7 +19,7 @@ public class DynamicAttribute
     private Long id;
     private String name;
     private boolean required;
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private Type type;
     @ManyToOne
     private PickList enumList;
