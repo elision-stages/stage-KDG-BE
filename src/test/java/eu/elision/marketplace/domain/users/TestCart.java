@@ -2,6 +2,7 @@ package eu.elision.marketplace.domain.users;
 
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.Category;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class TestCart {
         final int quantity1 = RandomUtils.nextInt(1, 10);
         final int quantity2 = RandomUtils.nextInt(1, 10);
 
-        Product product = new Product(RandomUtils.nextLong(1,100), price, new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
+        Product product = new Product(RandomUtils.nextLong(1,100), RandomStringUtils.random(5), price, new Category(), new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
         OrderLine ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
         OrderLine ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 

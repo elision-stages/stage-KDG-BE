@@ -16,18 +16,19 @@ import java.util.List;
 public class Category
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
     private Long id;
     @Setter
     private String name;
-    @OneToMany
-    private final List<Category> subCategories;
+    @ManyToOne()
+    @JoinColumn(name = "parent_id", columnDefinition = "integer")
+    @Setter
+    private Category parent;
     @OneToMany
     private final List<DynamicAttribute> characteristics;
 
     public Category() {
-        subCategories = new ArrayList<>();
         characteristics = new ArrayList<>();
     }
 }

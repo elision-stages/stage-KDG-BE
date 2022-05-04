@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "algolia.apiKey",
+      "type": "java.lang.String",
+      "description": "Algolia API write key"
+  }
+] }
