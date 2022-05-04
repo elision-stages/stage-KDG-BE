@@ -21,7 +21,8 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
 {
 
     private static final String[] AUTH_WHITELIST = {
-            "/hello"
+            "/hello",
+            "/swagger-ui/"
     };
 
     @Override
@@ -51,7 +52,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
     {
         http
                 .cors()
-                .disable()
+                .and()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest()

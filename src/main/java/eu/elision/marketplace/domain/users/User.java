@@ -23,13 +23,13 @@ public abstract class User
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotBlank(message = "First name is mandatory")
-    @Size(max = 15, min = 2, message = "First name can not be longer than 15 characters")
+    @NotBlank(message = "Firstname is mandatory")
+    @Size(max = 15, min = 2, message = "Name can not be longer than 15 characters")
     private String firstName;
-    @NotBlank(message = "Last name is mandatory")
-    @Size(max = 15, min = 2, message = "Last name can not be longer than 15 characters")
+    @NotBlank(message = "Lastname is mandatory")
+    @Size(max = 20, min = 2, message = "Name can not be longer than 15 characters")
     private String lastName;
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank(message = "Email is mandatory")
     @Email(message = "Email format is wrong")
     private String email;
     @NotBlank(message = "Password is required")
