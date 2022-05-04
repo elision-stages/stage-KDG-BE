@@ -85,7 +85,6 @@ class ProductTest
         assertThat(product.getAttributes().get(3).getValue()).isEqualTo(enumValue);
     }
 
-    @SuppressWarnings({"EqualsWithItself", "EqualsBetweenInconvertibleTypes"})
     @Test
     void testEquals()
     {
@@ -106,6 +105,7 @@ class ProductTest
 
         Vendor vendor1 = new Vendor();
         vendor1.setFirstName(RandomStringUtils.random(4));
+        vendor1.setLastName(RandomStringUtils.random(4));
         product2.setVendor(vendor1);
         assertThat(product1.equals(product2)).isFalse();
         product2.setVendor(vendor);

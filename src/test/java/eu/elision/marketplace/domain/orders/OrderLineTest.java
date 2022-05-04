@@ -134,6 +134,7 @@ class OrderLineTest
         ol2.setProduct(product);
         final Vendor vendor1 = new Vendor();
         vendor1.setFirstName(RandomStringUtils.random(10));
+        vendor1.setLastName(RandomStringUtils.random(10));
         ol2.setVendor(vendor1);
         assertThat(ol1.equals(ol2)).isFalse();
 
