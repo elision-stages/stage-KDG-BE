@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "users")
-public abstract class User {
+public abstract class User
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -37,7 +38,9 @@ public abstract class User {
     private LocalDateTime createdDate;
     private boolean validated;
 
-    protected User() {
+    protected User()
+    {
         validated = false;
+        createdDate = LocalDateTime.now();
     }
 }

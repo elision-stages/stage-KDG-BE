@@ -3,8 +3,8 @@ package eu.elision.marketplace.web.config;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-//@Configuration
-//@EnableWebMvc
+@Configuration
+@EnableWebMvc
 public class WebConfig implements WebMvcConfigurer
 {
 
