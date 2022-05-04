@@ -84,6 +84,7 @@ class ProductTest
         assertThat(product.getAttributes().get(3).getValue()).isEqualTo(enumValue);
     }
 
+    @SuppressWarnings({"EqualsWithItself", "EqualsBetweenInconvertibleTypes"})
     @Test
     void testEquals()
     {
