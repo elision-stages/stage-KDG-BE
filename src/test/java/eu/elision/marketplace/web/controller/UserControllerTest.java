@@ -4,7 +4,6 @@ import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.AddressDto;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -25,7 +24,8 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerTest {
+class UserControllerTest
+{
     private static URL base;
     private TestRestTemplate restTemplate;
     @LocalServerPort
@@ -34,35 +34,25 @@ class UserControllerTest {
     private Controller controller;
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() throws MalformedURLException
+    {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void testAddCustomer() {
-        final String name = RandomStringUtils.randomAlphabetic(4);
+    void testAddCustomer()
+    {
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-        final boolean validated = RandomUtils.nextBoolean();
-
-        final String street = RandomStringUtils.randomAlphabetic(4);
-        final String number = String.valueOf(RandomUtils.nextInt(1, 100));
-        final String postalCode = String.valueOf(RandomUtils.nextInt(1, 9999));
-        final String city = RandomStringUtils.randomAlphabetic(10);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registercustomer", base),
-                new CustomerDto(name,
+                new CustomerDto(firstName, lastName,
                         email,
-                        password,
-                        validated,
-                        new AddressDto(
-                                street,
-                                number,
-                                postalCode,
-                                city
-                        )),
+                        password),
                 String.class
         );
 
@@ -70,24 +60,20 @@ class UserControllerTest {
 
         User customer = controller.findUserByEmailAndPassword(email, password);
 
-        assertThat(customer.getName()).hasToString(name);
+        assertThat(customer.getFirstName()).hasToString(firstName);
+        assertThat(customer.getLastName()).hasToString(lastName);
         assertThat(customer.getEmail()).hasToString(email);
         assertThat(customer.getPassword()).hasToString(password);
-        assertThat(customer.isValidated()).isEqualTo(validated);
         assertThat(customer).isInstanceOf(Customer.class);
-
-        assertThat(((Customer) customer).getMainAddress().getStreet()).hasToString(street);
-        assertThat(((Customer) customer).getMainAddress().getCity()).hasToString(city);
-        assertThat(((Customer) customer).getMainAddress().getNumber()).hasToString(number);
-        assertThat(((Customer) customer).getMainAddress().getPostalCode()).hasToString(postalCode);
     }
 
     @Test
-    void testAddVendor() {
-        final String name = RandomStringUtils.randomAlphabetic(4);
+    void testAddVendor()
+    {
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-        final boolean validated = RandomUtils.nextBoolean();
         final String logo = RandomStringUtils.randomAlphabetic(4);
         final String theme = RandomStringUtils.randomAlphabetic(4);
         final String introduction = RandomStringUtils.randomAlphabetic(4);
@@ -98,10 +84,9 @@ class UserControllerTest {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registervendor", base),
                 new VendorDto(
-                        name,
+                        firstName, lastName,
                         email,
                         password,
-                        validated,
                         logo,
                         theme,
                         introduction,
@@ -112,16 +97,15 @@ class UserControllerTest {
                 String.class
         );
 
-        assertThat(response.getBody()).isEqualTo("Vendor is valid");
+        assertThat(response.getBody()).isEqualTo("{\"status\": \"ok\"}");
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         User vendor = controller.findUserByEmailAndPassword(email, password);
 
         assertThat(vendor).isInstanceOf(Vendor.class);
-        assertThat(vendor.getName()).hasToString(name);
+        assertThat(vendor.getFirstName()).hasToString(firstName);
         assertThat(vendor.getEmail()).hasToString(email);
         assertThat(vendor.getPassword()).hasToString(password);
-        assertThat(vendor.isValidated()).isEqualTo(validated);
         assertThat(((Vendor) vendor).getLogo()).isEqualTo(logo);
         assertThat(((Vendor) vendor).getTheme()).isEqualTo(theme);
         assertThat(((Vendor) vendor).getIntroduction()).isEqualTo(introduction);
@@ -131,13 +115,15 @@ class UserControllerTest {
     }
 
     @Test
-    void testFindAll() {
+    void testFindAll()
+    {
         ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/allUsers", base), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
-    void testUserNotValidated() {
+    void testUserNotValidated()
+    {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registervendor", base), new Vendor(), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

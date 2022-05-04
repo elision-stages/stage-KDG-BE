@@ -18,13 +18,17 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "users")
-public abstract class User {
+public abstract class User
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @NotBlank(message = "Name is mandatory")
-    @Size(max = 15, min = 2, message = "Name can not be longer than 15 characters")
-    private String name;
+    @NotBlank(message = "First name is mandatory")
+    @Size(max = 15, min = 2, message = "First name can not be longer than 15 characters")
+    private String firstName;
+    @NotBlank(message = "Last name is mandatory")
+    @Size(max = 15, min = 2, message = "Last name can not be longer than 15 characters")
+    private String lastName;
     @NotBlank(message = "Name is mandatory")
     @Email(message = "Email format is wrong")
     private String email;
@@ -34,7 +38,9 @@ public abstract class User {
     private LocalDateTime createdDate;
     private boolean validated;
 
-    protected User() {
+    protected User()
+    {
         validated = false;
+        createdDate = LocalDateTime.now();
     }
 }
