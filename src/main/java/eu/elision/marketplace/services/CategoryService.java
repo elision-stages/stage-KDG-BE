@@ -6,6 +6,7 @@ import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -29,6 +30,7 @@ public class CategoryService
         return categoryRepository.save(category);
     }
 
+    @Transactional
     public void save(Category category, long parentId)
     {
         if (parentId != 0L)
@@ -39,6 +41,7 @@ public class CategoryService
             {
                 throw new NotFoundException(String.format("Parent category with id %s not found", parentId));
             }
+            category.setParent(parent);
             parent.getSubCategories().add(category);
             categoryRepository.save(category);
             categoryRepository.save(parent);

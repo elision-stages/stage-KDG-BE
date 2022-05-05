@@ -25,10 +25,13 @@ public class Category
     @JoinColumn(name = "parent_id", columnDefinition = "integer")
     @Setter
     private Category parent;
+    @OneToMany(mappedBy="parent",fetch = FetchType.EAGER)
+    private List<Category> subCategories;
     @OneToMany
     private final List<DynamicAttribute> characteristics;
 
     public Category() {
+        subCategories = new ArrayList<>();
         characteristics = new ArrayList<>();
     }
 }
