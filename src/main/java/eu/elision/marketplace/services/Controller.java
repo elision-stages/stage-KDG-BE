@@ -7,6 +7,7 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.ProductDto;
@@ -92,19 +93,23 @@ public class Controller {
 
     //--------------------------------- findById
 
-    public Address findAddressById(long id) {
+    public Address findAddressById(long id)
+    {
         return addressService.findById(id);
     }
 
-    public User findUserById(long id) {
+    public User findUserById(long id)
+    {
         return userService.findUserById(id);
     }
 
-    public void saveVendor(VendorDto vendorDto) {
-        userService.save(vendorDto);
+    public Vendor saveVendor(VendorDto vendorDto)
+    {
+        return userService.save(vendorDto);
     }
 
-    public User findUserByEmailAndPassword(String email, String password) {
+    public User findUserByEmailAndPassword(String email, String password)
+    {
         return userService.findUserByEmailAndPassword(email, password);
     }
 }

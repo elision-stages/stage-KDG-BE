@@ -17,17 +17,16 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class DynamicAttributeValue<T> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String attributeName;
-    private T value;
 
-    public DynamicAttributeValue(String attributeName, T value) {
+    protected DynamicAttributeValue(String attributeName)
+    {
         this.attributeName = attributeName;
-        this.value = value;
     }
 
     /**
@@ -35,7 +34,5 @@ public abstract class DynamicAttributeValue<T> {
      *
      * @return the value of the attribute
      */
-    public T getValue() {
-        return value;
-    }
+    public abstract T getValue();
 }
