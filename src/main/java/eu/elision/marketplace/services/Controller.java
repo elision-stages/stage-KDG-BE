@@ -9,6 +9,7 @@ import eu.elision.marketplace.web.dtos.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +19,14 @@ public class Controller {
     private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public Controller(AddressService addressService, UserService userService, CategoryService categoryService) {
+    public Controller(AddressService addressService, UserService userService, CategoryService categoryService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     //---------------------------------- Find all - only for testing
@@ -50,7 +53,9 @@ public class Controller {
     }
 
     public void saveCustomer(CustomerDto customerDto) {
-        Customer customer = userService.toCustomer(customerDto);
+        String password = bCryptPasswordEncoder.encode(customerDto.password());
+        CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
+        Customer customer = userService.toCustomer(newCustomerDto);
         if (customer.getMainAddress() != null) {
             saveAddress(customer.getMainAddress());
         }

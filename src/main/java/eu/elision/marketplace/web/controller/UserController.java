@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("register")
 public class UserController
 {
     final
@@ -25,14 +26,14 @@ public class UserController
         this.controller = controller;
     }
 
-    @PostMapping("/registercustomer")
+    @PostMapping("customer")
     ResponseEntity<String> registerCustomer(@RequestBody @Valid CustomerDto customerDto)
     {
         controller.saveCustomer(customerDto);
         return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 
-    @PostMapping("/registervendor")
+    @PostMapping("vendor")
     ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto)
     {
         controller.saveVendor(vendorDto);
