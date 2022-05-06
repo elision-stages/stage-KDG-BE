@@ -1,7 +1,10 @@
 package eu.elision.marketplace.web.config.filters;
 
 import eu.elision.marketplace.services.JwtService;
+import eu.elision.marketplace.web.controller.AuthController;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
+    private static final Log logger = LogFactory.getLog(JwtFilter.class);
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final Cookie[] cookies = request.getCookies();
@@ -42,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtService.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException | ExpiredJwtException e) {
-                System.out.println("JWT Token is invalid or has expired");
+                logger.info("JWT Token is invalid or has expired");
             }
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -56,7 +61,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     }
                 } catch (NullPointerException e) {
                     // This occurs when a user has changed his username and uses his old jwt token to authenticate instead of the newly generated one.
-                    System.out.println("Valid bearer token with invalid claims");
+                    logger.info("Valid bearer token with invalid claims");
                 }
             }
         }

@@ -5,6 +5,8 @@ import eu.elision.marketplace.services.AuthService;
 import eu.elision.marketplace.services.JwtService;
 import eu.elision.marketplace.services.UserService;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +64,6 @@ public class AuthController {
 
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (BadCredentialsException | InternalAuthenticationServiceException ex) {
-            System.out.println("Login mislukt");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
