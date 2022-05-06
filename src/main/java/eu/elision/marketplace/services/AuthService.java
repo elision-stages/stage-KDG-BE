@@ -20,5 +20,6 @@ public class AuthService {
         cookie.setHttpOnly(true);
         cookie.setSecure(ssl);
         cookie.setPath("/");
+        return cookie;
     }
 }
