@@ -13,28 +13,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
-public class CategoryService
-{
+public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public CategoryService(CategoryRepository categoryRepository)
-    {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 
-    public Collection<CategoryDto> findAllDto()
-    {
+    public Collection<CategoryDto> findAllDto() {
         return categoryRepository.findAll().stream().map(this::toCategoryDto).toList();
     }
 
-    public CategoryDto toCategoryDto(Category category)
-    {
+    public CategoryDto toCategoryDto(Category category) {
         Collection<DynamicAttributeDto> characteristics = new ArrayList<>();
 
-        for (DynamicAttribute characteristic : category.getCharacteristics())
-        {
-            characteristics.add(new DynamicAttributeDto(characteristic.getName(), characteristic.isRequired(), characteristic.getType(),
-                    characteristic.getEnumList().getItems().stream().map(PickListItem::getValue).toList()));
+        for (DynamicAttribute characteristic : category.getCharacteristics()) {
+            characteristics.add(
+                    new DynamicAttributeDto(characteristic.getName(),
+                            characteristic.isRequired(),
+                            characteristic.getType(),
+                            (characteristic.getEnumList() != null ? characteristic.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null)));
         }
 
         return new CategoryDto(
@@ -44,8 +42,7 @@ public class CategoryService
         );
     }
 
-    private Category toCategory(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes)
-    {
+    private Category toCategory(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
         category.getCharacteristics().addAll(dynamicAttributes);
@@ -53,8 +50,7 @@ public class CategoryService
         return category;
     }
 
-    public void save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes)
-    {
+    public void save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
         categoryRepository.save(toCategory(categoryMakeDto, dynamicAttributes));
     }
 }
