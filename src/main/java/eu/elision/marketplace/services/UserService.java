@@ -95,8 +95,8 @@ public class UserService implements UserDetailsService {
         return vendor;
     }
 
-    public User findUserByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override

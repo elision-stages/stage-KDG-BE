@@ -16,6 +16,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,6 +32,7 @@ class UserControllerTest {
     private Integer port;
     @Autowired
     private Controller controller;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() throws MalformedURLException {
@@ -51,7 +53,7 @@ class UserControllerTest {
         final String city = RandomStringUtils.randomAlphabetic(10);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
-                String.format("%s/registercustomer", base),
+                String.format("%s/register/customer", base),
                 new CustomerDto(firstName, lastName,
                         email,
                         password),
@@ -59,13 +61,15 @@ class UserControllerTest {
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        System.out.println(response.getBody());
 
-        User customer = controller.findUserByEmailAndPassword(email, password);
+        User customer = controller.findUserByEmail(email);
+        assertThat(customer).isNotNull();
 
         assertThat(customer.getFirstName()).hasToString(firstName);
         assertThat(customer.getLastName()).hasToString(lastName);
         assertThat(customer.getEmail()).hasToString(email);
-        assertThat(customer.getPassword()).hasToString(password);
+        assertThat(bCryptPasswordEncoder.matches(password, customer.getPassword())).isTrue();
         assertThat(customer.isValidated()).isFalse();
         assertThat(customer).isInstanceOf(Customer.class);
     }
@@ -85,7 +89,7 @@ class UserControllerTest {
         final String businessName = RandomStringUtils.randomAlphabetic(10);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
-                String.format("%s/registervendor", base),
+                String.format("%s/register/vendor", base),
                 new VendorDto(
                         firstName, lastName,
                         email,
@@ -104,14 +108,14 @@ class UserControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo("{\"status\": \"ok\"}");
 
-        User vendor = controller.findUserByEmailAndPassword(email, password);
+        User vendor = controller.findUserByEmail(email);
 
         assertThat(vendor).isInstanceOf(Vendor.class);
         assertThat(vendor.getFirstName()).hasToString(firstName);
         assertThat(vendor.getLastName()).hasToString(lastName);
         assertThat(vendor.getEmail()).hasToString(email);
-        assertThat(vendor.getPassword()).hasToString(password);
-        assertThat(vendor.isValidated()).isEqualTo(validated);
+        assertThat(bCryptPasswordEncoder.matches(password, vendor.getPassword())).isTrue();
+        assertThat(vendor.isValidated()).isFalse();
         assertThat(((Vendor) vendor).getLogo()).isEqualTo(logo);
         assertThat(((Vendor) vendor).getTheme()).isEqualTo(theme);
         assertThat(((Vendor) vendor).getIntroduction()).isEqualTo(introduction);
@@ -121,15 +125,9 @@ class UserControllerTest {
     }
 
     @Test
-    void testFindAll() {
-        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/allUsers", base), String.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
     void testUserNotValidated() {
         ResponseEntity<String> response = restTemplate.postForEntity(
-                String.format("%s/registervendor", base), new Vendor(), String.class);
+                String.format("%s/register/vendor", base), new Vendor(), String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }

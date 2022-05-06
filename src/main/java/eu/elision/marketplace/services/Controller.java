@@ -73,12 +73,26 @@ public class Controller {
     }
 
     public void saveVendor(VendorDto vendorDto) {
-        userService.save(vendorDto);
+        String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
+        VendorDto newVendorDto = new VendorDto(
+                vendorDto.firstName(),
+                vendorDto.lastName(),
+                vendorDto.email(),
+                password,
+                false,
+                vendorDto.logo(),
+                vendorDto.theme(),
+                vendorDto.introduction(),
+                vendorDto.vatNumber(),
+                vendorDto.phoneNumber(),
+                vendorDto.businessName()
+        );
+        userService.save(newVendorDto);
     }
 
-    public User findUserByEmailAndPassword(String email, String password)
+    public User findUserByEmail(String email)
     {
-        return userService.findUserByEmailAndPassword(email, password);
+        return userService.findUserByEmail(email);
     }
 
 
