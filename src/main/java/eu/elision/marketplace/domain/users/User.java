@@ -3,6 +3,7 @@ package eu.elision.marketplace.domain.users;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -12,6 +13,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * This class contains the basic information of any user
@@ -50,7 +53,10 @@ public abstract class User implements UserDetails
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Set<GrantedAuthority> roles = new java.util.HashSet<>();
+        roles.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
+        if(this instanceof Vendor) roles.add(new SimpleGrantedAuthority("ROLE_VENDOR"));
+        return roles;
     }
 
     @Override

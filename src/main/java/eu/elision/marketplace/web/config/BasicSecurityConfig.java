@@ -88,8 +88,8 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
-                .antMatchers("/register/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/hello").permitAll()
+                .antMatchers("/**").permitAll() // We permit al since we catch everything with @Secured
+                // .antMatchers("/hellosecured").hasAnyAuthority("VENDOR")
                 // Our private endpoints
                 .anyRequest().authenticated();
 
@@ -99,7 +99,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
     CorsConfigurationSource corsConfigurationSource() {
         // Works for OPTIONS request
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:59216"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
@@ -116,7 +116,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:59216"));
+        config.setAllowedOrigins(List.of("http://localhost:4200"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);

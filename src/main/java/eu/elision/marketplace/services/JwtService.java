@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     @Value("${jwt.durationInMinutes}")
-    public long JWT_TOKEN_VALIDITY;
+    private long JWT_TOKEN_VALIDITY;
 
     @Value("${jwt.secret}")
     private String secret;

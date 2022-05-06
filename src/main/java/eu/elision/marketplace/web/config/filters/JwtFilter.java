@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @Component
-public class JwtFilter  extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userDetailsService;

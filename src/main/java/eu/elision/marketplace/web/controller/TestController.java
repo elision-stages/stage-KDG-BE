@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class TestController
      *
      * @return returns the string "hello"
      */
-    //@Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @GetMapping("/hellosecured")
     String helloSecured()
     {

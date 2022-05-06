@@ -40,12 +40,6 @@ public class UserController
         return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 
-    @GetMapping("/allUsers")
-    List<User> findAllUsers()
-    {
-        return controller.findAllUsers();
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
     public Map<String, String> handleValidationExceptions(ConstraintViolationException ex)
