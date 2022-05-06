@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     @Value("${jwt.durationInMinutes}")
-    private long JWT_TOKEN_VALIDITY;
+    private long jwtTokenValidity;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -53,7 +53,7 @@ public class JwtService {
     }
 
     private String generateToken(Map<String, Object> claims, String subject) {
-        Date expirationDate = new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000 * 60);
+        Date expirationDate = new Date(System.currentTimeMillis() + jwtTokenValidity * 1000 * 60);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)

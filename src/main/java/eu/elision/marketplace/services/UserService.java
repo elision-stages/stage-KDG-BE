@@ -101,7 +101,6 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException {
-        System.out.println("Looking for " + mail);
         return userRepository.findByEmail(mail);
     }
 }

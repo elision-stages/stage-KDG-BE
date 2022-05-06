@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.services.AuthService;
 import eu.elision.marketplace.services.JwtService;
 import eu.elision.marketplace.services.UserService;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
@@ -27,14 +28,13 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserService userService;
+    private final AuthService authService;
 
-    @Value("${jwt.durationInMinutes}")
-    public long JWT_TOKEN_VALIDITY;
-
-    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserService userService, AuthService authService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.authService = authService;
     }
 
     @GetMapping("userinfo")
@@ -57,11 +57,7 @@ public class AuthController {
 
             User user = (User) authentication.getPrincipal();
             String token = jwtService.generateToken(user);
-
-            Cookie cookie = new Cookie("jwt", token);
-            cookie.setMaxAge((int) (JWT_TOKEN_VALIDITY * 60));
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
+            Cookie cookie = authService.generateTokenCookie(token);
             response.addCookie(cookie);
 
             return new ResponseEntity<>(user, HttpStatus.OK);
