@@ -37,7 +37,7 @@ class JwtFilterTest {
     @ValueSource(strings = { "", "fakeToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"})
     void testTokens(String token) throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Cookie tokenCookie = new Cookie(token, null);
+        Cookie tokenCookie = new Cookie("jwt", token);
         request.setCookies(tokenCookie);
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
