@@ -12,7 +12,7 @@ import javax.servlet.http.Cookie;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class AuthServiceTest {
+class AuthServiceTest {
     @Autowired
     private AuthService authService;
 
