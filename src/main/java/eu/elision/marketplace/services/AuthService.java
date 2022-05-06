@@ -11,7 +11,7 @@ import javax.servlet.http.Cookie;
 public class AuthService {
     @Value("${jwt.durationInMinutes}")
     private long jwtTokenValidity;
-    @Value("${server.ssl.enabled}")
+    @Value("${ssl}")
     private boolean ssl;
 
     public Cookie generateTokenCookie(String token) {
