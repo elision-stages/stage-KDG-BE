@@ -1,6 +1,5 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController

@@ -5,9 +5,6 @@ import eu.elision.marketplace.services.AuthService;
 import eu.elision.marketplace.services.JwtService;
 import eu.elision.marketplace.services.UserService;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -41,14 +38,14 @@ public class AuthController {
 
     @GetMapping("userinfo")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<?> userinfo(Principal principal) {
+    public ResponseEntity<UserDetails> userinfo(Principal principal) {
         UserDetails user = userService.loadUserByUsername(principal.getName());
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthRequestDto request, HttpServletResponse response) {
+    public ResponseEntity<User> login(@RequestBody @Valid AuthRequestDto request, HttpServletResponse response) {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(
