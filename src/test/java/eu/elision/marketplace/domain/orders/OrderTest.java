@@ -49,7 +49,8 @@ class OrderTest {
         assertThat(order1.equals(order2)).isTrue();
 
         Customer customer1 = new Customer();
-       customer1.setName(RandomStringUtils.random(4));
+        customer1.setFirstName(RandomStringUtils.random(4));
+        customer1.setLastName(RandomStringUtils.random(4));
         order2.setUser(customer1);
         assertThat(order1.equals(order2)).isFalse();
         order2.setUser(customer);

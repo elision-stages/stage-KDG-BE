@@ -21,7 +21,7 @@ public class Category
     private Long id;
     @Setter
     private String name;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private final List<Category> subCategories;
     @OneToMany
     private final List<DynamicAttribute> characteristics;

@@ -57,29 +57,20 @@ public class UserService {
     public Customer toCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
 
-        final Address address = new Address();
-        address.setCity(customerDto.mainAddress().city());
-        address.setStreet(customerDto.mainAddress().street());
-        address.setPostalCode(customerDto.mainAddress().postalCode());
-        address.setNumber(customerDto.mainAddress().number());
-
-        customer.setName(customerDto.name());
+        customer.setFirstName(customerDto.firstName());
+        customer.setLastName(customerDto.lastName());
         customer.setEmail(customerDto.email());
         customer.setPassword(customerDto.password());
-        customer.setValidated(customerDto.validated());
-        customer.setMainAddress(address);
 
         return customer;
     }
 
-    public AddressDto toAddressDto(Address address)
-    {
+    public AddressDto toAddressDto(Address address) {
         return address == null ? null : new AddressDto(address.getStreet(), address.getNumber(), address.getPostalCode(), address.getCity());
     }
 
-    public CustomerDto toCustomerDto(Customer customer)
-    {
-        return new CustomerDto(customer.getName(), customer.getEmail(), customer.getPassword(), customer.isValidated(), toAddressDto(customer.getMainAddress()));
+    public CustomerDto toCustomerDto(Customer customer) {
+        return new CustomerDto(customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getPassword());
     }
 
     public Vendor save(VendorDto vendorDto)
@@ -87,14 +78,14 @@ public class UserService {
         return userRepository.save(toVendor(vendorDto));
     }
 
-    private Vendor toVendor(VendorDto vendorDto)
-    {
+    private Vendor toVendor(VendorDto vendorDto) {
         Vendor vendor = new Vendor();
         vendor.setIntroduction(vendorDto.introduction());
         vendor.setLogo(vendorDto.logo());
         vendor.setTheme(vendorDto.theme());
         vendor.setEmail(vendorDto.email());
-        vendor.setName(vendorDto.name());
+        vendor.setFirstName(vendorDto.firstName());
+        vendor.setLastName(vendorDto.lastName());
         vendor.setPassword(vendorDto.password());
         vendor.setValidated(vendorDto.validated());
         vendor.setVatNumber(vendorDto.vatNumber());

@@ -4,7 +4,6 @@ import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.AddressDto;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -41,10 +40,10 @@ class UserControllerTest {
 
     @Test
     void testAddCustomer() {
-        final String name = RandomStringUtils.randomAlphabetic(4);
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-        final boolean validated = RandomUtils.nextBoolean();
 
         final String street = RandomStringUtils.randomAlphabetic(4);
         final String number = String.valueOf(RandomUtils.nextInt(1, 100));
@@ -53,16 +52,9 @@ class UserControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registercustomer", base),
-                new CustomerDto(name,
+                new CustomerDto(firstName, lastName,
                         email,
-                        password,
-                        validated,
-                        new AddressDto(
-                                street,
-                                number,
-                                postalCode,
-                                city
-                        )),
+                        password),
                 String.class
         );
 
@@ -70,21 +62,18 @@ class UserControllerTest {
 
         User customer = controller.findUserByEmailAndPassword(email, password);
 
-        assertThat(customer.getName()).hasToString(name);
+        assertThat(customer.getFirstName()).hasToString(firstName);
+        assertThat(customer.getLastName()).hasToString(lastName);
         assertThat(customer.getEmail()).hasToString(email);
         assertThat(customer.getPassword()).hasToString(password);
-        assertThat(customer.isValidated()).isEqualTo(validated);
+        assertThat(customer.isValidated()).isFalse();
         assertThat(customer).isInstanceOf(Customer.class);
-
-        assertThat(((Customer) customer).getMainAddress().getStreet()).hasToString(street);
-        assertThat(((Customer) customer).getMainAddress().getCity()).hasToString(city);
-        assertThat(((Customer) customer).getMainAddress().getNumber()).hasToString(number);
-        assertThat(((Customer) customer).getMainAddress().getPostalCode()).hasToString(postalCode);
     }
 
     @Test
     void testAddVendor() {
-        final String name = RandomStringUtils.randomAlphabetic(4);
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
         final boolean validated = RandomUtils.nextBoolean();
@@ -98,7 +87,7 @@ class UserControllerTest {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/registervendor", base),
                 new VendorDto(
-                        name,
+                        firstName, lastName,
                         email,
                         password,
                         validated,
@@ -112,13 +101,14 @@ class UserControllerTest {
                 String.class
         );
 
-        assertThat(response.getBody()).isEqualTo("Vendor is valid");
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo("{\"status\": \"ok\"}");
 
         User vendor = controller.findUserByEmailAndPassword(email, password);
 
         assertThat(vendor).isInstanceOf(Vendor.class);
-        assertThat(vendor.getName()).hasToString(name);
+        assertThat(vendor.getFirstName()).hasToString(firstName);
+        assertThat(vendor.getLastName()).hasToString(lastName);
         assertThat(vendor.getEmail()).hasToString(email);
         assertThat(vendor.getPassword()).hasToString(password);
         assertThat(vendor.isValidated()).isEqualTo(validated);

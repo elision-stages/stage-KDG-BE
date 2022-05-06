@@ -4,9 +4,14 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.services.helpers.Mapper;
+import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.CustomerDto;
+import eu.elision.marketplace.web.dtos.VendorDto;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,7 @@ import java.util.List;
 public class Controller {
     private final AddressService addressService;
     private final UserService userService;
+    private final CategoryService categoryService;
     private final ProductService productService;
     private final DynamicAttributeService dynamicAttributeService;
     private final DynamicAttributeValueService dynamicAttributeValueService;
@@ -27,8 +33,7 @@ public class Controller {
     private final CategoryService categoryService;
 
     @Autowired
-    public Controller(AddressService addressService, UserService userService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, CategoryService categoryService)
-    {
+    public Controller(AddressService addressService, UserService userService, CategoryService categoryService) {
         this.addressService = addressService;
         this.userService = userService;
         this.productService = productService;
@@ -82,10 +87,11 @@ public class Controller {
         return userService.save(user);
     }
 
-    public void saveCustomer(CustomerDto customerDto)
-    {
+    public void saveCustomer(CustomerDto customerDto) {
         Customer customer = userService.toCustomer(customerDto);
-        saveAddress(customer.getMainAddress());
+        if (customer.getMainAddress() != null) {
+            saveAddress(customer.getMainAddress());
+        }
         saveUser(customer);
     }
 
@@ -134,5 +140,16 @@ public class Controller {
     public User findUserByEmailAndPassword(String email, String password)
     {
         return userService.findUserByEmailAndPassword(email, password);
+    }
+
+
+    public void saveCategory(CategoryMakeDto categoryMakeDto)
+    {
+        categoryService.save(Mapper.toCategory(categoryMakeDto), categoryMakeDto.parentId());
+    }
+
+    public Category findCategoryByName(String name)
+    {
+        return categoryService.findByName(name);
     }
 }

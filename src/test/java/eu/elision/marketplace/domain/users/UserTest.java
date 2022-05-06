@@ -11,12 +11,21 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class UserTest {
 
     @Test
-    void getName() {
+    void getFirstName() {
         User vendor = new Vendor();
         final String name = RandomStringUtils.random(4);
-        vendor.setName(name);
+        vendor.setFirstName(name);
 
-        assertThat(vendor.getName()).isEqualTo(name);
+        assertThat(vendor.getFirstName()).isEqualTo(name);
+    }
+
+    @Test
+    void getLastName() {
+        User vendor = new Vendor();
+        final String name = RandomStringUtils.random(4);
+        vendor.setLastName(name);
+
+        assertThat(vendor.getLastName()).isEqualTo(name);
     }
 
     @Test
