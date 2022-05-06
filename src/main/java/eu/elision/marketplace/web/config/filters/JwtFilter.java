@@ -3,6 +3,7 @@ package eu.elision.marketplace.web.config.filters;
 import eu.elision.marketplace.services.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String username = null;
             try {
                 username = jwtService.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException | MalformedJwtException | ExpiredJwtException e) {
+            } catch (IllegalArgumentException | MalformedJwtException | SignatureException | ExpiredJwtException e) {
                 log.info("JWT Token is invalid or has expired");
             }
 
