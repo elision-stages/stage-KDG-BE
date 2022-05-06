@@ -1,6 +1,9 @@
 package eu.elision.marketplace.web.config.filters;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -29,32 +32,12 @@ class JwtFilterTest {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 
-    @Test
-    void testNullToken() throws ServletException, IOException {
+    @ParameterizedTest
+    @NullSource    // pass a null value
+    @ValueSource(strings = { "", "fakeToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"})
+    void testTokens(String token) throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Cookie tokenCookie = new Cookie("jwt", null);
-        request.setCookies(tokenCookie);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain filterChain = new MockFilterChain();
-        jwtFilter.doFilterInternal(request, response, filterChain);
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @Test
-    void testInvalidToken() throws ServletException, IOException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        Cookie tokenCookie = new Cookie("jwt", "fakeToken");
-        request.setCookies(tokenCookie);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain filterChain = new MockFilterChain();
-        jwtFilter.doFilterInternal(request, response, filterChain);
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @Test
-    void testFakeToken() throws ServletException, IOException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        Cookie tokenCookie = new Cookie("jwt", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+        Cookie tokenCookie = new Cookie(token, null);
         request.setCookies(tokenCookie);
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
