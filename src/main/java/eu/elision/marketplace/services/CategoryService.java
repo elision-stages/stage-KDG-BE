@@ -1,11 +1,18 @@
 package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.repositories.CategoryRepository;
+import eu.elision.marketplace.web.dtos.CategoryDto;
+import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -51,27 +58,10 @@ public class CategoryService
         return categoryRepository.findCategoryByName(name);
     }
 
-    public Category findById(long id)
-    {
+    public Category findById(long id) {
         return categoryRepository.findById(id).orElse(null);
-import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
-import eu.elision.marketplace.repositories.CategoryRepository;
-import eu.elision.marketplace.web.dtos.CategoryDto;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-@Service
-public class CategoryService {
-    private final CategoryRepository categoryRepository;
-
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
     }
+
 
     public Collection<CategoryDto> findAllDto() {
         return categoryRepository.findAll().stream().map(this::toCategoryDto).toList();

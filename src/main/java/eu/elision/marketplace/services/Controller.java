@@ -1,18 +1,15 @@
 package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
-import eu.elision.marketplace.services.helpers.Mapper;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.CustomerDto;
-import eu.elision.marketplace.web.dtos.VendorDto;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,18 +27,18 @@ public class Controller {
     private final DynamicAttributeValueService dynamicAttributeValueService;
     private final PickListItemService pickListItemService;
     private final PickListService pickListService;
-    private final CategoryService categoryService;
+
 
     @Autowired
-    public Controller(AddressService addressService, UserService userService, CategoryService categoryService) {
+    public Controller(AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService) {
         this.addressService = addressService;
         this.userService = userService;
+        this.categoryService = categoryService;
         this.productService = productService;
         this.dynamicAttributeService = dynamicAttributeService;
         this.dynamicAttributeValueService = dynamicAttributeValueService;
         this.pickListItemService = pickListItemService;
         this.pickListService = pickListService;
-        this.categoryService = categoryService;
     }
 
     //---------------------------------- Find all - only for testing
@@ -103,21 +100,13 @@ public class Controller {
         productService.save(productDto, productAttributes, vendor);
     }
 
-    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto)
-    {
+    public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
-        if (dynamicAttribute.getType() == Type.ENUMERATION)
-        {
+        if (dynamicAttribute.getType() == Type.ENUMERATION) {
             pickListItemService.save(dynamicAttribute.getEnumList().getItems());
             pickListService.save(dynamicAttribute.getEnumList());
         }
-        return dynamicAttributeService.save(dynamicAttribute);
-    }
-
-    public void saveCategory(CategoryMakeDto categoryMakeDto)
-    {
-        final List<DynamicAttribute> dynamicAttributes = categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList();
-        categoryService.save(categoryMakeDto, dynamicAttributes);
+        dynamicAttributeService.save(dynamicAttribute);
     }
 
     //--------------------------------- findById
@@ -143,13 +132,15 @@ public class Controller {
     }
 
 
-    public void saveCategory(CategoryMakeDto categoryMakeDto)
-    {
+    public void saveCategory(CategoryMakeDto categoryMakeDto) {
         categoryService.save(Mapper.toCategory(categoryMakeDto), categoryMakeDto.parentId());
     }
 
-    public Category findCategoryByName(String name)
-    {
+    public Category findCategoryByName(String name) {
         return categoryService.findByName(name);
+    }
+
+    public List<Category> findAllCategories() {
+        return categoryService.findAll();
     }
 }

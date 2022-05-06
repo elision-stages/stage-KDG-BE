@@ -2,7 +2,10 @@ package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.web.dtos.ProductDto;
+import eu.elision.marketplace.web.dtos.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,12 +42,6 @@ public class ProductController
     {
         controller.saveDynamicAttribute(dynamicAttributeDto);
         return ResponseEntity.ok("{\"status\":\"success\"}");
-    }
-
-    @GetMapping("/getCategories")
-    ResponseEntity<Collection<CategoryDto>> getCategories()
-    {
-        return new ResponseEntity<>(controller.findAllCategoriesDto(), HttpStatus.OK);
     }
 
     @PostMapping("/addCategory")
