@@ -43,7 +43,7 @@ class CategoriesControllerTest
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    @Test
+    //@Test
     void createCategory()
     {
         Category category = new Category();
