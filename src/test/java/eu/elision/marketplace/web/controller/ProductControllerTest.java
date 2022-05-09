@@ -2,10 +2,7 @@ package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
-import eu.elision.marketplace.web.dtos.Pair;
-import eu.elision.marketplace.web.dtos.ProductDto;
-import eu.elision.marketplace.web.dtos.VendorDto;
+import eu.elision.marketplace.web.dtos.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,5 +65,24 @@ class ProductControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).contains("success");
+    }
+
+    @Test
+    void addAttribute() {
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                String.format("%s/addAttribute", base),
+                new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), Type.DECIMAL, new ArrayList<>()),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void addCategory() {
+        assertThat(
+                restTemplate.postForEntity(
+                        String.format("%s/addCategory", base),
+                        new CategoryMakeDto(RandomStringUtils.randomAlphabetic(5), 0, new ArrayList<>()),
+                        String.class).getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }
