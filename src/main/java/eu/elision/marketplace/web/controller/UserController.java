@@ -1,6 +1,5 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
@@ -11,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("register")
 public class UserController
 {
     final
@@ -25,24 +24,18 @@ public class UserController
         this.controller = controller;
     }
 
-    @PostMapping("/registercustomer")
+    @PostMapping("customer")
     ResponseEntity<String> registerCustomer(@RequestBody @Valid CustomerDto customerDto)
     {
         controller.saveCustomer(customerDto);
         return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 
-    @PostMapping("/registervendor")
+    @PostMapping("vendor")
     ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto)
     {
         controller.saveVendor(vendorDto);
         return ResponseEntity.ok("{\"status\": \"ok\"}");
-    }
-
-    @GetMapping("/allUsers")
-    List<User> findAllUsers()
-    {
-        return controller.findAllUsers();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

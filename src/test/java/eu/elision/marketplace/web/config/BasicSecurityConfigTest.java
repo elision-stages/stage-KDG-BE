@@ -26,8 +26,8 @@ class BasicSecurityConfigTest {
 
     @BeforeEach
     void setUp() throws MalformedURLException {
-        restTemplate = new TestRestTemplate("user", "password");
-        base = new URL(String.format("http://localhost:%s/hellosecured", port));
+        restTemplate = new TestRestTemplate();
+        base = new URL(String.format("http://localhost:%s/hello", port));
     }
 
     @Test
@@ -38,15 +38,5 @@ class BasicSecurityConfigTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).contains("hello");
-    }
-
-    @Test
-    void testApiCallBadCredentials() {
-
-        restTemplate = new TestRestTemplate("user", "wrongpassword");
-        ResponseEntity<String> response =
-                restTemplate.getForEntity(base.toString(), String.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 }

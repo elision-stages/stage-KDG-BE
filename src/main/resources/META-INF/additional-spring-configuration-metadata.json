@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Random secret string to generate the tokens with"
+    },
+    {
+      "name": "jwt.durationInMinutes",
+      "type": "java.lang.String",
+      "description": "Duration a token is valid in minutes"
+    }
+  ] }

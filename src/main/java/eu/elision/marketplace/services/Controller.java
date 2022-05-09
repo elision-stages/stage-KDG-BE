@@ -11,6 +11,7 @@ import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -21,6 +22,7 @@ public class Controller {
     private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ProductService productService;
     private final DynamicAttributeService dynamicAttributeService;
     private final DynamicAttributeValueService dynamicAttributeValueService;
@@ -33,6 +35,7 @@ public class Controller {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.productService = productService;
         this.dynamicAttributeService = dynamicAttributeService;
         this.dynamicAttributeValueService = dynamicAttributeValueService;
@@ -77,7 +80,9 @@ public class Controller {
     }
 
     public void saveCustomer(CustomerDto customerDto) {
-        Customer customer = userService.toCustomer(customerDto);
+        String password = bCryptPasswordEncoder.encode(customerDto.password());
+        CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
+        Customer customer = userService.toCustomer(newCustomerDto);
         if (customer.getMainAddress() != null) {
             saveAddress(customer.getMainAddress());
         }
@@ -110,12 +115,27 @@ public class Controller {
         return userService.findUserById(id);
     }
 
-    public Vendor saveVendor(VendorDto vendorDto) {
-        return userService.save(vendorDto);
+    public void saveVendor(VendorDto vendorDto) {
+        String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
+        VendorDto newVendorDto = new VendorDto(
+                vendorDto.firstName(),
+                vendorDto.lastName(),
+                vendorDto.email(),
+                password,
+                false,
+                vendorDto.logo(),
+                vendorDto.theme(),
+                vendorDto.introduction(),
+                vendorDto.vatNumber(),
+                vendorDto.phoneNumber(),
+                vendorDto.businessName()
+        );
+        userService.save(newVendorDto);
     }
 
-    public User findUserByEmailAndPassword(String email, String password) {
-        return userService.findUserByEmailAndPassword(email, password);
+    public User findUserByEmail(String email)
+    {
+        return userService.findUserByEmail(email);
     }
 
 
