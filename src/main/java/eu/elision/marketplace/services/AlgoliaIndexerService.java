@@ -8,6 +8,7 @@ import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,9 +27,14 @@ public class AlgoliaIndexerService implements IndexerService {
     @Override
     @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
     public void indexAllProducts() {
-        List<Product> productList = this.productRepository.findAll();
-        Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
-        SearchIndex<AlgoliaProductDto> searchClient = indexSearchClientService.getSearchClient();
-        searchClient.saveObjects(algoliaProductList);
+        try {
+            List<Product> productList = this.productRepository.findAll();
+            Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
+            SearchIndex<AlgoliaProductDto> searchClient = null;
+            searchClient = indexSearchClientService.getSearchClient();
+            searchClient.saveObjects(algoliaProductList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
