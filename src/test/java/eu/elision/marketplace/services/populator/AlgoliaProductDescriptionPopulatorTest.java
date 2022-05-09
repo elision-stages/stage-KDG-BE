@@ -4,9 +4,6 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AlgoliaProductDescriptionPopulatorTest {
@@ -17,7 +14,7 @@ class AlgoliaProductDescriptionPopulatorTest {
 
         AlgoliaProductDto algoliaProductDto = new AlgoliaProductDto();
 
-        AlgoliaProductDefaultAttributePopulator populator = new AlgoliaProductDefaultAttributePopulator();
+        AlgoliaProductDescriptionPopulator populator = new AlgoliaProductDescriptionPopulator();
         populator.populate(product, algoliaProductDto);
 
         assertThat(algoliaProductDto.getDescription()).isEqualTo("test desc");
