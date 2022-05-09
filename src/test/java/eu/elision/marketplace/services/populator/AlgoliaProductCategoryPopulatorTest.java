@@ -38,8 +38,8 @@ public class AlgoliaProductCategoryPopulatorTest {
 
 
         assertThat(algoliaProductDto.getParameters()).hasSize(3);
-        assertThat(algoliaProductDto.getParameters().get("categories.lvl0")).isEqualTo("Kleding");
-        assertThat(algoliaProductDto.getParameters().get("categories.lvl1")).isEqualTo("Kleding > Broeken");
-        assertThat(algoliaProductDto.getParameters().get("categories.lvl2")).isEqualTo("Kleding > Broeken > Jeans");
+        assertThat(algoliaProductDto.getParameters()).containsEntry("categories.lvl0", "Kleding");
+        assertThat(algoliaProductDto.getParameters()).containsEntry("categories.lvl1", "Kleding > Broeken");
+        assertThat(algoliaProductDto.getParameters()).containsEntry("categories.lvl2", "Kleding > Broeken > Jeans");
     }
 }

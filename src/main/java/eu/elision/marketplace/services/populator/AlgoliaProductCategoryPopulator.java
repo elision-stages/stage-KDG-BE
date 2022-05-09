@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class AlgoliaProductCategoryPopulator extends Populator<Product, AlgoliaProductDto> {
+public class AlgoliaProductCategoryPopulator implements Populator<Product, AlgoliaProductDto> {
 
     @Override
     public void populate(Product source, AlgoliaProductDto target) {
@@ -22,7 +22,7 @@ public class AlgoliaProductCategoryPopulator extends Populator<Product, AlgoliaP
         }
         Collections.reverse(catStructure);
 
-        while(catStructure.size() > 0) {
+        while(!catStructure.isEmpty()) {
             String paramName = String.format("categories.lvl%d", catStructure.size()-1);
             String paramValue = String.join(" > ", catStructure);
             target.getParameters().put(paramName, paramValue);

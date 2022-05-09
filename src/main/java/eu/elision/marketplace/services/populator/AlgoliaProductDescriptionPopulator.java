@@ -5,7 +5,7 @@ import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AlgoliaProductDescriptionPopulator extends Populator<Product, AlgoliaProductDto> {
+public class AlgoliaProductDescriptionPopulator implements Populator<Product, AlgoliaProductDto> {
 
     @Override
     public void populate(Product source, AlgoliaProductDto target) {

@@ -5,10 +5,8 @@ import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
-public class AlgoliaSearchClientService implements SearchClientService<SearchIndex> {
+public class AlgoliaSearchClientService implements SearchClientService<SearchIndex<AlgoliaProductDto>> {
     @Value("${algolia.applicationId}")
     private String applicationId;
     @Value("${algolia.apiKey}")
