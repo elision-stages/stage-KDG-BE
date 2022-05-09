@@ -20,7 +20,7 @@ class AlgoliaProductImagePopulatorTest {
 
         AlgoliaProductDto algoliaProductDto = new AlgoliaProductDto();
 
-        AlgoliaProductDefaultAttributePopulator populator = new AlgoliaProductDefaultAttributePopulator();
+        AlgoliaProductImagePopulator populator = new AlgoliaProductImagePopulator();
         populator.populate(product, algoliaProductDto);
 
         assertThat(algoliaProductDto.getImage()).isEqualTo("a");

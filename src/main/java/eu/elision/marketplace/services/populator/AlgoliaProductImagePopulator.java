@@ -9,10 +9,10 @@ public class AlgoliaProductImagePopulator implements Populator<Product, AlgoliaP
 
     @Override
     public void populate(Product source, AlgoliaProductDto target) {
-        if(!source.getImages().isEmpty()) {
-            target.setImage(source.getImages().get(0));
-        }else {
+        if(source.getImages() == null || source.getImages().isEmpty()) {
             target.setImage("");
+        }else {
+            target.setImage(source.getImages().get(0));
         }
     }
 }

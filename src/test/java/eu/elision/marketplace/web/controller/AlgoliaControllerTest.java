@@ -28,8 +28,8 @@ public class AlgoliaControllerTest {
     }
 
     @Test
-    void testVatCheck() {
-        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/updatealgolia", base), String.class);
+    void test() {
+        ResponseEntity<String> response = restTemplate.postForEntity(String.format("%s/updatealgolia", base), null, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
