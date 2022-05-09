@@ -64,12 +64,7 @@ public class CategoryService
 
 
     public Collection<CategoryDto> findAllDto() {
-        List<CategoryDto> list = new ArrayList<>();
-        for (Category category : categoryRepository.findAll()) {
-            CategoryDto categoryDto = toCategoryDto(category);
-            list.add(categoryDto);
-        }
-        return list;
+        return categoryRepository.findAll().stream().map(this::toCategoryDto).toList();
     }
 
     public CategoryDto toCategoryDto(Category category) {

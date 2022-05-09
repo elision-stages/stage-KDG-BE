@@ -1,6 +1,10 @@
 package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.domain.product.category.attributes.PickList;
+import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
+import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.repositories.CategoryRepository;
 import eu.elision.marketplace.web.dtos.CategoryDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
@@ -10,6 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -88,6 +95,22 @@ class CategoryServiceTest {
         final Category cat1 = new Category();
         final String name = RandomStringUtils.randomAlphabetic(4);
         cat1.setName(name);
+
+        final DynamicAttribute dynamicAttribute = new DynamicAttribute();
+        dynamicAttribute.setRequired(RandomUtils.nextBoolean());
+        dynamicAttribute.setType(Type.DECIMAL);
+        dynamicAttribute.setName(RandomStringUtils.randomAlphabetic(4));
+        cat1.getCharacteristics().add(dynamicAttribute);
+
+        final DynamicAttribute dynamicAttribute2 = new DynamicAttribute();
+        dynamicAttribute2.setRequired(RandomUtils.nextBoolean());
+        dynamicAttribute2.setType(Type.ENUMERATION);
+        dynamicAttribute2.setName(RandomStringUtils.randomAlphabetic(4));
+
+        final PickList pickList = new PickList();
+        pickList.setItems(new ArrayList<>(List.of(new PickListItem())));
+        dynamicAttribute2.setEnumList(pickList);
+        cat1.getCharacteristics().add(dynamicAttribute2);
 
         CategoryDto categoryDto = categoryService.toCategoryDto(cat1);
 
