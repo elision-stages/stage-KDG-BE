@@ -1,30 +1,35 @@
 package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.repositories.CategoryRepository;
+import eu.elision.marketplace.web.dtos.CategoryDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
-class CategoryServiceTest
-{
+class CategoryServiceTest {
     @Autowired
     Controller controller;
     @Autowired
     CategoryService categoryService;
+    @Mock
+    private CategoryRepository categoryRepository;
 
     @Test
-    void findAll()
-    {
+    void findAll() {
         assertThat(categoryService.findAll()).isNotNull();
     }
 
     @Test
-    void testSave()
-    {
+    void testSave() {
         Category category = new Category();
 
         String name = RandomStringUtils.randomAlphabetic(5);
@@ -38,8 +43,7 @@ class CategoryServiceTest
     }
 
     @Test
-    void testSaveWithParent()
-    {
+    void testSaveWithParent() {
         Category parent = new Category();
         Category child = new Category();
 
@@ -58,8 +62,7 @@ class CategoryServiceTest
     }
 
     @Test
-    void findByName()
-    {
+    void findByName() {
         Category category = new Category();
 
         String name = RandomStringUtils.randomAlphabetic(5);
@@ -70,5 +73,24 @@ class CategoryServiceTest
         Category repoCategory = categoryService.findByName(name);
         assertThat(repoCategory).isNotNull();
         assertThat(repoCategory.getName()).hasToString(name);
+    }
+
+    @Test
+    void assertParentNotFound() {
+        Category child = new Category();
+        final long parentId = RandomUtils.nextLong();
+
+        assertThrows(NotFoundException.class, () -> categoryService.save(child, parentId));
+    }
+
+    @Test
+    void toCategoryDto() {
+        final Category cat1 = new Category();
+        final String name = RandomStringUtils.randomAlphabetic(4);
+        cat1.setName(name);
+
+        CategoryDto categoryDto = categoryService.toCategoryDto(cat1);
+
+        assertThat(categoryDto.name()).isEqualTo(name);
     }
 }
