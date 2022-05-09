@@ -1,20 +1,13 @@
 package eu.elision.marketplace.services.populator;
 
-import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.domain.users.Address;
-import eu.elision.marketplace.domain.users.Cart;
-import eu.elision.marketplace.domain.users.Customer;
-import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AlgoliaProductCategoryPopulatorTest {
+class AlgoliaProductCategoryPopulatorTest {
     @Test
     void Test() {
         Category category1 = new Category();
