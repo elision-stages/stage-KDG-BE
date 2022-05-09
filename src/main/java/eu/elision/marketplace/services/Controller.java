@@ -9,7 +9,6 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,45 +41,38 @@ public class Controller {
     }
 
     //---------------------------------- Find all - only for testing
-    public List<Address> findAllAddresses()
-    {
+    public List<Address> findAllAddresses() {
         return addressService.findAll();
     }
 
-    public List<User> findAllUsers()
-    {
+    public List<User> findAllUsers() {
         return userService.findAllUsers();
     }
 
-    public List<CustomerDto> findAllCustomerDto()
-    {
+    public List<CustomerDto> findAllCustomerDto() {
         return findAllUsers().stream()
                 .filter(Customer.class::isInstance)
                 .map(user -> userService.toCustomerDto((Customer) user))
                 .toList();
     }
 
-    public Collection<Product> findAllProducts()
-    {
+    public Collection<Product> findAllProducts() {
         return productService.findAllProducts();
     }
 
     //---------------------------------- Find all
 
-    public Collection<CategoryDto> findAllCategoriesDto()
-    {
+    public Collection<CategoryDto> findAllCategoriesDto() {
         return categoryService.findAllDto();
     }
 
     //--------------------------------- Save
 
-    public Address saveAddress(Address address)
-    {
+    public Address saveAddress(Address address) {
         return addressService.save(address);
     }
 
-    public User saveUser(User user)
-    {
+    public User saveUser(User user) {
         return userService.save(user);
     }
 
@@ -92,48 +84,43 @@ public class Controller {
         saveUser(customer);
     }
 
-    public void saveProduct(ProductDto productDto)
-    {
+    public void saveProduct(ProductDto productDto) {
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
         final User vendor = userService.findUserById(productDto.vendorId());
         dynamicAttributeValueService.save(productAttributes);
         productService.save(productDto, productAttributes, vendor);
     }
 
-    public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
+    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
         if (dynamicAttribute.getType() == Type.ENUMERATION) {
             pickListItemService.save(dynamicAttribute.getEnumList().getItems());
             pickListService.save(dynamicAttribute.getEnumList());
         }
-        dynamicAttributeService.save(dynamicAttribute);
+        return dynamicAttributeService.save(dynamicAttribute);
     }
 
     //--------------------------------- findById
 
-    public Address findAddressById(long id)
-    {
+    public Address findAddressById(long id) {
         return addressService.findById(id);
     }
 
-    public User findUserById(long id)
-    {
+    public User findUserById(long id) {
         return userService.findUserById(id);
     }
 
-    public Vendor saveVendor(VendorDto vendorDto)
-    {
+    public Vendor saveVendor(VendorDto vendorDto) {
         return userService.save(vendorDto);
     }
 
-    public User findUserByEmailAndPassword(String email, String password)
-    {
+    public User findUserByEmailAndPassword(String email, String password) {
         return userService.findUserByEmailAndPassword(email, password);
     }
 
 
     public void saveCategory(CategoryMakeDto categoryMakeDto) {
-        categoryService.save(Mapper.toCategory(categoryMakeDto), categoryMakeDto.parentId());
+        categoryService.save(categoryMakeDto, categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList());
     }
 
     public Category findCategoryByName(String name) {

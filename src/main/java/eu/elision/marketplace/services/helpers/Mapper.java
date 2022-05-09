@@ -34,7 +34,7 @@ public class Mapper {
     }
 
     public static DynamicAttributeDto toDynamicAttributeDto(DynamicAttribute dynamicAttribute) {
-        return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList());
+        return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList() != null ? dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null);
     }
 }
 
