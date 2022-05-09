@@ -41,6 +41,6 @@ class ConverterTest {
         product.setVendor(vendor);
         product.setImages(List.of("test"));
         Collection<AlgoliaProductDto> result = algoliaProductConverter.convertAll(List.of(product));
-        assertThat(result.size()).isEqualTo(1);
+        assertThat(result).hasSize(1);
     }
 }
