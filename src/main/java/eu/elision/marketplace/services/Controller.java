@@ -31,7 +31,7 @@ public class Controller {
 
 
     @Autowired
-    public Controller(AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService) {
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService) {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
@@ -115,7 +115,7 @@ public class Controller {
         return userService.findUserById(id);
     }
 
-    public void saveVendor(VendorDto vendorDto) {
+    public Vendor saveVendor(VendorDto vendorDto) {
         String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
         VendorDto newVendorDto = new VendorDto(
                 vendorDto.firstName(),
@@ -130,11 +130,10 @@ public class Controller {
                 vendorDto.phoneNumber(),
                 vendorDto.businessName()
         );
-        userService.save(newVendorDto);
+        return userService.save(newVendorDto);
     }
 
-    public User findUserByEmail(String email)
-    {
+    public User findUserByEmail(String email) {
         return userService.findUserByEmail(email);
     }
 

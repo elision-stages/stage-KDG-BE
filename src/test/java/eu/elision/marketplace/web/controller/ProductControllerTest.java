@@ -25,8 +25,7 @@ import java.util.Locale;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductControllerTest
-{
+class ProductControllerTest {
     private static URL base;
     private TestRestTemplate restTemplate;
     @LocalServerPort
@@ -35,18 +34,27 @@ class ProductControllerTest
     private Controller controller;
 
     @BeforeEach
-    void setUp() throws MalformedURLException
-    {
+    void setUp() throws MalformedURLException {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void addProduct()
-    {
+    void addProduct() {
         final String name = RandomStringUtils.randomAlphabetic(4);
         controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()));
-        final long vendorId = controller.saveVendor(new VendorDto(RandomStringUtils.randomAlphabetic(4), RandomStringUtils.randomAlphabetic(4), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)), RandomUtils.nextBoolean(), RandomStringUtils.randomAlphabetic(4), RandomStringUtils.randomAlphabetic(4), RandomStringUtils.randomAlphabetic(4), RandomStringUtils.randomAlphabetic(4), RandomStringUtils.random(10, false, true), RandomStringUtils.randomAlphabetic(4))).getId();
+        final long vendorId = controller.saveVendor(new VendorDto(
+                RandomStringUtils.randomAlphabetic(4),
+                RandomStringUtils.randomAlphabetic(4),
+                String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)),
+                String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)),
+                RandomUtils.nextBoolean(),
+                RandomStringUtils.randomAlphabetic(4),
+                RandomStringUtils.randomAlphabetic(4),
+                RandomStringUtils.randomAlphabetic(4),
+                RandomStringUtils.randomAlphabetic(4),
+                RandomStringUtils.random(10, false, true),
+                RandomStringUtils.randomAlphabetic(4))).getId();
 
         ArrayList<Pair<String, String>> attributes = new ArrayList<>();
         attributes.add(new Pair<>(name, String.valueOf(RandomUtils.nextInt(1, 100))));
