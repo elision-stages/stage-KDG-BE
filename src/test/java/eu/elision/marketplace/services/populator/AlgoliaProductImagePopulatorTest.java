@@ -27,6 +27,20 @@ class AlgoliaProductImagePopulatorTest {
     }
 
     @Test
+    void TestEmpty() {
+        List<String> images = new ArrayList<>();
+        Product product = new Product();
+        product.setImages(images);
+
+        AlgoliaProductDto algoliaProductDto = new AlgoliaProductDto();
+
+        AlgoliaProductImagePopulator populator = new AlgoliaProductImagePopulator();
+        populator.populate(product, algoliaProductDto);
+
+        assertThat(algoliaProductDto.getImage()).isEmpty();
+    }
+
+    @Test
     void TestNull() {
         Product product = new Product();
         product.setImages(null);
@@ -36,6 +50,6 @@ class AlgoliaProductImagePopulatorTest {
         AlgoliaProductImagePopulator populator = new AlgoliaProductImagePopulator();
         populator.populate(product, algoliaProductDto);
 
-        assertThat(algoliaProductDto.getImage()).isEqualTo("");
+        assertThat(algoliaProductDto.getImage()).isEmpty();
     }
 }
