@@ -27,7 +27,6 @@ public class AlgoliaIndexerService implements IndexerService {
 
     @Override
     @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
-    @EventListener(ApplicationReadyEvent.class)
     public void indexAllProducts() {
         List<Product> productList = this.productRepository.findAll();
         Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
