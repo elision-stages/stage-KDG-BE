@@ -28,6 +28,7 @@ public class AlgoliaIndexerService implements IndexerService {
     public void indexAllProducts() {
         List<Product> productList = this.productRepository.findAll();
         Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
-        indexSearchClientService.getSearchClient().saveObjects(algoliaProductList);
+        SearchIndex<AlgoliaProductDto> searchClient = indexSearchClientService.getSearchClient();
+        searchClient.saveObjects(algoliaProductList);
     }
 }

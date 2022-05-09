@@ -1,7 +1,6 @@
 package eu.elision.marketplace.services.populator;
 
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.junit.jupiter.api.Test;
