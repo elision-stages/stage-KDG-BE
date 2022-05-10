@@ -39,6 +39,7 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
     runtimeOnly group: 'com.h2database', name: 'h2'
+    implementation group: 'mysql', name: 'mysql-connector-java'
 
     implementation "io.springfox:springfox-swagger-ui:$springfoxVersion"
     implementation "io.springfox:springfox-boot-starter:$springfoxVersion"
