@@ -27,6 +27,14 @@ class PickListItemTest {
     }
 
     @Test
+    void constructorTest() {
+        final String value = RandomStringUtils.random(4);
+
+        PickListItem pli = new PickListItem(value);
+        assertThat(pli.getValue()).hasToString(value);
+    }
+
+    @Test
     void getSetId() {
         PickListItem pli = new PickListItem();
         final long id = RandomUtils.nextLong();

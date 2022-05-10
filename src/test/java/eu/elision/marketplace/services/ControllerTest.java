@@ -2,6 +2,7 @@ package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
+import eu.elision.marketplace.web.dtos.CustomerDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -68,8 +69,7 @@ class ControllerTest {
     }
 
     @Test
-    void saveCustomerWithoutAddress()
-    {
+    void saveCustomerWithoutAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();
@@ -98,9 +98,16 @@ class ControllerTest {
     }
 
     @Test
-    void findAllCategoriesTest()
-    {
+    void findAllCategoriesTest() {
         assertThat(controller.findAllCategories()).isNotNull();
+    }
+
+    @Test
+    void findAllCustomerDtoTest() {
+        final int initSize = controller.findAllCustomerDto().size();
+
+        controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
+        assertThat(controller.findAllCustomerDto()).hasSize(initSize + 1);
     }
 
 }

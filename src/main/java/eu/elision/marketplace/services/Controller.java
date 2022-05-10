@@ -1,17 +1,20 @@
 package eu.elision.marketplace.services;
 
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.domain.product.category.attributes.Type;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
-import eu.elision.marketplace.services.helpers.Mapper;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.CustomerDto;
-import eu.elision.marketplace.web.dtos.VendorDto;
+import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.web.dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -20,13 +23,24 @@ public class Controller {
     private final UserService userService;
     private final CategoryService categoryService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ProductService productService;
+    private final DynamicAttributeService dynamicAttributeService;
+    private final DynamicAttributeValueService dynamicAttributeValueService;
+    private final PickListItemService pickListItemService;
+    private final PickListService pickListService;
+
 
     @Autowired
-    public Controller(AddressService addressService, UserService userService, CategoryService categoryService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService) {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.productService = productService;
+        this.dynamicAttributeService = dynamicAttributeService;
+        this.dynamicAttributeValueService = dynamicAttributeValueService;
+        this.pickListItemService = pickListItemService;
+        this.pickListService = pickListService;
     }
 
     //---------------------------------- Find all - only for testing
@@ -38,10 +52,23 @@ public class Controller {
         return userService.findAllUsers();
     }
 
-    //--------------------------------- FindAll
-    public List<Category> findAllCategories() {
-        return categoryService.findAll();
+    public List<CustomerDto> findAllCustomerDto() {
+        return findAllUsers().stream()
+                .filter(Customer.class::isInstance)
+                .map(user -> userService.toCustomerDto((Customer) user))
+                .toList();
     }
+
+    public Collection<Product> findAllProducts() {
+        return productService.findAllProducts();
+    }
+
+    //---------------------------------- Find all
+
+    public Collection<CategoryDto> findAllCategoriesDto() {
+        return categoryService.findAllDto();
+    }
+
     //--------------------------------- Save
 
     public Address saveAddress(Address address) {
@@ -62,6 +89,22 @@ public class Controller {
         saveUser(customer);
     }
 
+    public void saveProduct(ProductDto productDto) {
+        final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
+        final User vendor = userService.findUserById(productDto.vendorId());
+        dynamicAttributeValueService.save(productAttributes);
+        productService.save(productDto, productAttributes, vendor);
+    }
+
+    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
+        DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
+        if (dynamicAttribute.getType() == Type.ENUMERATION) {
+            pickListItemService.save(dynamicAttribute.getEnumList().getItems());
+            pickListService.save(dynamicAttribute.getEnumList());
+        }
+        return dynamicAttributeService.save(dynamicAttribute);
+    }
+
     //--------------------------------- findById
 
     public Address findAddressById(long id) {
@@ -72,7 +115,7 @@ public class Controller {
         return userService.findUserById(id);
     }
 
-    public void saveVendor(VendorDto vendorDto) {
+    public Vendor saveVendor(VendorDto vendorDto) {
         String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
         VendorDto newVendorDto = new VendorDto(
                 vendorDto.firstName(),
@@ -87,22 +130,23 @@ public class Controller {
                 vendorDto.phoneNumber(),
                 vendorDto.businessName()
         );
-        userService.save(newVendorDto);
+        return userService.save(newVendorDto);
     }
 
-    public User findUserByEmail(String email)
-    {
+    public User findUserByEmail(String email) {
         return userService.findUserByEmail(email);
     }
 
 
-    public void saveCategory(CategoryMakeDto categoryMakeDto)
-    {
-        categoryService.save(Mapper.toCategory(categoryMakeDto), categoryMakeDto.parentId());
+    public void saveCategory(CategoryMakeDto categoryMakeDto) {
+        categoryService.save(categoryMakeDto, categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList());
     }
 
-    public Category findCategoryByName(String name)
-    {
+    public Category findCategoryByName(String name) {
         return categoryService.findByName(name);
+    }
+
+    public List<Category> findAllCategories() {
+        return categoryService.findAll();
     }
 }

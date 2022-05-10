@@ -8,14 +8,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapperTest
-{
+class MapperTest {
     @Test
-    void toCategoryDtoList()
-    {
+    void toCategoryDtoList() {
         Category parent = new Category();
         Category child = new Category();
 
@@ -34,19 +33,16 @@ class MapperTest
         final CategoryDto parentDto = categoryDtos.get(0);
         assertThat(parentDto).isNotNull();
         assertThat(parentDto.name()).hasToString(parentName);
-        assertThat(parentDto.subcategories()).hasSize(1);
-        assertThat(parentDto.subcategories().get(0).name()).hasToString(childName);
     }
 
     @Test
-    void categoryInDtoListTest()
-    {
+    void categoryInDtoListTest() {
         final Category category = new Category();
         category.setName(RandomStringUtils.randomAlphabetic(4));
         category.setId(RandomUtils.nextLong(1, 10));
 
         List<CategoryDto> categoryDtos = new ArrayList<>(List.of(Mapper.toCategoryDto(category)));
 
-        assertThat(Mapper.categoryInDtoList(categoryDtos, category)).isTrue();
+        assertThat(categoryDtos.stream().anyMatch(categoryDto -> Objects.equals(categoryDto.id(), category.getId()))).isTrue();
     }
 }
