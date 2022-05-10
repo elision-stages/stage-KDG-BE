@@ -2,6 +2,7 @@ package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.web.dtos.CustomerDto;
+import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,17 +26,15 @@ public class UserController
     }
 
     @PostMapping("customer")
-    ResponseEntity<String> registerCustomer(@RequestBody @Valid CustomerDto customerDto)
-    {
+    ResponseEntity<ResponseDto> registerCustomer(@RequestBody @Valid CustomerDto customerDto) {
         controller.saveCustomer(customerDto);
-        return ResponseEntity.ok("{\"status\": \"ok\"}");
+        return ResponseEntity.ok(new ResponseDto("success"));
     }
 
     @PostMapping("vendor")
-    ResponseEntity<String> registerVendor(@RequestBody VendorDto vendorDto)
-    {
+    ResponseEntity<ResponseDto> registerVendor(@RequestBody VendorDto vendorDto) {
         controller.saveVendor(vendorDto);
-        return ResponseEntity.ok("{\"status\": \"ok\"}");
+        return ResponseEntity.ok(new ResponseDto("success"));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

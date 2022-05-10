@@ -9,11 +9,8 @@ class ResponseDtoTest {
 
     @Test
     void testResponseDto() {
-        final String field = RandomStringUtils.randomAlphabetic(5);
         final String value = RandomStringUtils.randomAlphabetic(5);
-        ResponseDto responseDto = new ResponseDto(field, value);
-
-        assertThat(responseDto.field()).isEqualTo(field);
-        assertThat(responseDto.value()).isEqualTo(value);
+        ResponseDto responseDto = new ResponseDto(value);
+        assertThat(responseDto.status()).isEqualTo(value);
     }
 }

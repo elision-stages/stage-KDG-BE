@@ -1,5 +1,4 @@
 package eu.elision.marketplace.web.dtos;
 
-public record ResponseDto(String field, String value)
-{
+public record ResponseDto(String status) {
 }

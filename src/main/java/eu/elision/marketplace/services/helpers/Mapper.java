@@ -7,7 +7,6 @@ import eu.elision.marketplace.web.dtos.CategoryDto;
 import eu.elision.marketplace.web.dtos.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Mapper {
@@ -21,16 +20,11 @@ public class Mapper {
     }
 
     public static CategoryDto toCategoryDto(Category category) {
-        return new CategoryDto(category.getId(), category.getName(), new ArrayList<>());
+        return new CategoryDto(category.getId(), category.getName(), category.getCharacteristics().stream().map(Mapper::toDynamicAttributeDto).toList());
     }
 
     public static List<CategoryDto> toCategoryDtoList(List<Category> categories) {
-        List<CategoryDto> dtoList = new ArrayList<>();
-
-        for (Category category : categories) {
-            dtoList.add(new CategoryDto(category.getId(), category.getName(), category.getCharacteristics().stream().map(Mapper::toDynamicAttributeDto).toList()));
-        }
-        return dtoList;
+        return categories.stream().map(Mapper::toCategoryDto).toList();
     }
 
     public static DynamicAttributeDto toDynamicAttributeDto(DynamicAttribute dynamicAttribute) {

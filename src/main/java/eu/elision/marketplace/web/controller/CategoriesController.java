@@ -5,6 +5,7 @@ import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.CategoryDto;
 import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -32,9 +33,9 @@ public class CategoriesController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping("/createCategory")
-    ResponseEntity<String> createCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
+    ResponseEntity<ResponseDto> createCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
         controller.saveCategory(categoryMakeDto);
-        return ResponseEntity.ok("{\"status\": \"ok\"}");
+        return ResponseEntity.ok(new ResponseDto("success"));
     }
 
 }

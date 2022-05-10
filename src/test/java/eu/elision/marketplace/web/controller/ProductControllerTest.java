@@ -53,8 +53,8 @@ class ProductControllerTest {
                 RandomStringUtils.random(10, false, true),
                 RandomStringUtils.randomAlphabetic(4))).getId();
 
-        ArrayList<Pair<String, String>> attributes = new ArrayList<>();
-        attributes.add(new Pair<>(name, String.valueOf(RandomUtils.nextInt(1, 100))));
+        ArrayList<AttributeValue<String, String>> attributes = new ArrayList<>();
+        attributes.add(new AttributeValue<>(name, String.valueOf(RandomUtils.nextInt(1, 100))));
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/addProduct", base),
@@ -65,16 +65,6 @@ class ProductControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).contains("success");
-    }
-
-    @Test
-    void addAttribute() {
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                String.format("%s/addAttribute", base),
-                new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), Type.DECIMAL, new ArrayList<>()),
-                String.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test

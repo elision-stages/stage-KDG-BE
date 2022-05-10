@@ -5,5 +5,5 @@ import java.util.Collection;
 import java.util.List;
 
 public record ProductDto(double price, String description, List<String> images,
-                         Collection<Pair<String, String>> attributes, long vendorId) implements Serializable {
+                         Collection<AttributeValue<String, String>> attributes, long vendorId) implements Serializable {
 }

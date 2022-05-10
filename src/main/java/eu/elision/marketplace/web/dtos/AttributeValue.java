@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pair<A, V> {
+public class AttributeValue<A, V> {
     private A attributeName;
-    private V attributeValue;
+    private V value;
 }
