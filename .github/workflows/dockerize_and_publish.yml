@@ -46,7 +46,7 @@ jobs:
           # The AWS secret access key
           secret_access_key: ${{ secrets.AWS_SECRET }}
           # AWS Account ID
-          account_id: github-action
+          account_id: 482685161646
           repo: kdg
           # The AWS region
           region: eu-west-1
