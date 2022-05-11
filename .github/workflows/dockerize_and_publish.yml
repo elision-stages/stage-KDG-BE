@@ -47,7 +47,7 @@ jobs:
           secret_access_key: ${{ secrets.AWS_SECRET }}
           # AWS Account ID
           account_id: github-action
-          repo: kdg/marketplace-fe
+          repo: kdg
           # The AWS region
           region: eu-west-1
           # Set this to true to create the repository if it does not already exist
