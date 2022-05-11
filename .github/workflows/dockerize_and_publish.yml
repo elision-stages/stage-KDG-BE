@@ -28,14 +28,14 @@ jobs:
         uses: kciter/aws-ecr-action@v4
         with:
           # The AWS access key id
-          access_key_id: 
+          access_key_id: AKIAXAYSHCCXOVA7PP62
           # The AWS secret access key
-          secret_access_key: 
+          secret_access_key: ${{ secrets.AWS_SECRET }}
           # AWS Account ID
-          account_id: 
-          repo: kdg/marketplace-be
+          account_id: github-action
+          repo: kdg/marketplace-fe
           # The AWS region
-          region: 
+          region: eu-west-1
           # Set this to true to create the repository if it does not already exist
           create_repo: true
           # Extra flags to pass to docker build (see docs.docker.com/engine/reference/commandline/build)
