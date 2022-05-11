@@ -45,11 +45,8 @@ class CategoryTest
         sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, null));
         sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), thirdName, true, Type.ENUMERATION, pickList));
 
-        category.getSubCategories().add(sub1);
-        final Category actual = category.getSubCategories().get(0);
-
-        assertThat(category.getSubCategories()).hasSize(1);
-        assertThat(actual).isEqualTo(sub1);
+        sub1.setParent(category);
+        final Category actual = sub1;
 
         assertThat(actual.getName()).isEqualTo(subName);
         assertThat(actual.getCharacteristics().get(0).getName()).isEqualTo(firstName);
