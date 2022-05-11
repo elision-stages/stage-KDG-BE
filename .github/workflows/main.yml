@@ -1,0 +1,46 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build docker image
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: build jar
+        run: ./gradlew bootJar
+      - name: create docker image
+        run:  docker build --build-arg JAR_FILE=build/libs/marketplace-0.0.1-SNAPSHOT.jar -t kdg/marketplace-be .
+      - name: AWS ECR
+        # You may pin to the exact commit or the version.
+        # uses: kciter/aws-ecr-action@79255b7c5aa03dbf6d7c46cff2bfd049874cd98d
+        uses: kciter/aws-ecr-action@v4
+        with:
+          # The AWS access key id
+          access_key_id: 
+          # The AWS secret access key
+          secret_access_key: 
+          # AWS Account ID
+          account_id: 
+          repo: kdg/marketplace-be
+          # The AWS region
+          region: 
+          # Set this to true to create the repository if it does not already exist
+          create_repo: true
+          # Extra flags to pass to docker build (see docs.docker.com/engine/reference/commandline/build)
+          extra_build_args: "JAR_FILE=build/libs/marketplace-0.0.1.jar"
