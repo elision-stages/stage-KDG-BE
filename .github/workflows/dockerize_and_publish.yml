@@ -36,8 +36,6 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: build jar
         run: ./gradlew bootJar
-      - name: create docker image
-        run:  docker build --build-arg JAR_FILE=build/libs/marketplace-0.0.1-SNAPSHOT.jar -t kdg/marketplace-be .
       - name: AWS ECR
         uses: kciter/aws-ecr-action@v4
         with:
