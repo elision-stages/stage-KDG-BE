@@ -53,6 +53,6 @@ jobs:
           # Set this to true to create the repository if it does not already exist
           create_repo: true
           # Extra flags to pass to docker build (see docs.docker.com/engine/reference/commandline/build)
-          extra_build_args: --build-arg JAR_FILE=build/libs/marketplace-0.0.1.jar --build-arg ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY }}
+          extra_build_args: --build-arg JAR_FILE=build/libs/marketplace-0.0.1-SNAPSHOT.jar --build-arg ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY }}
           tags: latest,${{ github.sha }}
           dockerfile: dockerfile
