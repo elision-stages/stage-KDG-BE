@@ -76,7 +76,7 @@ jobs:
           secret_access_key: ${{ secrets.AWS_SECRET }}
           # AWS Account ID
           account_id: 482685161646
-          repo: kdg
+          repo: kdg/marketplace-be
           # The AWS region
           region: eu-west-1
           # Set this to true to create the repository if it does not already exist
