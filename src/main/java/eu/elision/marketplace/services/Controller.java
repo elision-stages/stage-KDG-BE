@@ -104,6 +104,10 @@ public class Controller {
         productService.save(productDto, productAttributes, vendor);
     }
 
+    public void saveProduct(Product product) {
+        productService.save(product);
+    }
+
     public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
         dynamicAttribute.setCategory(category);

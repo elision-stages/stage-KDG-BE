@@ -24,6 +24,10 @@ public class ProductService {
         productRepository.save(toProduct(productDto, attributeValues, (Vendor) vendor));
     }
 
+    public void save(Product product) {
+        productRepository.save(product);
+    }
+
     private Product toProduct(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
         Product product = new Product();
         product.setPrice(productDto.price());
