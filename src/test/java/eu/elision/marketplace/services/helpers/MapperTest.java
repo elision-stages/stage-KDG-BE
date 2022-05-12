@@ -1,7 +1,7 @@
 package eu.elision.marketplace.services.helpers;
 
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.web.dtos.CategoryDto;
+import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

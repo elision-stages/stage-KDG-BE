@@ -1,4 +1,4 @@
-package eu.elision.marketplace.web.dtos;
+package eu.elision.marketplace.web.dtos.attributes;
 
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 

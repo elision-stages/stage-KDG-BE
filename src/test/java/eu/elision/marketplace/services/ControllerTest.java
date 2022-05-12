@@ -2,7 +2,7 @@ package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
-import eu.elision.marketplace.web.dtos.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

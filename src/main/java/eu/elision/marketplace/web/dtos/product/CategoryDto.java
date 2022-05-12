@@ -1,4 +1,6 @@
-package eu.elision.marketplace.web.dtos;
+package eu.elision.marketplace.web.dtos.product;
+
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 
 import java.io.Serializable;
 import java.util.Collection;

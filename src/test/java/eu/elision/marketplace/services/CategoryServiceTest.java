@@ -6,7 +6,7 @@ import eu.elision.marketplace.domain.product.category.attributes.PickList;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.repositories.CategoryRepository;
-import eu.elision.marketplace.web.dtos.CategoryDto;
+import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;

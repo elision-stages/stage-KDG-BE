@@ -1,4 +1,4 @@
-package eu.elision.marketplace.web.dtos;
+package eu.elision.marketplace.web.dtos.users;
 
 import java.io.Serializable;
 

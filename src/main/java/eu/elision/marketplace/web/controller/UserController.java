@@ -1,9 +1,9 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.ResponseDto;
-import eu.elision.marketplace.web.dtos.VendorDto;
+import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

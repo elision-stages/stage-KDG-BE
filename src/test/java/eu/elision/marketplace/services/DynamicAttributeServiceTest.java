@@ -1,7 +1,7 @@
 package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.category.attributes.Type;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

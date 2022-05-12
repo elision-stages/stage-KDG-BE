@@ -9,7 +9,14 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.services.helpers.Mapper;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.product.CategoryDto;
+import eu.elision.marketplace.web.dtos.product.EditProductDto;
+import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class Controller {
+public class Controller
+{
     private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
@@ -31,7 +39,8 @@ public class Controller {
 
 
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService) {
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService)
+    {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
@@ -44,61 +53,70 @@ public class Controller {
     }
 
     //---------------------------------- Find all - only for testing
-    public List<Address> findAllAddresses() {
+    public List<Address> findAllAddresses()
+    {
         return addressService.findAll();
     }
 
-    public List<User> findAllUsers() {
+    public List<User> findAllUsers()
+    {
         return userService.findAllUsers();
     }
 
-    public List<CustomerDto> findAllCustomerDto() {
-        return findAllUsers().stream()
-                .filter(Customer.class::isInstance)
-                .map(user -> userService.toCustomerDto((Customer) user))
-                .toList();
+    public List<CustomerDto> findAllCustomerDto()
+    {
+        return findAllUsers().stream().filter(Customer.class::isInstance).map(user -> userService.toCustomerDto((Customer) user)).toList();
     }
 
-    public Collection<Product> findAllProducts() {
+    public Collection<Product> findAllProducts()
+    {
         return productService.findAllProducts();
     }
 
     //---------------------------------- Find all
 
-    public Collection<CategoryDto> findAllCategoriesDto() {
+    public Collection<CategoryDto> findAllCategoriesDto()
+    {
         return categoryService.findAllDto();
     }
 
     //--------------------------------- Save
 
-    public Address saveAddress(Address address) {
+    public Address saveAddress(Address address)
+    {
         return addressService.save(address);
     }
 
-    public User saveUser(User user) {
+    public User saveUser(User user)
+    {
         return userService.save(user);
     }
 
-    public void saveCustomer(CustomerDto customerDto) {
+    public void saveCustomer(CustomerDto customerDto)
+    {
         String password = bCryptPasswordEncoder.encode(customerDto.password());
         CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
         Customer customer = userService.toCustomer(newCustomerDto);
-        if (customer.getMainAddress() != null) {
+        if (customer.getMainAddress() != null)
+        {
             saveAddress(customer.getMainAddress());
         }
         saveUser(customer);
     }
 
-    public void saveProduct(ProductDto productDto) {
+    public void saveProduct(ProductDto productDto)
+    {
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
         final User vendor = userService.findUserById(productDto.vendorId());
         dynamicAttributeValueService.save(productAttributes);
         productService.save(productDto, productAttributes, vendor);
     }
 
-    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
+    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto)
+    {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
-        if (dynamicAttribute.getType() == Type.ENUMERATION) {
+        if (dynamicAttribute.getType() == Type.ENUMERATION)
+        {
             pickListItemService.save(dynamicAttribute.getEnumList().getItems());
             pickListService.save(dynamicAttribute.getEnumList());
         }
@@ -107,46 +125,48 @@ public class Controller {
 
     //--------------------------------- findById
 
-    public Address findAddressById(long id) {
+    public Address findAddressById(long id)
+    {
         return addressService.findById(id);
     }
 
-    public User findUserById(long id) {
+    public User findUserById(long id)
+    {
         return userService.findUserById(id);
     }
 
-    public Vendor saveVendor(VendorDto vendorDto) {
+    public Vendor saveVendor(VendorDto vendorDto)
+    {
         String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
-        VendorDto newVendorDto = new VendorDto(
-                vendorDto.firstName(),
-                vendorDto.lastName(),
-                vendorDto.email(),
-                password,
-                false,
-                vendorDto.logo(),
-                vendorDto.theme(),
-                vendorDto.introduction(),
-                vendorDto.vatNumber(),
-                vendorDto.phoneNumber(),
-                vendorDto.businessName()
-        );
+        VendorDto newVendorDto = new VendorDto(vendorDto.firstName(), vendorDto.lastName(), vendorDto.email(), password, false, vendorDto.logo(), vendorDto.theme(), vendorDto.introduction(), vendorDto.vatNumber(), vendorDto.phoneNumber(), vendorDto.businessName());
         return userService.save(newVendorDto);
     }
 
-    public User findUserByEmail(String email) {
+    public User findUserByEmail(String email)
+    {
         return userService.findUserByEmail(email);
     }
 
 
-    public void saveCategory(CategoryMakeDto categoryMakeDto) {
+    public void saveCategory(CategoryMakeDto categoryMakeDto)
+    {
         categoryService.save(categoryMakeDto, categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList());
     }
 
-    public Category findCategoryByName(String name) {
+    public Category findCategoryByName(String name)
+    {
         return categoryService.findByName(name);
     }
 
-    public List<Category> findAllCategories() {
+    public List<Category> findAllCategories()
+    {
         return categoryService.findAll();
+    }
+
+    public void editProduct(EditProductDto editProductDto)
+    {
+        final List<DynamicAttributeValue<?>> attributeValues = dynamicAttributeService.getSavedAttributes(editProductDto.attributes()).stream().toList();
+        dynamicAttributeValueService.save(attributeValues);
+        productService.editProduct(Mapper.toProduct(editProductDto, userService.findVendorById(editProductDto.vendorId()), attributeValues));
     }
 }

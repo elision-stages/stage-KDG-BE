@@ -2,7 +2,11 @@ package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;

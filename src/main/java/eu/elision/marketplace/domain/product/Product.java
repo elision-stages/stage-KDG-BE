@@ -21,6 +21,7 @@ public class Product
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private double price;
+    private String title;
     @ManyToOne
     private Vendor vendor;
     private String description;
