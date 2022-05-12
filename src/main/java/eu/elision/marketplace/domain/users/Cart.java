@@ -20,7 +20,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
     private Long id;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<OrderLine> orderLines;
 
     public Cart() {
