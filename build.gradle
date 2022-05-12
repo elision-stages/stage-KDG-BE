@@ -25,7 +25,7 @@ def springfoxVersion = "3.0.0"
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.19'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.20'
     implementation 'junit:junit:4.13.2'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
