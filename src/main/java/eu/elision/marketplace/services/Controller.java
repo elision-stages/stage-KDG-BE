@@ -104,8 +104,9 @@ public class Controller {
         productService.save(productDto, productAttributes, vendor);
     }
 
-    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
+    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
+        dynamicAttribute.setCategory(category);
         if (dynamicAttribute.getType() == Type.ENUMERATION) {
             pickListItemService.save(dynamicAttribute.getEnumList().getItems());
             pickListService.save(dynamicAttribute.getEnumList());
@@ -147,7 +148,7 @@ public class Controller {
 
 
     public void saveCategory(CategoryMakeDto categoryMakeDto) {
-        categoryService.save(categoryMakeDto, categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList());
+        categoryService.save(categoryMakeDto);
     }
 
     public Category findCategoryByName(String name) {

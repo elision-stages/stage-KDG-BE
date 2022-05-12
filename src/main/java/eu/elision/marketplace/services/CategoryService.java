@@ -4,6 +4,7 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.repositories.CategoryRepository;
+import eu.elision.marketplace.repositories.DynamicAttributeRepository;
 import eu.elision.marketplace.web.dtos.CategoryDto;
 import eu.elision.marketplace.web.dtos.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
@@ -20,11 +21,13 @@ import java.util.List;
 public class CategoryService
 {
     private final CategoryRepository categoryRepository;
+    private final DynamicAttributeRepository attributeRepository;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository)
+    public CategoryService(CategoryRepository categoryRepository, DynamicAttributeRepository attributeRepository)
     {
         this.categoryRepository = categoryRepository;
+        this.attributeRepository = attributeRepository;
     }
 
     public List<Category> findAll()
@@ -37,7 +40,6 @@ public class CategoryService
         return categoryRepository.save(category);
     }
 
-    @Transactional
     public void save(Category category, long parentId)
     {
         if (parentId != 0L)
@@ -49,11 +51,10 @@ public class CategoryService
                 throw new NotFoundException(String.format("Parent category with id %s not found", parentId));
             }
             category.setParent(parent);
-            parent.getSubCategories().add(category);
-            categoryRepository.save(category);
-            categoryRepository.save(parent);
-        } else
-            categoryRepository.save(category);
+            //parent.getSubCategories().add(category);
+            //categoryRepository.save(category);
+        }
+        categoryRepository.save(category);
     }
 
     public Category findByName(String name)
@@ -90,15 +91,18 @@ public class CategoryService
         );
     }
 
-    private Category toCategory(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
+    private Category toCategory(CategoryMakeDto categoryMakeDto) {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
-        category.getCharacteristics().addAll(dynamicAttributes);
 
         return category;
     }
 
     public void save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
-        categoryRepository.save(toCategory(categoryMakeDto, dynamicAttributes));
+        Category category = categoryRepository.save(toCategory(categoryMakeDto));
+        for(DynamicAttribute attr : dynamicAttributes) {
+            attr.setCategory(category);
+            attributeRepository.save(attr);
+        }
     }
 }

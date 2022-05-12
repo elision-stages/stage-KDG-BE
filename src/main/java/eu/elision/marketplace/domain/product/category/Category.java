@@ -30,7 +30,7 @@ public class Category
     @Setter
     private Category parent;
     @JsonIgnore
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Category> subCategories;
     @OneToMany(mappedBy = "category")
     private final List<DynamicAttribute> characteristics;

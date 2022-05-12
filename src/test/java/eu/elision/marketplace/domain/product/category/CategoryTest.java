@@ -8,6 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ class CategoryTest
     }
 
     @Test
+    @Transactional
     void getSubCategories()
     {
         Category category = new Category();
@@ -41,28 +43,28 @@ class CategoryTest
         pickList.setCode(String.valueOf(RandomUtils.nextInt(1, 1000)));
         pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1,100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1,100), RandomStringUtils.random(1)))));
         sub1.setName(subName);
-        sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), firstName, true, Type.DECIMAL, null));
-        sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, null));
-        sub1.getCharacteristics().add(new DynamicAttribute(RandomUtils.nextLong(1, 100), thirdName, true, Type.ENUMERATION, pickList));
+        DynamicAttribute characteristic1 = new DynamicAttribute(RandomUtils.nextLong(1, 100), firstName, true, Type.DECIMAL, null, sub1);
+        DynamicAttribute characteristic2 = new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, null, sub1);
+        DynamicAttribute characteristic3 = new DynamicAttribute(RandomUtils.nextLong(1, 100), thirdName, true, Type.ENUMERATION, pickList, sub1);
 
         sub1.setParent(category);
         final Category actual = sub1;
 
         assertThat(actual.getName()).isEqualTo(subName);
-        assertThat(actual.getCharacteristics().get(0).getName()).isEqualTo(firstName);
-        assertThat(actual.getCharacteristics().get(0).isRequired()).isTrue();
-        assertThat(actual.getCharacteristics().get(0).getType()).isEqualTo(Type.DECIMAL);
-        assertThat(actual.getCharacteristics().get(0).getEnumList()).isNull();
+        assertThat(characteristic1.getName()).isEqualTo(firstName);
+        assertThat(characteristic1.isRequired()).isTrue();
+        assertThat(characteristic1.getType()).isEqualTo(Type.DECIMAL);
+        assertThat(characteristic1.getEnumList()).isNull();
 
-        assertThat(actual.getCharacteristics().get(1).getName()).isEqualTo(secondName);
-        assertThat(actual.getCharacteristics().get(1).isRequired()).isFalse();
-        assertThat(actual.getCharacteristics().get(1).getType()).isEqualTo(Type.INTEGER);
-        assertThat(actual.getCharacteristics().get(1).getEnumList()).isNull();
+        assertThat(characteristic2.getName()).isEqualTo(secondName);
+        assertThat(characteristic2.isRequired()).isFalse();
+        assertThat(characteristic2.getType()).isEqualTo(Type.INTEGER);
+        assertThat(characteristic2.getEnumList()).isNull();
 
-        assertThat(actual.getCharacteristics().get(2).getName()).isEqualTo(thirdName);
-        assertThat(actual.getCharacteristics().get(2).isRequired()).isTrue();
-        assertThat(actual.getCharacteristics().get(2).getType()).isEqualTo(Type.ENUMERATION);
-        assertThat(actual.getCharacteristics().get(2).getEnumList().getItems()).hasSize(3);
+        assertThat(characteristic3.getName()).isEqualTo(thirdName);
+        assertThat(characteristic3.isRequired()).isTrue();
+        assertThat(characteristic3.getType()).isEqualTo(Type.ENUMERATION);
+        assertThat(characteristic3.getEnumList().getItems()).hasSize(3);
     }
 
     @Test

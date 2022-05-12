@@ -1,5 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.web.dtos.*;
@@ -39,7 +40,7 @@ class ProductControllerTest {
     @Test
     void addProduct() {
         final String name = RandomStringUtils.randomAlphabetic(4);
-        controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()));
+        controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()), new Category());
         final long vendorId = controller.saveVendor(new VendorDto(
                 RandomStringUtils.randomAlphabetic(4),
                 RandomStringUtils.randomAlphabetic(4),
