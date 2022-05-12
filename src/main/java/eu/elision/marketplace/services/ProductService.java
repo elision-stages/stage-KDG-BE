@@ -38,4 +38,12 @@ public class ProductService {
     public Collection<Product> findAllProducts() {
         return productRepository.findAll();
     }
+
+    public Product findProductById(long productId) {
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product == null) {
+            throw new NotFoundException(String.format("Product with id %s not found", productId));
+        }
+        return product;
+    }
 }

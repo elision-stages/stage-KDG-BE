@@ -1,12 +1,18 @@
 package eu.elision.marketplace.services.helpers;
 
+import eu.elision.marketplace.domain.orders.OrderLine;
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
-import eu.elision.marketplace.web.dtos.CategoryDto;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
+import eu.elision.marketplace.domain.users.Cart;
+import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Mapper {
@@ -29,6 +35,22 @@ public class Mapper {
 
     public static DynamicAttributeDto toDynamicAttributeDto(DynamicAttribute dynamicAttribute) {
         return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList() != null ? dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null);
+    }
+
+    public static CartDto toCartDto(Cart cart) {
+        CartDto cartDto = new CartDto(new ArrayList<>(), cart.getTotalPrice());
+        for (OrderLine orderLine : cart.getOrderLines()) {
+            final Product product = orderLine.getProduct();
+            Collection<AttributeValue<String, String>> attributes = new ArrayList<>();
+
+            for (DynamicAttributeValue<?> attribute : product.getAttributes()) {
+                attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
+            }
+
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getImages(), attributes, product.getVendor().getId())));
+        }
+
+        return cartDto;
     }
 }
 
