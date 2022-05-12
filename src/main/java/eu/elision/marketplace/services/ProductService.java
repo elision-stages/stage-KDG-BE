@@ -10,6 +10,7 @@ import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -35,7 +36,15 @@ public class ProductService {
         return product;
     }
 
+    public Collection<Product> findProductsByVendor(Vendor vendor) {
+        return productRepository.findProductsByVendor(vendor);
+    }
+
     public Collection<Product> findAllProducts() {
         return productRepository.findAll();
+    }
+
+    public Product findProductById(long id) {
+        return productRepository.findById(id).orElse(null);
     }
 }

@@ -85,6 +85,7 @@ public class CategoryService
         return new CategoryDto(
                 category.getId(),
                 category.getName(),
+                (category.getParent() == null ? null : category.getParent().getId()),
                 characteristics
         );
     }

@@ -59,8 +59,16 @@ public class Controller {
                 .toList();
     }
 
+    public Collection<Product> findProductsByVendor(Vendor vendor) {
+        return productService.findProductsByVendor(vendor);
+    }
+
     public Collection<Product> findAllProducts() {
         return productService.findAllProducts();
+    }
+
+    public Product findProduct(long id) {
+        return productService.findProductById(id);
     }
 
     //---------------------------------- Find all

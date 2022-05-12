@@ -4,7 +4,9 @@ import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.services.AuthService;
 import eu.elision.marketplace.services.JwtService;
 import eu.elision.marketplace.services.UserService;
+import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
+import eu.elision.marketplace.web.dtos.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -45,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<User> login(@RequestBody @Valid AuthRequestDto request, HttpServletResponse response) {
+    public ResponseEntity<UserDto> login(@RequestBody @Valid AuthRequestDto request, HttpServletResponse response) {
         try {
             Authentication authentication = authenticationManager
                     .authenticate(
@@ -59,7 +61,7 @@ public class AuthController {
             Cookie cookie = authService.generateTokenCookie(token);
             response.addCookie(cookie);
 
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return new ResponseEntity<>(Mapper.toUserDto(user), HttpStatus.OK);
         } catch (BadCredentialsException | InternalAuthenticationServiceException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

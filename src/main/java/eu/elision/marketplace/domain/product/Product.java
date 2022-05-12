@@ -25,7 +25,7 @@ public class Product
     private double price;
     @ManyToOne
     private Category category;
-    @ManyToOne
+    @ManyToOne()
     private Vendor vendor;
     private String description;
     @ElementCollection(fetch = FetchType.EAGER)

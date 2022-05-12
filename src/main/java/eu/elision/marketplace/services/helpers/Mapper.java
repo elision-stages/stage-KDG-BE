@@ -1,11 +1,11 @@
 package eu.elision.marketplace.services.helpers;
 
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
-import eu.elision.marketplace.web.dtos.CategoryDto;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.web.dtos.*;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class Mapper {
     }
 
     public static CategoryDto toCategoryDto(Category category) {
-        return new CategoryDto(category.getId(), category.getName(), category.getCharacteristics().stream().map(Mapper::toDynamicAttributeDto).toList());
+        return new CategoryDto(category.getId(), category.getName(), (category.getParent() == null ? null : category.getParent().getId()), category.getCharacteristics().stream().map(Mapper::toDynamicAttributeDto).toList());
     }
 
     public static List<CategoryDto> toCategoryDtoList(List<Category> categories) {
@@ -29,6 +29,21 @@ public class Mapper {
 
     public static DynamicAttributeDto toDynamicAttributeDto(DynamicAttribute dynamicAttribute) {
         return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList() != null ? dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null);
+    }
+
+    public static UserDto toUserDto(User user) {
+        String role = "customer";
+        if(user.getAuthorities().stream().anyMatch(predicate -> predicate.toString().equals("ROLE_ADMIN"))) {
+            role = "admin";
+        }else if(user.getAuthorities().stream().anyMatch(predicate -> predicate.toString().equals("ROLE_VENDOR"))) {
+            role = "vendor";
+        }
+        return new UserDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), role);
+    }
+
+    public static SmallProductDto toSmallProductDto(Product product) {
+        String image = product.getImages().size() > 0 ? product.getImages().get(0) : null;
+        return new SmallProductDto(product.getId(), product.getCategory().getName(), product.getName(), image, product.getDescription(), product.getPrice());
     }
 }
 
