@@ -104,8 +104,8 @@ public class Controller {
         productService.save(productDto, productAttributes, vendor);
     }
 
-    public void saveProduct(Product product) {
-        productService.save(product);
+    public Product saveProduct(Product product) {
+        return productService.save(product);
     }
 
     public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {

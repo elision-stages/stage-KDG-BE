@@ -2,13 +2,12 @@ package eu.elision.marketplace.services.converter;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.services.converter.exeption.ConversionException;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +19,7 @@ class ConverterTest {
     Converter<Product, AlgoliaProductDto> algoliaProductConverter;
 
     @Test
-    void test() {
+    void test() throws ConversionException {
         Vendor vendor = new Vendor();
         vendor.setBusinessName("vendor");
         Product product = new Product();

@@ -1,5 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.services.CategoryService;
@@ -79,5 +80,27 @@ class ProductControllerTest {
                         String.format("%s/addCategory", base),
                         new CategoryMakeDto(RandomStringUtils.randomAlphabetic(5), 0, new ArrayList<>()),
                         String.class).getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void testGetProductById() {
+        final Product product = new Product();
+        final String description = RandomStringUtils.randomAlphabetic(5);
+        final int price = RandomUtils.nextInt();
+        final String name = RandomStringUtils.randomAlphabetic(5);
+
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setName(name);
+
+        long productId = controller.saveProduct(product).getId();
+        ResponseEntity<Product> response = restTemplate.getForEntity(String.format("%s/product/%s", base, productId), Product.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getDescription()).isEqualTo(description);
+        assertThat(response.getBody().getPrice()).isEqualTo(price);
+        assertThat(response.getBody().getName()).isEqualTo(name);
     }
 }
