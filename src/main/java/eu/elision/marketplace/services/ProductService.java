@@ -10,7 +10,6 @@ import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class ProductService {

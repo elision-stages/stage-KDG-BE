@@ -2,10 +2,8 @@ package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.repositories.CategoryRepository;
-import eu.elision.marketplace.repositories.DynamicAttributeRepository;
 import eu.elision.marketplace.web.dtos.CategoryDto;
 import eu.elision.marketplace.web.dtos.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
@@ -13,7 +11,6 @@ import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

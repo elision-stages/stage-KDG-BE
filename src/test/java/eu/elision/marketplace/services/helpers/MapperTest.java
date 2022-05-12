@@ -1,7 +1,11 @@
 package eu.elision.marketplace.services.helpers;
 
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.CategoryDto;
+import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.UserDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -44,5 +48,33 @@ class MapperTest {
         List<CategoryDto> categoryDtos = new ArrayList<>(List.of(Mapper.toCategoryDto(category)));
 
         assertThat(categoryDtos.stream().anyMatch(categoryDto -> Objects.equals(categoryDto.id(), category.getId()))).isTrue();
+    }
+
+    @Test
+    void toCategoryTest() {
+        CategoryMakeDto categoryMakeDto = new CategoryMakeDto("Name", 0, new ArrayList<>());
+        Category category = Mapper.toCategory(categoryMakeDto);
+
+        assertThat(category.getName()).isEqualTo("Name");
+    }
+
+    @Test
+    void toUserDtoTest() {
+        User user = new Vendor();
+        Long id = RandomUtils.nextLong(1, 10);
+        String firstName = RandomStringUtils.randomAlphabetic(4);
+        String lastName = RandomStringUtils.randomAlphabetic(4);
+        String email = RandomStringUtils.randomAlphabetic(4);
+        user.setId(id);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        UserDto userDto = Mapper.toUserDto(user);
+
+        assertThat(userDto.id()).isEqualTo(id);
+        assertThat(userDto.firstName()).isEqualTo(firstName);
+        assertThat(userDto.lastName()).isEqualTo(lastName);
+        assertThat(userDto.email()).isEqualTo(email);
+        assertThat(userDto.role()).isEqualTo("vendor");
     }
 }

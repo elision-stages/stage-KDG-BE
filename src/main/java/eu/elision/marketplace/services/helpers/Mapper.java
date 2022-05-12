@@ -42,7 +42,7 @@ public class Mapper {
     }
 
     public static SmallProductDto toSmallProductDto(Product product) {
-        String image = product.getImages().size() > 0 ? product.getImages().get(0) : null;
+        String image = product.getImages().isEmpty() ? null : product.getImages().get(0);
         return new SmallProductDto(product.getId(), product.getCategory().getName(), product.getName(), image, product.getDescription(), product.getPrice());
     }
 }
