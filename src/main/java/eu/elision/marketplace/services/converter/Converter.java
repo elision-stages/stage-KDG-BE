@@ -1,5 +1,6 @@
 package eu.elision.marketplace.services.converter;
 
+import eu.elision.marketplace.services.converter.exeption.ConversionException;
 import eu.elision.marketplace.services.populator.Populator;
 
 import java.lang.reflect.InvocationTargetException;
@@ -7,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public abstract class Converter<S,T> {
+public abstract class Converter<S, T> {
     private final List<Populator<S, T>> populatorList;
     private Class<T> targetClass;
 
@@ -23,8 +24,9 @@ public abstract class Converter<S,T> {
                 populator.populate(source, targetInstance);
             }
             return targetInstance;
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new ConversionException(String.format("Problem converting %s to %s: %s", source.getClass(), targetClass, e.getMessage()));
         }
     }
 

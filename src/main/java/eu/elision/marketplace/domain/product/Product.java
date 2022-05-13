@@ -19,13 +19,13 @@ import java.util.List;
 public class Product
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private double price;
     @ManyToOne
     private Category category;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
     private String description;
     @ElementCollection(fetch = FetchType.LAZY)

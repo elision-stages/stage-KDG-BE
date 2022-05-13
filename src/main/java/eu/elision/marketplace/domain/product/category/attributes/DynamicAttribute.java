@@ -1,5 +1,7 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import eu.elision.marketplace.domain.product.category.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,11 @@ public class DynamicAttribute
     private boolean required;
     @Enumerated(EnumType.STRING)
     private Type type;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private PickList enumList;
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id", columnDefinition = "BIGINT")
+    private Category category;
+
 }
