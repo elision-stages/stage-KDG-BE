@@ -15,22 +15,20 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Entity
-public class Product
-{
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private double price;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Vendor vendor;
     private String description;
     @ElementCollection
     private List<String> images;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<DynamicAttributeValue<?>> attributes;
 
-    public Product()
-    {
+    public Product() {
         this.images = new ArrayList<>();
         this.attributes = new ArrayList<>();
     }

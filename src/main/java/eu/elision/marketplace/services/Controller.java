@@ -9,7 +9,10 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
+import eu.elision.marketplace.web.dtos.cart.CartDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -96,6 +99,10 @@ public class Controller {
         productService.save(productDto, productAttributes, vendor);
     }
 
+    public Product saveProduct(Product product) {
+        return productService.save(product);
+    }
+
     public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
         if (dynamicAttribute.getType() == Type.ENUMERATION) {
@@ -148,5 +155,16 @@ public class Controller {
 
     public List<Category> findAllCategories() {
         return categoryService.findAll();
+    }
+
+    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto) {
+        Customer customer = (Customer) userService.findUserByEmail(customerEmail);
+        customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count());
+        userService.save(customer);
+        return Mapper.toCartDto(customer.getCart());
+    }
+
+    public CartDto getCustomerCart(String customerName) {
+        return Mapper.toCartDto(((Customer) userService.loadUserByUsername(customerName)).getCart());
     }
 }
