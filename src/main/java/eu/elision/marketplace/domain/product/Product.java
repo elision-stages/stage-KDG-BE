@@ -30,7 +30,7 @@ public class Product
     private String description;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> images;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<DynamicAttributeValue<?>> attributes;
 
     public Product()

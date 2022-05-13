@@ -8,9 +8,9 @@ import eu.elision.marketplace.repositories.UserRepository;
 import eu.elision.marketplace.web.dtos.AddressDto;
 import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.VendorDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +52,9 @@ public class UserService implements UserDetailsService {
     }
 
     public User findUserById(long id) {
-        return userRepository.findById(id).orElse(null);
+        final User user = userRepository.findById(id).orElse(null);
+        if (user == null) throw new NotFoundException(String.format("User with id %s not found", id));
+        return user;
     }
 
     public Customer toCustomer(CustomerDto customerDto) {
@@ -75,8 +76,9 @@ public class UserService implements UserDetailsService {
         return new CustomerDto(customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getPassword());
     }
 
-    public void save(VendorDto vendorDto) {
-        userRepository.save(toVendor(vendorDto));
+    public Vendor save(VendorDto vendorDto)
+    {
+        return userRepository.save(toVendor(vendorDto));
     }
 
     private Vendor toVendor(VendorDto vendorDto) {

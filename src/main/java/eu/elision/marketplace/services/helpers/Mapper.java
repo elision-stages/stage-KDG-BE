@@ -1,62 +1,56 @@
 package eu.elision.marketplace.services.helpers;
 
+import eu.elision.marketplace.domain.orders.OrderLine;
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.web.dtos.CategoryDto;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
+import eu.elision.marketplace.domain.users.Cart;
+import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class Mapper
-{
-    private Mapper()
-    {
+public class Mapper {
+    private Mapper() {
     }
 
-    public static Category toCategory(CategoryMakeDto categoryMakeDto)
-    {
+    public static Category toCategory(CategoryMakeDto categoryMakeDto) {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
         return category;
     }
 
-    public static CategoryDto toCategoryDto(Category category)
-    {
-        return new CategoryDto(category.getId(), category.getName(), new ArrayList<>());
+    public static CategoryDto toCategoryDto(Category category) {
+        return new CategoryDto(category.getId(), category.getName(), category.getCharacteristics().stream().map(Mapper::toDynamicAttributeDto).toList());
     }
 
-    public static List<CategoryDto> toCategoryDtoList(List<Category> categories)
-    {
-        List<CategoryDto> dtoList = new ArrayList<>();
+    public static List<CategoryDto> toCategoryDtoList(List<Category> categories) {
+        return categories.stream().map(Mapper::toCategoryDto).toList();
+    }
 
-        for (Category category : categories)
-        {
-            if (!categoryInDtoList(dtoList, category))
-            {
-                if (category.getSubCategories().isEmpty()) dtoList.add(toCategoryDto(category));
-                else
-                {
+    public static DynamicAttributeDto toDynamicAttributeDto(DynamicAttribute dynamicAttribute) {
+        return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList() != null ? dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null);
+    }
 
-                    List<CategoryDto> sub = toCategoryDtoList(category.getSubCategories());
-                    CategoryDto parent = toCategoryDto(category);
-                    parent.subcategories().addAll(sub);
+    public static CartDto toCartDto(Cart cart) {
+        CartDto cartDto = new CartDto(new ArrayList<>(), cart.getTotalPrice());
+        for (OrderLine orderLine : cart.getOrderLines()) {
+            final Product product = orderLine.getProduct();
+            Collection<AttributeValue<String, String>> attributes = new ArrayList<>();
 
-                    dtoList.add(parent);
-                }
+            for (DynamicAttributeValue<?> attribute : product.getAttributes()) {
+                attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
-        }
-        return dtoList;
-    }
 
-    public static boolean categoryInDtoList(List<CategoryDto> list, Category category)
-    {
-        for (CategoryDto categoryDto : list)
-        {
-            if (categoryDto.id() == category.getId()) return true;
-            if (categoryDto.subcategories().stream().anyMatch(categoryDto1 -> categoryDto1.id() == category.getId()))
-                return true;
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getImages(), attributes, product.getVendor().getId())));
         }
-        return false;
+
+        return cartDto;
     }
 }
 
