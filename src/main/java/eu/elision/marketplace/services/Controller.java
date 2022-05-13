@@ -113,10 +113,9 @@ public class Controller
         saveUser(customer);
     }
 
-    public void saveProduct(ProductDto productDto)
+    public void saveProduct(Vendor vendor, ProductDto productDto)
     {
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
-        final User vendor = userService.findUserById(productDto.vendorId());
         dynamicAttributeValueService.save(productAttributes);
         productService.save(productDto, productAttributes, vendor);
     }

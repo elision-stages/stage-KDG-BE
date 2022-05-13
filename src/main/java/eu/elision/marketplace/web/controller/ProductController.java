@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.services.UserService;
@@ -12,6 +13,7 @@ import eu.elision.marketplace.web.dtos.SmallProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,8 +32,10 @@ public class ProductController
     }
 
     @PostMapping("/addProduct")
-    ResponseEntity<ResponseDto> addProduct(@RequestBody ProductDto productDto) {
-        controller.saveProduct(productDto);
+    @Secured("ROLE_VENDOR")
+    ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestBody ProductDto productDto) {
+        Vendor user = (Vendor)userService.loadUserByUsername(principal.getName());
+        controller.saveProduct(user, productDto);
         return ResponseEntity.ok(new ResponseDto("success"));
     }
 

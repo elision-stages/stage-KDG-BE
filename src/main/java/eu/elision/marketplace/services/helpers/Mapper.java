@@ -63,7 +63,7 @@ public class Mapper {
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getImages(), attributes, product.getVendor().getId())));
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getName(), product.getDescription(), product.getCategory().getId(), product.getImages(), attributes)));
         }
 
         return cartDto;
