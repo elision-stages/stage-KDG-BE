@@ -26,7 +26,7 @@ public class Category
     private String name;
     // columnDefinition BIGINT works for MySQL but H2 requires INT
     @JoinColumn(name = "parent_id", referencedColumnName = "id", columnDefinition = "BIGINT")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @Setter
     private Category parent;
     @JsonIgnore
