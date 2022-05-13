@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeBoolValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import org.apache.commons.lang3.RandomUtils;
@@ -25,6 +26,15 @@ class DynamicAttributeTest {
         dynamicAttribute.setId(id);
 
         assertThat(dynamicAttribute.getId()).isEqualTo(id);
+    }
+
+    @Test
+    void setSetCategory() {
+        DynamicAttribute dynamicAttribute = new DynamicAttribute();
+        final Category category = new Category();
+        dynamicAttribute.setCategory(category);
+
+        assertThat(dynamicAttribute.getCategory()).isEqualTo(category);
     }
 
 }

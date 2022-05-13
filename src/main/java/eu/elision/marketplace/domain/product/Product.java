@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product;
 
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
 import lombok.AllArgsConstructor;
@@ -17,10 +18,13 @@ import java.util.List;
 @Entity
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
     private double price;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    private Category category;
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
     private String description;
     @ElementCollection

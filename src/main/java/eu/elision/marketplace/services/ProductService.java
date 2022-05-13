@@ -39,6 +39,10 @@ public class ProductService {
         return product;
     }
 
+    public Collection<Product> findProductsByVendor(Vendor vendor) {
+        return productRepository.findProductsByVendor(vendor);
+    }
+
     public Collection<Product> findAllProducts() {
         return productRepository.findAll();
     }

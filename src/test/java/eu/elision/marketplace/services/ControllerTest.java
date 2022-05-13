@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 @SpringBootTest
 class ControllerTest {
@@ -116,6 +116,33 @@ class ControllerTest {
 
         controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
         assertThat(controller.findAllCustomerDto()).hasSize(initSize + 1);
+    }
+
+    @Test
+    void findProductsByVendor() {
+        final String firstName = RandomStringUtils.randomAlphabetic(5);
+        final String lastName = RandomStringUtils.randomAlphabetic(5);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        final String phone = RandomStringUtils.random(10, false, true);
+
+        Vendor vendor = new Vendor();
+        vendor.setFirstName(firstName);
+        vendor.setLastName(lastName);
+        vendor.setEmail(email);
+        vendor.setPassword(password);
+        vendor.setPhoneNumber(phone);
+        controller.saveUser(vendor);
+
+        Product product = new Product();
+        product.setVendor(vendor);
+        product.setName(RandomStringUtils.randomAlphabetic(5));
+        controller.saveProduct(product);
+
+        Collection<Product> products = controller.findProductsByVendor(vendor);
+
+        assertThat(products).hasSize(1);
+        assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getName(), product.getName()))).isTrue();
     }
 
     @Test
