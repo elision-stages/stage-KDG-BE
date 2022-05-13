@@ -184,7 +184,6 @@ class ControllerTest {
 
         final int count = RandomUtils.nextInt(1, 10);
         controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
-        controller.addProductToCart(email, new AddProductToCartDto(productId, count, true));
 
         CartDto cartDto = controller.getCustomerCart(email);
         assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.productDto().description(), description))).isTrue();

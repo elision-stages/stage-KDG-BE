@@ -46,6 +46,7 @@ public class Cart
      *
      * @param product  the product you want to add
      * @param quantity the amount of products you want to add
+     * @param add      if true, the quantity will be added to the quantity if there is already a order line with the same proudct. If false the previous quantity will be overwritten
      */
     public void addProduct(Product product, int quantity, boolean add)
     {
@@ -66,6 +67,12 @@ public class Cart
         orderLines.add(orderLine);
     }
 
+    /**
+     * Make an order from the shopping cart of a user
+     *
+     * @param user the user who wants to checkout
+     * @return the order created from the cart
+     */
     public Order checkout(User user)
     {
         if (orderLines.isEmpty()) return null;
