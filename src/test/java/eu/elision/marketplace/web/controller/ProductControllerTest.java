@@ -3,6 +3,7 @@ package eu.elision.marketplace.web.controller;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.CategoryService;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.web.dtos.*;
@@ -25,7 +26,8 @@ import java.util.Locale;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductControllerTest {
+class ProductControllerTest
+{
     private static URL base;
     private TestRestTemplate restTemplate;
     @LocalServerPort
@@ -36,13 +38,15 @@ class ProductControllerTest {
     private Controller controller;
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() throws MalformedURLException
+    {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void addProduct() {
+    void addProduct()
+    {
         final String name = RandomStringUtils.randomAlphabetic(4);
         Category category = categoryService.save(new CategoryMakeDto("Test", 0, new ArrayList<>()));
         controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()), category);
@@ -74,7 +78,8 @@ class ProductControllerTest {
     }
 
     @Test
-    void addCategory() {
+    void addCategory()
+    {
         assertThat(
                 restTemplate.postForEntity(
                         String.format("%s/addCategory", base),
@@ -83,15 +88,30 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetProductById() {
+    void testGetProductById()
+    {
         final Product product = new Product();
         final String description = RandomStringUtils.randomAlphabetic(5);
         final int price = RandomUtils.nextInt();
         final String name = RandomStringUtils.randomAlphabetic(5);
 
+        final Vendor vendor = new Vendor();
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        final String phoneNumber = RandomStringUtils.random(10, false, true);
+
         product.setDescription(description);
         product.setPrice(price);
         product.setName(name);
+        //product.setVendor(vendor);
+
+        vendor.setFirstName(firstName);
+        vendor.setLastName(lastName);
+        vendor.setEmail(email);
+        vendor.setPassword(password);
+        vendor.setPhoneNumber(phoneNumber);
 
         long productId = controller.saveProduct(product).getId();
         ResponseEntity<Product> response = restTemplate.getForEntity(String.format("%s/product/%s", base, productId), Product.class);

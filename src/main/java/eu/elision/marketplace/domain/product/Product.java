@@ -24,7 +24,7 @@ public class Product {
     private double price;
     @ManyToOne
     private Category category;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
     private String description;
     @ElementCollection

@@ -1,12 +1,19 @@
 package eu.elision.marketplace.services.helpers;
 
+import eu.elision.marketplace.domain.orders.OrderLine;
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
-import eu.elision.marketplace.web.dtos.CategoryDto;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
+import eu.elision.marketplace.domain.users.Cart;
+import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Mapper {

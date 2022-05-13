@@ -1,5 +1,6 @@
 package eu.elision.marketplace.services;
 
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
