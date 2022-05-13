@@ -95,18 +95,22 @@ public class CategoryService
         );
     }
 
-    private Category toCategory(CategoryMakeDto categoryMakeDto) {
+    private Category toCategory(CategoryMakeDto categoryMakeDto)
+    {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
 
         return category;
     }
 
-    public void save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
+    public Category save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes)
+    {
         Category category = categoryRepository.save(toCategory(categoryMakeDto));
-        for(DynamicAttribute attr : dynamicAttributes) {
+        for (DynamicAttribute attr : dynamicAttributes)
+        {
             attr.setCategory(category);
             attributeService.save(attr);
         }
+        return category;
     }
 }

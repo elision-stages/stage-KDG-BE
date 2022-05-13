@@ -7,6 +7,7 @@ import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.repositories.CategoryRepository;
 import eu.elision.marketplace.web.dtos.CategoryDto;
+import eu.elision.marketplace.web.dtos.CategoryMakeDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -15,7 +16,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +115,12 @@ class CategoryServiceTest {
 
         CategoryDto categoryDto = categoryService.toCategoryDto(cat1);
 
+
         assertThat(categoryDto.name()).isEqualTo(name);
+        long savedCatId = categoryService.save(new CategoryMakeDto(cat1.getName(), 0, new ArrayList<>()), cat1.getCharacteristics()).getId();
+
+        final Category byId = categoryService.findById(savedCatId);
+        assertThat(byId).isNotNull();
+        assertThat(byId.getName()).isEqualTo(cat1.getName());
     }
 }

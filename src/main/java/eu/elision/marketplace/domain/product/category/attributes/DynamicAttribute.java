@@ -23,7 +23,7 @@ public class DynamicAttribute
     private boolean required;
     @Enumerated(EnumType.STRING)
     private Type type;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private PickList enumList;
     @JsonIgnore
     @ManyToOne(optional = false)
