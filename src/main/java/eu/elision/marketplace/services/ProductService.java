@@ -47,7 +47,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product findProductById(long id) {
-        return productRepository.findById(id).orElse(null);
+    public Product findProductById(long productId) {
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product == null) {
+            throw new NotFoundException(String.format("Product with id %s not found", productId));
+        }
+        return product;
     }
 }

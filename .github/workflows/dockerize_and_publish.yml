@@ -1,0 +1,87 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build docker image and publish to ECR
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+    branches: [ develop ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build_and_test:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.1.1
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: run tests
+        run: ./gradlew test
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube --info
+  # This workflow contains a single job called "build"
+  dockerize:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.1.1
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Cache Gradle packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: build jar
+        run: ./gradlew bootJar
+      - name: AWS ECR
+        uses: kciter/aws-ecr-action@v4
+        with:
+          # The AWS access key id
+          access_key_id: AKIAXAYSHCCXOVA7PP62
+          # The AWS secret access key
+          secret_access_key: ${{ secrets.AWS_SECRET }}
+          # AWS Account ID
+          account_id: 482685161646
+          repo: kdg/marketplace-be
+          # The AWS region
+          region: eu-west-1
+          # Set this to true to create the repository if it does not already exist
+          create_repo: true
+          # Extra flags to pass to docker build (see docs.docker.com/engine/reference/commandline/build)
+          extra_build_args: --build-arg JAR_FILE=build/libs/marketplace-0.0.1-SNAPSHOT.jar --build-arg ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY }}
+          tags: latest,${{ github.sha }}
+          dockerfile: dockerfile

@@ -1,6 +1,7 @@
 package eu.elision.marketplace.domain.users;
 
 import eu.elision.marketplace.domain.orders.OrderLine;
+import eu.elision.marketplace.domain.product.Product;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,12 +14,13 @@ import java.util.List;
  */
 @Getter
 @Entity
+
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
     private Long id;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<OrderLine> orderLines;
 
     public Cart() {
@@ -32,5 +34,13 @@ public class Cart {
      */
     public double getTotalPrice() {
         return orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
+    }
+
+    public void addProduct(Product product, int quantity) {
+        final OrderLine orderLine = new OrderLine();
+        orderLine.setProduct(product);
+        orderLine.setQuantity(quantity);
+
+        orderLines.add(orderLine);
     }
 }
