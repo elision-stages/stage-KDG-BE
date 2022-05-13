@@ -4,6 +4,9 @@ import eu.elision.marketplace.domain.product.category.attributes.PickList;
 import eu.elision.marketplace.repositories.PickListRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for pick lists
+ */
 @Service
 public class PickListService {
     private final PickListRepository pickListRepository;

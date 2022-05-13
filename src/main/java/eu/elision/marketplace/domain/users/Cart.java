@@ -26,6 +26,9 @@ public class Cart
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<OrderLine> orderLines;
 
+    /**
+     * No args constructor. Initalises order lines array
+     */
     public Cart()
     {
         orderLines = new ArrayList<>();

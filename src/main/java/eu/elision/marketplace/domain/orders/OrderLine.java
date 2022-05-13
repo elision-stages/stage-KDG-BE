@@ -23,6 +23,15 @@ public class OrderLine
     private Product product;
     private int quantity;
 
+    /**
+     * All args constructor.
+     *
+     * @param orderLineNumber the number of the orderline. Is the id in the database
+     * @param vendor          the vendor of the product
+     * @param orderNumber     the ordernumber the order line is connected to
+     * @param product         the product in the
+     * @param quantity        the quantity of the product
+     */
     public OrderLine(int orderLineNumber, Vendor vendor, String orderNumber, Product product, int quantity)
     {
         this.orderLineNumber = orderLineNumber;

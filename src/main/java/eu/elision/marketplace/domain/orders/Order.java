@@ -24,6 +24,9 @@ public class Order
     @OneToMany(cascade = CascadeType.MERGE)
     private List<OrderLine> lines;
 
+    /**
+     * Public no args constructor. Initialises the orderlines array
+     */
     public Order()
     {
         lines = new ArrayList<>();
