@@ -1,10 +1,12 @@
 package eu.elision.marketplace.services.helpers;
 
+import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.CategoryDto;
 import eu.elision.marketplace.web.dtos.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.SmallProductDto;
 import eu.elision.marketplace.web.dtos.UserDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -16,9 +18,11 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapperTest {
+class MapperTest
+{
     @Test
-    void toCategoryDtoList() {
+    void toCategoryDtoList()
+    {
         Category parent = new Category();
         Category child = new Category();
 
@@ -40,7 +44,8 @@ class MapperTest {
     }
 
     @Test
-    void categoryInDtoListTest() {
+    void categoryInDtoListTest()
+    {
         final Category category = new Category();
         category.setName(RandomStringUtils.randomAlphabetic(4));
         category.setId(RandomUtils.nextLong(1, 10));
@@ -51,7 +56,8 @@ class MapperTest {
     }
 
     @Test
-    void toCategoryTest() {
+    void toCategoryTest()
+    {
         CategoryMakeDto categoryMakeDto = new CategoryMakeDto("Name", 0, new ArrayList<>());
         Category category = Mapper.toCategory(categoryMakeDto);
 
@@ -59,7 +65,8 @@ class MapperTest {
     }
 
     @Test
-    void toUserDtoTest() {
+    void toUserDtoTest()
+    {
         User user = new Vendor();
         Long id = RandomUtils.nextLong(1, 10);
         String firstName = RandomStringUtils.randomAlphabetic(4);
@@ -76,5 +83,20 @@ class MapperTest {
         assertThat(userDto.lastName()).isEqualTo(lastName);
         assertThat(userDto.email()).isEqualTo(email);
         assertThat(userDto.role()).isEqualTo("vendor");
+    }
+
+    @Test
+    void testToSmallDto()
+    {
+        Product product = new Product();
+        final String name = RandomStringUtils.randomAlphabetic(5);
+        product.setName(name);
+        final String image1 = RandomStringUtils.randomAlphabetic(5);
+        product.setImages(List.of(image1, RandomStringUtils.randomAlphabetic(5)));
+
+        SmallProductDto smallProductDto = Mapper.toSmallProductDto(product);
+
+        assertThat(smallProductDto.name()).isEqualTo(name);
+        assertThat(smallProductDto.image()).isEqualTo(image1);
     }
 }
