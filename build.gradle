@@ -8,7 +8,7 @@ plugins {
 
 group = 'eu.elision'
 version = '0.0.1-SNAPSHOT'
-//sourceCompatibility = '17'
+sourceCompatibility = '17'
 
 configurations {
 	compileOnly {
@@ -26,6 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
     implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.20'
+    implementation 'junit:junit:4.13.2'
+
     implementation 'junit:junit:4.13.2'
 
     implementation 'com.algolia:algoliasearch-core:3.10.0'

@@ -19,16 +19,16 @@ import java.util.List;
 public class Product
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private double price;
     @ManyToOne
     private Category category;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Vendor vendor;
     private String description;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> images;
     @OneToMany(fetch = FetchType.EAGER)
     private List<DynamicAttributeValue<?>> attributes;
