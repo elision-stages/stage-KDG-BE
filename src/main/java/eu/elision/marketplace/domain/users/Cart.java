@@ -16,7 +16,8 @@ import java.util.List;
 @Getter
 @Entity
 
-public class Cart {
+public class Cart
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
@@ -24,7 +25,8 @@ public class Cart {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private final List<OrderLine> orderLines;
 
-    public Cart() {
+    public Cart()
+    {
         orderLines = new ArrayList<>();
     }
 
@@ -49,6 +51,7 @@ public class Cart {
 
     public Order checkout(User user)
     {
+        if (orderLines.isEmpty()) return null;
         Order order = new Order();
         order.getLines().addAll(orderLines);
         order.setUser(user);

@@ -20,13 +20,22 @@ public class CartController {
 
     @PostMapping("add")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<CartDto> addProductToCart(Principal principal, @RequestBody AddProductToCartDto addProductDto) {
+    public ResponseEntity<CartDto> addProductToCart(Principal principal, @RequestBody AddProductToCartDto addProductDto)
+    {
         return ResponseEntity.ok(controller.addProductToCart(principal.getName(), addProductDto));
     }
 
     @GetMapping("/get")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<CartDto> getCart(Principal principal) {
+    public ResponseEntity<CartDto> getCart(Principal principal)
+    {
         return ResponseEntity.ok(controller.getCustomerCart(principal.getName()));
+    }
+
+    @GetMapping("/checkout")
+    @Secured("ROLE_CUSTOMER")
+    public ResponseEntity<Long> checkoutCart(Principal principal)
+    {
+        return ResponseEntity.ok(controller.checkoutCart(principal.getName()));
     }
 }

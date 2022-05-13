@@ -150,6 +150,9 @@ class ControllerTest
         vendor.setPassword(password);
         vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
+
+        controller.saveUser(vendor);
+
         product.setVendor(vendor);
 
         final String description = RandomStringUtils.randomAlphabetic(5);
@@ -184,6 +187,24 @@ class ControllerTest
         customer.setLastName(lastName);
         customer.setEmail(email);
         customer.setPassword(password);
+
+        final Vendor vendor = new Vendor();
+        vendor.setLastName(RandomStringUtils.randomAlphabetic(4));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(4));
+        vendor.setPassword(password);
+        vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
+        vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
+        controller.saveUser(vendor);
+
+        Product product = new Product();
+        final int price = RandomUtils.nextInt(1, 100);
+        product.setPrice(price);
+        product.setVendor(vendor);
+        controller.saveUser(vendor);
+        controller.saveUser(customer);
+
+        final int count = RandomUtils.nextInt(1, 100);
+        controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count));
 
 
         controller.saveUser(customer);

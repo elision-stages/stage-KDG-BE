@@ -20,7 +20,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private double price;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
     private String description;
     @ElementCollection

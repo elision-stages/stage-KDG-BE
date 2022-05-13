@@ -21,7 +21,7 @@ public class Order
     private long orderNumber;
     @ManyToOne
     private User user;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.MERGE)
     private List<OrderLine> lines;
 
     public Order()
