@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.users;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import lombok.Getter;
@@ -32,15 +33,26 @@ public class Cart {
      *
      * @return the value of all the orderLines in the cart
      */
-    public double getTotalPrice() {
+    public double getTotalPrice()
+    {
         return orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 
-    public void addProduct(Product product, int quantity) {
+    public void addProduct(Product product, int quantity)
+    {
         final OrderLine orderLine = new OrderLine();
         orderLine.setProduct(product);
         orderLine.setQuantity(quantity);
 
         orderLines.add(orderLine);
+    }
+
+    public Order checkout(User user)
+    {
+        Order order = new Order();
+        order.getLines().addAll(orderLines);
+        order.setUser(user);
+
+        return order;
     }
 }

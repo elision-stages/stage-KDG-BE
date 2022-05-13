@@ -1,5 +1,6 @@
 package eu.elision.marketplace.services;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
@@ -13,6 +14,7 @@ import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.*;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,12 @@ public class Controller {
     private final DynamicAttributeValueService dynamicAttributeValueService;
     private final PickListItemService pickListItemService;
     private final PickListService pickListService;
+    private final OrderService orderService;
 
 
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService) {
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService)
+    {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
@@ -44,6 +48,7 @@ public class Controller {
         this.dynamicAttributeValueService = dynamicAttributeValueService;
         this.pickListItemService = pickListItemService;
         this.pickListService = pickListService;
+        this.orderService = orderService;
     }
 
     //---------------------------------- Find all - only for testing
@@ -140,31 +145,54 @@ public class Controller {
         return userService.save(newVendorDto);
     }
 
-    public User findUserByEmail(String email) {
+    public User findUserByEmail(String email)
+    {
         return userService.findUserByEmail(email);
     }
 
 
-    public void saveCategory(CategoryMakeDto categoryMakeDto) {
+    public void saveCategory(CategoryMakeDto categoryMakeDto)
+    {
         categoryService.save(categoryMakeDto, categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList());
     }
 
-    public Category findCategoryByName(String name) {
+    public Category findCategoryByName(String name)
+    {
         return categoryService.findByName(name);
     }
 
-    public List<Category> findAllCategories() {
+    public List<Category> findAllCategories()
+    {
         return categoryService.findAll();
     }
 
-    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto) {
+    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto)
+    {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count());
         userService.save(customer);
         return Mapper.toCartDto(customer.getCart());
     }
 
-    public CartDto getCustomerCart(String customerName) {
+    public CartDto getCustomerCart(String customerName)
+    {
         return Mapper.toCartDto(((Customer) userService.loadUserByUsername(customerName)).getCart());
+    }
+
+    public long checkoutCart(String userEmail)
+    {
+        User user = userService.findUserByEmail(userEmail);
+
+        if (!(user instanceof Customer customer))
+            throw new NotFoundException(String.format("User with email %s is not a customer", userEmail));
+
+        final Order save = orderService.save(customer.getCart().checkout(customer));
+        return save.getOrderNumber();
+
+    }
+
+    public Order findOrderById(long orderId)
+    {
+        return orderService.findOrderById(orderId);
     }
 }

@@ -1,5 +1,6 @@
 package eu.elision.marketplace.services;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
@@ -21,13 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-class ControllerTest {
+class ControllerTest
+{
 
     @Autowired
     Controller controller;
 
     @Test
-    void saveCostumerWithAddress() {
+    void saveCostumerWithAddress()
+    {
         final int initUserRepoSize = controller.findAllUsers().size();
         final int initAddressRepoSize = controller.findAllAddresses().size();
 
@@ -77,7 +80,8 @@ class ControllerTest {
     }
 
     @Test
-    void saveCustomerWithoutAddress() {
+    void saveCustomerWithoutAddress()
+    {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();
@@ -106,12 +110,14 @@ class ControllerTest {
     }
 
     @Test
-    void findAllCategoriesTest() {
+    void findAllCategoriesTest()
+    {
         assertThat(controller.findAllCategories()).isNotNull();
     }
 
     @Test
-    void findAllCustomerDtoTest() {
+    void findAllCustomerDtoTest()
+    {
         final int initSize = controller.findAllCustomerDto().size();
 
         controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
@@ -119,7 +125,8 @@ class ControllerTest {
     }
 
     @Test
-    void addGetProductToCartTest() {
+    void addGetProductToCartTest()
+    {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -161,6 +168,33 @@ class ControllerTest {
         assertThat(orderLineDto.productDto().price()).isEqualTo(price);
 
         assertThat(cartDto.totalPrice()).isEqualTo(price * count);
+    }
+
+    @Test
+    void checkoutCartTest()
+    {
+        final Customer customer = new Customer();
+
+        final String firstName = RandomStringUtils.randomAlphabetic(5);
+        final String lastName = RandomStringUtils.randomAlphabetic(5);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setEmail(email);
+        customer.setPassword(password);
+
+
+        controller.saveUser(customer);
+        final long orderId = controller.checkoutCart(email);
+        Order order = controller.findOrderById(orderId);
+        assertThat(order).isNotNull();
+        assertThat(order.getUser().getFirstName()).isEqualTo(firstName);
+        assertThat(order.getUser().getLastName()).isEqualTo(lastName);
+        assertThat(order.getUser().getPassword()).isEqualTo(password);
+        assertThat(order.getUser().getEmail()).isEqualTo(email);
+
     }
 
 }
