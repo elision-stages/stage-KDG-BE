@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The cart contains the orderLines of an customer that aren't bought yet
@@ -40,8 +41,24 @@ public class Cart
         return orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 
-    public void addProduct(Product product, int quantity)
+    /**
+     * Add a product to a cart
+     *
+     * @param product  the product you want to add
+     * @param quantity the amount of products you want to add
+     */
+    public void addProduct(Product product, int quantity, boolean add)
     {
+        if (orderLines.stream().anyMatch(orderLine -> Objects.equals(orderLine.getProduct().getId(), product.getId())))
+            for (OrderLine ol : orderLines)
+            {
+                if (Objects.equals(ol.getProduct().getId(), product.getId()))
+                {
+                    ol.setQuantity(add ? ol.getQuantity() + quantity : quantity);
+                    return;
+                }
+            }
+
         final OrderLine orderLine = new OrderLine();
         orderLine.setProduct(product);
         orderLine.setQuantity(quantity);

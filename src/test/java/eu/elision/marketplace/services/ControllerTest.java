@@ -183,7 +183,8 @@ class ControllerTest {
         long productId = controller.saveProduct(product).getId();
 
         final int count = RandomUtils.nextInt(1, 10);
-        controller.addProductToCart(email, new AddProductToCartDto(productId, count));
+        controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
+        controller.addProductToCart(email, new AddProductToCartDto(productId, count, true));
 
         CartDto cartDto = controller.getCustomerCart(email);
         assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.productDto().description(), description))).isTrue();
@@ -227,7 +228,7 @@ class ControllerTest {
         controller.saveUser(customer);
 
         final int count = RandomUtils.nextInt(1, 100);
-        controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count));
+        controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count, false));
 
 
         controller.saveUser(customer);

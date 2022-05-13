@@ -181,7 +181,7 @@ public class Controller {
 
     public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto) {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
-        customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count());
+        customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count(), addProductDto.add());
         userService.save(customer);
         return Mapper.toCartDto(customer.getCart());
     }

@@ -11,7 +11,7 @@ class AddProductToCartDtoTest {
     void testFields() {
         final int count = RandomUtils.nextInt();
         final long productId = RandomUtils.nextLong();
-        AddProductToCartDto addProductToCartDto = new AddProductToCartDto(productId, count);
+        AddProductToCartDto addProductToCartDto = new AddProductToCartDto(productId, count, false);
 
         assertThat(addProductToCartDto.productId()).isEqualTo(productId);
         assertThat(addProductToCartDto.count()).isEqualTo(count);

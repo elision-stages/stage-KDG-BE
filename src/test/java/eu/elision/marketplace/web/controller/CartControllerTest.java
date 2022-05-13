@@ -71,7 +71,7 @@ class CartControllerTest
 
         final int count = RandomUtils.nextInt(1, 100);
         assertThat(
-                controller.addProductToCart(email, new AddProductToCartDto(controller.saveProduct(product).getId(), count)).totalPrice())
+                controller.addProductToCart(email, new AddProductToCartDto(controller.saveProduct(product).getId(), count, false)).totalPrice())
                 .isEqualTo(price * count);
 
         ResponseEntity<String> response = restTemplate.getForEntity(
