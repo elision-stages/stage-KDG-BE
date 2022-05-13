@@ -1,5 +1,6 @@
 package eu.elision.marketplace.services;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
@@ -13,6 +14,7 @@ import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.*;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,7 @@ public class Controller {
         this.dynamicAttributeValueService = dynamicAttributeValueService;
         this.pickListItemService = pickListItemService;
         this.pickListService = pickListService;
+        this.orderService = orderService;
     }
 
     //---------------------------------- Find all - only for testing
