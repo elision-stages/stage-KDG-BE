@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
@@ -170,6 +171,7 @@ class ControllerTest {
         vendor.setPassword(password);
         vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
+
         product.setVendor(vendor);
 
         final String description = RandomStringUtils.randomAlphabetic(5);

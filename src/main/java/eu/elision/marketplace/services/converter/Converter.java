@@ -32,6 +32,5 @@ public abstract class Converter<S, T> {
 
     public Collection<T> convertAll(Collection<S> sourceList) {
         return sourceList.stream().map(this::convert).toList();
-
     }
 }

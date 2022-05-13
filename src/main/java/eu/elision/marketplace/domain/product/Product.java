@@ -16,7 +16,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Entity
-public class Product {
+public class Product
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,12 +28,16 @@ public class Product {
     @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
     private String description;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> images;
     @OneToMany(fetch = FetchType.EAGER)
     private List<DynamicAttributeValue<?>> attributes;
 
-    public Product() {
+    /**
+     * Constructor of product. Creates a new product with empty parameters
+     */
+    public Product()
+    {
         this.images = new ArrayList<>();
         this.attributes = new ArrayList<>();
     }

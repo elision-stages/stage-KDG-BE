@@ -9,6 +9,6 @@ public class AlgoliaProductDynamicAttributePopulator implements Populator<Produc
 
     @Override
     public void populate(Product source, AlgoliaProductDto target) {
-        // TODO
+        source.getAttributes().forEach(attr -> target.getParameters().put(attr.getAttributeName(), attr.getValue()));
     }
 }
