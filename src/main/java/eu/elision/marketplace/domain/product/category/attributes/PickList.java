@@ -17,6 +17,6 @@ public class PickList
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String code;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<PickListItem> items;
 }

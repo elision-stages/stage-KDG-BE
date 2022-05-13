@@ -1,6 +1,5 @@
 package eu.elision.marketplace.services;
 
-import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
@@ -14,7 +13,6 @@ import eu.elision.marketplace.services.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.*;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,8 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class Controller
-{
+public class Controller {
     private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
@@ -49,26 +46,27 @@ public class Controller
         this.dynamicAttributeValueService = dynamicAttributeValueService;
         this.pickListItemService = pickListItemService;
         this.pickListService = pickListService;
-        this.orderService = orderService;
     }
 
     //---------------------------------- Find all - only for testing
-    public List<Address> findAllAddresses()
-    {
+    public List<Address> findAllAddresses() {
         return addressService.findAll();
     }
 
-    public List<User> findAllUsers()
-    {
+    public List<User> findAllUsers() {
         return userService.findAllUsers();
     }
 
-    public List<CustomerDto> findAllCustomerDto()
-    {
+    public List<CustomerDto> findAllCustomerDto() {
         return findAllUsers().stream()
                 .filter(Customer.class::isInstance)
                 .map(user -> userService.toCustomerDto((Customer) user))
                 .toList();
+    }
+
+    public Collection<Product> findProductsByVendor(Vendor vendor)
+    {
+        return productService.findProductsByVendor(vendor);
     }
 
     public Collection<Product> findAllProducts()
@@ -76,39 +74,38 @@ public class Controller
         return productService.findAllProducts();
     }
 
+    public Product findProduct(long id)
+    {
+        return productService.findProductById(id);
+    }
+
     //---------------------------------- Find all
 
-    public Collection<CategoryDto> findAllCategoriesDto()
-    {
+    public Collection<CategoryDto> findAllCategoriesDto() {
         return categoryService.findAllDto();
     }
 
     //--------------------------------- Save
 
-    public Address saveAddress(Address address)
-    {
+    public Address saveAddress(Address address) {
         return addressService.save(address);
     }
 
-    public User saveUser(User user)
-    {
+    public User saveUser(User user) {
         return userService.save(user);
     }
 
-    public void saveCustomer(CustomerDto customerDto)
-    {
+    public void saveCustomer(CustomerDto customerDto) {
         String password = bCryptPasswordEncoder.encode(customerDto.password());
         CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
         Customer customer = userService.toCustomer(newCustomerDto);
-        if (customer.getMainAddress() != null)
-        {
+        if (customer.getMainAddress() != null) {
             saveAddress(customer.getMainAddress());
         }
         saveUser(customer);
     }
 
-    public void saveProduct(ProductDto productDto)
-    {
+    public void saveProduct(ProductDto productDto) {
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
         final User vendor = userService.findUserById(productDto.vendorId());
         dynamicAttributeValueService.save(productAttributes);
@@ -117,12 +114,14 @@ public class Controller
 
     public Product saveProduct(Product product)
     {
+        userService.save(product.getVendor());
         return productService.save(product);
     }
 
-    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto)
+    public DynamicAttribute saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
     {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
+        dynamicAttribute.setCategory(category);
         if (dynamicAttribute.getType() == Type.ENUMERATION)
         {
             pickListItemService.save(dynamicAttribute.getEnumList().getItems());
@@ -133,18 +132,15 @@ public class Controller
 
     //--------------------------------- findById
 
-    public Address findAddressById(long id)
-    {
+    public Address findAddressById(long id) {
         return addressService.findById(id);
     }
 
-    public User findUserById(long id)
-    {
+    public User findUserById(long id) {
         return userService.findUserById(id);
     }
 
-    public Vendor saveVendor(VendorDto vendorDto)
-    {
+    public Vendor saveVendor(VendorDto vendorDto) {
         String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
         VendorDto newVendorDto = new VendorDto(
                 vendorDto.firstName(),
@@ -162,37 +158,32 @@ public class Controller
         return userService.save(newVendorDto);
     }
 
-    public User findUserByEmail(String email)
-    {
+    public User findUserByEmail(String email) {
         return userService.findUserByEmail(email);
     }
 
 
     public void saveCategory(CategoryMakeDto categoryMakeDto)
     {
-        categoryService.save(categoryMakeDto, categoryMakeDto.characteristics().stream().map(this::saveDynamicAttribute).toList());
+        categoryService.save(categoryMakeDto);
     }
 
-    public Category findCategoryByName(String name)
-    {
+    public Category findCategoryByName(String name) {
         return categoryService.findByName(name);
     }
 
-    public List<Category> findAllCategories()
-    {
+    public List<Category> findAllCategories() {
         return categoryService.findAll();
     }
 
-    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto)
-    {
+    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto) {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count());
         userService.save(customer);
         return Mapper.toCartDto(customer.getCart());
     }
 
-    public CartDto getCustomerCart(String customerName)
-    {
+    public CartDto getCustomerCart(String customerName) {
         return Mapper.toCartDto(((Customer) userService.loadUserByUsername(customerName)).getCart());
     }
 

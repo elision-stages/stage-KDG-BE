@@ -29,6 +29,8 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: run tests
         run: ./gradlew test
+        env:
+          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

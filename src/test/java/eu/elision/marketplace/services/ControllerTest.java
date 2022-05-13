@@ -1,6 +1,5 @@
 package eu.elision.marketplace.services;
 
-import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
@@ -22,15 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-class ControllerTest
-{
+class ControllerTest {
 
     @Autowired
     Controller controller;
 
     @Test
-    void saveCostumerWithAddress()
-    {
+    void saveCostumerWithAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
         final int initAddressRepoSize = controller.findAllAddresses().size();
 
@@ -80,8 +77,7 @@ class ControllerTest
     }
 
     @Test
-    void saveCustomerWithoutAddress()
-    {
+    void saveCustomerWithoutAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();
@@ -110,14 +106,12 @@ class ControllerTest
     }
 
     @Test
-    void findAllCategoriesTest()
-    {
+    void findAllCategoriesTest() {
         assertThat(controller.findAllCategories()).isNotNull();
     }
 
     @Test
-    void findAllCustomerDtoTest()
-    {
+    void findAllCustomerDtoTest() {
         final int initSize = controller.findAllCustomerDto().size();
 
         controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
@@ -125,8 +119,34 @@ class ControllerTest
     }
 
     @Test
-    void addGetProductToCartTest()
-    {
+    void findProductsByVendor() {
+        final String firstName = RandomStringUtils.randomAlphabetic(5);
+        final String lastName = RandomStringUtils.randomAlphabetic(5);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        final String phone = RandomStringUtils.random(10, false, true);
+
+        Vendor vendor = new Vendor();
+        vendor.setFirstName(firstName);
+        vendor.setLastName(lastName);
+        vendor.setEmail(email);
+        vendor.setPassword(password);
+        vendor.setPhoneNumber(phone);
+        controller.saveUser(vendor);
+
+        Product product = new Product();
+        product.setVendor(vendor);
+        product.setName(RandomStringUtils.randomAlphabetic(5));
+        controller.saveProduct(product);
+
+        Collection<Product> products = controller.findProductsByVendor(vendor);
+
+        assertThat(products).hasSize(1);
+        assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getName(), product.getName()))).isTrue();
+    }
+
+    @Test
+    void addGetProductToCartTest() {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -152,6 +172,7 @@ class ControllerTest
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
 
         controller.saveUser(vendor);
+
 
         product.setVendor(vendor);
 

@@ -82,7 +82,7 @@ public class DynamicAttributeService
         return dynamicAttribute;
     }
 
-    public Collection<DynamicAttribute> toDynamicAttribute(Collection<DynamicAttributeDto> dynamicAttributeDtos)
+    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos)
     {
         return dynamicAttributeDtos.stream().map(this::toDynamicAttribute).toList();
     }
