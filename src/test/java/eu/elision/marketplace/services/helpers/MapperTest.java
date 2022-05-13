@@ -2,6 +2,7 @@ package eu.elision.marketplace.services.helpers;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.CategoryDto;
@@ -88,15 +89,24 @@ class MapperTest
     @Test
     void testToSmallDto()
     {
-        Product product = new Product();
+        final long id = RandomUtils.nextLong(1, 100);
         final String name = RandomStringUtils.randomAlphabetic(5);
-        product.setName(name);
         final String image1 = RandomStringUtils.randomAlphabetic(5);
-        product.setImages(List.of(image1, RandomStringUtils.randomAlphabetic(5)));
+        final Category category = new Category();
+        category.setName(RandomStringUtils.randomAlphabetic(5));
+        final Vendor vendor = new Vendor();
+        final String description = RandomStringUtils.randomAlphabetic(5);
+        final ArrayList<DynamicAttributeValue<?>> attributes = new ArrayList<>();
+        final int price = RandomUtils.nextInt(1, 100);
+        Product product = new Product(id, name, price, category, vendor, description, List.of(image1, RandomStringUtils.randomAlphabetic(5)), attributes);
 
         SmallProductDto smallProductDto = Mapper.toSmallProductDto(product);
 
+        assertThat(smallProductDto.id()).isEqualTo(id);
         assertThat(smallProductDto.name()).isEqualTo(name);
         assertThat(smallProductDto.image()).isEqualTo(image1);
+        assertThat(smallProductDto.category()).isEqualTo(category.getName());
+        assertThat(smallProductDto.description()).isEqualTo(description);
+        assertThat(smallProductDto.price()).isEqualTo(price);
     }
 }
