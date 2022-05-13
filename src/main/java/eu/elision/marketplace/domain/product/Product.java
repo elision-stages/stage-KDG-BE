@@ -33,6 +33,9 @@ public class Product
     @OneToMany(fetch = FetchType.EAGER)
     private List<DynamicAttributeValue<?>> attributes;
 
+    /**
+     * Constructor of product. Creates a new product with empty parameters
+     */
     public Product()
     {
         this.images = new ArrayList<>();
