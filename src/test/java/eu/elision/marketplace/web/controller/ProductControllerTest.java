@@ -26,8 +26,7 @@ import java.util.Locale;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductControllerTest
-{
+class ProductControllerTest {
     private static URL base;
     private TestRestTemplate restTemplate;
     @LocalServerPort
@@ -38,15 +37,13 @@ class ProductControllerTest
     private Controller controller;
 
     @BeforeEach
-    void setUp() throws MalformedURLException
-    {
+    void setUp() throws MalformedURLException {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void addProduct()
-    {
+    void addProduct() {
         final String name = RandomStringUtils.randomAlphabetic(4);
         Category category = categoryService.save(new CategoryMakeDto("Test", 0, new ArrayList<>()));
         controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()), category);
@@ -78,8 +75,7 @@ class ProductControllerTest
     }
 
     @Test
-    void addCategory()
-    {
+    void addCategory() {
         assertThat(
                 restTemplate.postForEntity(
                         String.format("%s/addCategory", base),
@@ -88,8 +84,7 @@ class ProductControllerTest
     }
 
     @Test
-    void testGetProductById()
-    {
+    void testGetProductById() {
         final Product product = new Product();
         final String description = RandomStringUtils.randomAlphabetic(5);
         final int price = RandomUtils.nextInt();

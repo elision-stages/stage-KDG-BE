@@ -18,13 +18,13 @@ import java.security.Principal;
 import java.util.Collection;
 
 @RestController
-public class ProductController
-{
+public class ProductController {
     final Controller controller;
     final UserService userService;
+    private static final String SUCCESS = "success";
 
-    public ProductController(Controller controller, UserService userService)
-    {
+
+    public ProductController(Controller controller, UserService userService) {
         this.controller = controller;
         this.userService = userService;
     }
@@ -32,37 +32,40 @@ public class ProductController
     @PostMapping("/addProduct")
     ResponseEntity<ResponseDto> addProduct(@RequestBody ProductDto productDto) {
         controller.saveProduct(productDto);
-        return ResponseEntity.ok(new ResponseDto("success"));
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
     @GetMapping("/getAllProducts")
-    ResponseEntity<Collection<Product>> getAllProducts()
-    {
+    ResponseEntity<Collection<Product>> getAllProducts() {
         return new ResponseEntity<>(controller.findAllProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/getMyProducts")
     @Secured("ROLE_VENDOR")
     ResponseEntity<Collection<SmallProductDto>> getMyProducts(Principal principal) {
-        Vendor vendor = (Vendor)userService.loadUserByUsername(principal.getName());
+        Vendor vendor = (Vendor) userService.loadUserByUsername(principal.getName());
         Collection<Product> products = controller.findProductsByVendor(vendor);
 
         return new ResponseEntity<>(products.stream().map(Mapper::toSmallProductDto).toList(), HttpStatus.OK);
     }
 
     @GetMapping("/product/{ids}")
-    ResponseEntity<Product> getProduct(@PathVariable String ids)
-    {
+    ResponseEntity<Product> getProduct(@PathVariable String ids) {
         long id = Long.parseLong(ids);
         Product product = controller.findProduct(id);
-        if(product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping("/addCategory")
-    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto)
-    {
+    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
         controller.saveCategory(categoryMakeDto);
-        return ResponseEntity.ok(new ResponseDto("success"));
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
+    }
+
+    @PostMapping("/deleteProduct/{id}")
+    ResponseEntity<ResponseDto> deleteProduct(@PathVariable String id, Principal principal) {
+        controller.deleteProduct(Long.parseLong(id), principal.getName());
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 }

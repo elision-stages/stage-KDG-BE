@@ -54,4 +54,8 @@ public class ProductService {
         }
         return product;
     }
+
+    public void delete(long productId) {
+        productRepository.deleteById(productId);
+    }
 }

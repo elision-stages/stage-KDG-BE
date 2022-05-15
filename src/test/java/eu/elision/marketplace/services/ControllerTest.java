@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
@@ -190,6 +189,19 @@ class ControllerTest {
         assertThat(orderLineDto.productDto().price()).isEqualTo(price);
 
         assertThat(cartDto.totalPrice()).isEqualTo(price * count);
+    }
+
+    @Test
+    void deleteProductTest() {
+        final int initSize = controller.findAllProducts().size();
+
+        Product product = new Product();
+        final long id = controller.saveProduct(product).getId();
+        assertThat(controller.findAllProducts()).hasSize(initSize + 1);
+
+        controller.deleteProduct(id);
+        assertThat(controller.findAllProducts()).hasSize(initSize);
+
     }
 
 }
