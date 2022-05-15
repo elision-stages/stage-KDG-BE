@@ -138,13 +138,13 @@ class ControllerTest {
 
         Product product = new Product();
         product.setVendor(vendor);
-        product.setName(RandomStringUtils.randomAlphabetic(5));
+        product.setTitle(RandomStringUtils.randomAlphabetic(5));
         controller.saveProduct(product);
 
         Collection<Product> products = controller.findProductsByVendor(vendor);
 
         assertThat(products).hasSize(1);
-        assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getName(), product.getName()))).isTrue();
+        assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getTitle(), product.getTitle()))).isTrue();
     }
 
     @Test
@@ -196,6 +196,18 @@ class ControllerTest {
         assertThat(cartDto.totalPrice()).isEqualTo(price * count);
     }
 
+    @Test
+    void deleteProductTest() {
+        final int initSize = controller.findAllProducts().size();
+
+        Product product = new Product();
+        final long id = controller.saveProduct(product).getId();
+        assertThat(controller.findAllProducts()).hasSize(initSize + 1);
+
+        controller.deleteProduct(id);
+        assertThat(controller.findAllProducts()).hasSize(initSize);
+    }
+  
     @Test
     void checkoutCartTest()
     {
