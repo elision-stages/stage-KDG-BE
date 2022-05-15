@@ -18,13 +18,20 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class PickListItem {
+public class PickListItem
+{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String value;
 
-    public PickListItem(String value) {
+    /**
+     * Constructor with value
+     *
+     * @param value the value of the pick list item
+     */
+    public PickListItem(String value)
+    {
         this.value = value;
     }
 }

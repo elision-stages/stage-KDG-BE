@@ -35,7 +35,11 @@ public class Category
     @OneToMany(mappedBy = "category")
     private final List<DynamicAttribute> characteristics;
 
-    public Category() {
+    /**
+     * No args constructor. Initialises the sub categories and characteristics array.
+     */
+    public Category()
+    {
         subCategories = new HashSet<>();
         characteristics = new ArrayList<>();
     }

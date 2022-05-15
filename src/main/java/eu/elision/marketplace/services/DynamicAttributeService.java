@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+/**
+ * Service for dynamic attributes
+ */
 @Service
 public class DynamicAttributeService
 {
@@ -37,14 +40,16 @@ public class DynamicAttributeService
             if (dynamicAttribute == null)
                 throw new NotFoundException(String.format("Attribute with name %s not found", attribute.getAttributeName()));
 
-            switch (dynamicAttribute.getType()) {
+            switch (dynamicAttribute.getType())
+            {
                 case BOOL ->
                         dynamicAttributeValues.add(new DynamicAttributeBoolValue(attribute.getAttributeName(), Boolean.valueOf(attribute.getValue())));
                 case DECIMAL ->
                         dynamicAttributeValues.add(new DynamicAttributeDoubleValue(attribute.getAttributeName(), Double.parseDouble(attribute.getValue())));
                 case INTEGER ->
                         dynamicAttributeValues.add(new DynamicAttributeIntValue(attribute.getAttributeName(), Integer.parseInt(attribute.getValue())));
-                case ENUMERATION -> {
+                case ENUMERATION ->
+                {
                     if (dynamicAttribute.getEnumList().getItems().stream().noneMatch(pickListItem -> Objects.equals(pickListItem.getValue(), attribute.getValue())))
                         throw new NotFoundException(String.format("Value %s is not found in enum %s", attribute.getValue(), dynamicAttribute.getName()));
 

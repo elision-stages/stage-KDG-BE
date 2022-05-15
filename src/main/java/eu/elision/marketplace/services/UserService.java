@@ -22,6 +22,9 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Service for users
+ */
 @Service
 @NoArgsConstructor
 public class UserService implements UserDetailsService

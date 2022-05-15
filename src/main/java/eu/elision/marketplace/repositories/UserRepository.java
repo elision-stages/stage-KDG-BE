@@ -3,8 +3,16 @@ package eu.elision.marketplace.repositories;
 import eu.elision.marketplace.domain.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Jpa repository for users
+ */
 public interface UserRepository extends JpaRepository<User, Long>
 {
-    User findByEmailAndPassword(String email, String name);
+    /**
+     * Find a users by email
+     *
+     * @param email the email of the user that you want to find
+     * @return the user with given email
+     */
     User findByEmail(String email);
 }
