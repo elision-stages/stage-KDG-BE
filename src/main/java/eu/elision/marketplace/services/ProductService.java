@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+/**
+ * Service for products
+ */
 @Service
 public class ProductService {
     private final ProductRepository productRepository;

@@ -1,5 +1,6 @@
 package eu.elision.marketplace.services;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
@@ -14,12 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest
 class ControllerTest {
@@ -172,6 +173,9 @@ class ControllerTest {
         vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
 
+        controller.saveUser(vendor);
+
+
         product.setVendor(vendor);
 
         final String description = RandomStringUtils.randomAlphabetic(5);
@@ -179,7 +183,7 @@ class ControllerTest {
         long productId = controller.saveProduct(product).getId();
 
         final int count = RandomUtils.nextInt(1, 10);
-        controller.addProductToCart(email, new AddProductToCartDto(productId, count));
+        controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
 
         CartDto cartDto = controller.getCustomerCart(email);
         assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.productDto().description(), description))).isTrue();
@@ -190,6 +194,51 @@ class ControllerTest {
         assertThat(orderLineDto.productDto().price()).isEqualTo(price);
 
         assertThat(cartDto.totalPrice()).isEqualTo(price * count);
+    }
+
+    @Test
+    void checkoutCartTest()
+    {
+        final Customer customer = new Customer();
+
+        final String firstName = RandomStringUtils.randomAlphabetic(5);
+        final String lastName = RandomStringUtils.randomAlphabetic(5);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setEmail(email);
+        customer.setPassword(password);
+
+        final Vendor vendor = new Vendor();
+        vendor.setLastName(RandomStringUtils.randomAlphabetic(4));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(4));
+        vendor.setPassword(password);
+        vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
+        vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
+        controller.saveUser(vendor);
+
+        Product product = new Product();
+        final int price = RandomUtils.nextInt(1, 100);
+        product.setPrice(price);
+        product.setVendor(vendor);
+        controller.saveUser(vendor);
+        controller.saveUser(customer);
+
+        final int count = RandomUtils.nextInt(1, 100);
+        controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count, false));
+
+
+        controller.saveUser(customer);
+        final long orderId = controller.checkoutCart(email);
+        Order order = controller.findOrderById(orderId);
+        assertThat(order).isNotNull();
+        assertThat(order.getUser().getFirstName()).isEqualTo(firstName);
+        assertThat(order.getUser().getLastName()).isEqualTo(lastName);
+        assertThat(order.getUser().getPassword()).isEqualTo(password);
+        assertThat(order.getUser().getEmail()).isEqualTo(email);
+
     }
 
 }

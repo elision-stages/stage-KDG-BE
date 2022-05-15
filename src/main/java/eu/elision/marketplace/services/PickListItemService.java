@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+/**
+ * Service for pick list items
+ */
 @Service
 public class PickListItemService {
     private final PickListItemRepository pickListItemRepository;
