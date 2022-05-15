@@ -50,7 +50,7 @@ public class Mapper {
 
     public static SmallProductDto toSmallProductDto(Product product) {
         String image = product.getImages().isEmpty() ? null : product.getImages().get(0);
-        return new SmallProductDto(product.getId(), product.getName(), product.getCategory().getName(), image, product.getDescription(), product.getPrice());
+        return new SmallProductDto(product.getId(), product.getTitle(), product.getCategory().getName(), image, product.getDescription(), product.getPrice());
     }
 
     public static CartDto toCartDto(Cart cart) {
@@ -63,7 +63,7 @@ public class Mapper {
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getImages(), attributes, product.getVendor().getId())));
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), attributes, product.getVendor().getId())));
         }
 
         return cartDto;

@@ -136,13 +136,13 @@ class ControllerTest {
 
         Product product = new Product();
         product.setVendor(vendor);
-        product.setName(RandomStringUtils.randomAlphabetic(5));
+        product.setTitle(RandomStringUtils.randomAlphabetic(5));
         controller.saveProduct(product);
 
         Collection<Product> products = controller.findProductsByVendor(vendor);
 
         assertThat(products).hasSize(1);
-        assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getName(), product.getName()))).isTrue();
+        assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getTitle(), product.getTitle()))).isTrue();
     }
 
     @Test
