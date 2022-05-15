@@ -21,12 +21,14 @@ import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
+import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The controller that relays all of the methods of the services. It connects all of the services together
@@ -319,6 +321,22 @@ public class Controller {
         return Mapper.toCartDto(customer.getCart());
     }
 
+    public void deleteProduct(long productId) {
+        productService.delete(productId);
+    }
+
+    public void deleteProduct(long productId, String userEmail) {
+        User user = userService.findUserByEmail(userEmail);
+        if (user == null) throw new NotFoundException(String.format("User with email %s not found", userEmail));
+        if (!(user instanceof Vendor vendor))
+            throw new NotFoundException(String.format("User with id %s is not a vendor", user.getId()));
+
+        Product product = productService.findProductById(productId);
+        if (!(Objects.equals(product.getVendor().getId(), vendor.getId())))
+            throw new UnauthorisedException(String.format("Vendor with id %s is not allowed to delete product with id %s", vendor.getId(), product.getId()));
+
+        productService.delete(productId);
+    }
     /**
      * Get the cart in dto form of a customer
      *

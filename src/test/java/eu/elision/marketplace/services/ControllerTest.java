@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 @SpringBootTest
 class ControllerTest {
 
@@ -196,7 +197,20 @@ class ControllerTest {
     }
 
     @Test
-    void checkoutCartTest() {
+    void deleteProductTest() {
+        final int initSize = controller.findAllProducts().size();
+
+        Product product = new Product();
+        final long id = controller.saveProduct(product).getId();
+        assertThat(controller.findAllProducts()).hasSize(initSize + 1);
+
+        controller.deleteProduct(id);
+        assertThat(controller.findAllProducts()).hasSize(initSize);
+    }
+
+    @Test
+    void checkoutCartTest()
+    {
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);

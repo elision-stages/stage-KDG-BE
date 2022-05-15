@@ -25,32 +25,40 @@ public class CategoryService
     private final DynamicAttributeService attributeService;
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, DynamicAttributeService attributeService) {
+    public CategoryService(CategoryRepository categoryRepository, DynamicAttributeService attributeService)
+    {
         this.categoryRepository = categoryRepository;
         this.attributeService = attributeService;
     }
 
-    public List<Category> findAll() {
+    public List<Category> findAll()
+    {
         return categoryRepository.findAll();
     }
 
     public Category save(CategoryMakeDto categoryMakeDto) {
         Category category = categoryRepository.save(toCategory(categoryMakeDto));
+
         for (DynamicAttribute attr : attributeService.toDynamicAttributes(categoryMakeDto.characteristics())) {
+            attr.setCategory(category);
             attributeService.save(attr);
         }
         return category;
     }
 
-    public Category save(Category category) {
+    public Category save(Category category)
+    {
         return categoryRepository.save(category);
     }
 
-    public void save(Category category, long parentId) {
-        if (parentId != 0L) {
+    public void save(Category category, long parentId)
+    {
+        if (parentId != 0L)
+        {
             Category parent =
                     categoryRepository.findById(parentId).orElse(null);
-            if (parent == null) {
+            if (parent == null)
+            {
                 throw new NotFoundException(String.format("Parent category with id %s not found", parentId));
             }
             category.setParent(parent);
@@ -58,11 +66,13 @@ public class CategoryService
         categoryRepository.save(category);
     }
 
-    public Category findByName(String name) {
+    public Category findByName(String name)
+    {
         return categoryRepository.findCategoryByName(name);
     }
 
-    public Category findById(long id) {
+    public Category findById(long id)
+    {
         return categoryRepository.findById(id).orElse(null);
     }
 
@@ -90,7 +100,8 @@ public class CategoryService
         );
     }
 
-    private Category toCategory(CategoryMakeDto categoryMakeDto) {
+    private Category toCategory(CategoryMakeDto categoryMakeDto)
+    {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
 
@@ -99,7 +110,8 @@ public class CategoryService
 
     public Category save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
         Category category = categoryRepository.save(toCategory(categoryMakeDto));
-        for (DynamicAttribute attr : dynamicAttributes) {
+        for (DynamicAttribute attr : dynamicAttributes)
+        {
             attr.setCategory(category);
             attributeService.save(attr);
         }

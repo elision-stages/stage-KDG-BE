@@ -69,7 +69,7 @@ class ProductControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/addProduct", base),
-                new ProductDto(RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), attributes, vendorId),
+                new ProductDto(RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), attributes, vendorId),
                 String.class
         );
 

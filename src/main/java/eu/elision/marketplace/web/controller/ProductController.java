@@ -23,9 +23,10 @@ public class ProductController
 {
     final Controller controller;
     final UserService userService;
-    static final String SUCCESS = "success";
+    private static final String SUCCESS = "success";
 
-    public ProductController(Controller controller, UserService userService) {
+    public ProductController(Controller controller, UserService userService)
+    {
         this.controller = controller;
         this.userService = userService;
     }
@@ -37,7 +38,8 @@ public class ProductController
     }
 
     @GetMapping("/getAllProducts")
-    ResponseEntity<Collection<Product>> getAllProducts() {
+    ResponseEntity<Collection<Product>> getAllProducts()
+    {
         return new ResponseEntity<>(controller.findAllProducts(), HttpStatus.OK);
     }
 
@@ -51,7 +53,8 @@ public class ProductController
     }
 
     @GetMapping("/product/{ids}")
-    ResponseEntity<Product> getProduct(@PathVariable String ids) {
+    ResponseEntity<Product> getProduct(@PathVariable String ids)
+    {
         long id = Long.parseLong(ids);
         Product product = controller.findProduct(id);
         if (product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -59,8 +62,15 @@ public class ProductController
     }
 
     @PostMapping("/addCategory")
-    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
+    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto)
+    {
         controller.saveCategory(categoryMakeDto);
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
+    }
+
+    @PostMapping("/deleteProduct/{id}")
+    ResponseEntity<ResponseDto> deleteProduct(@PathVariable String id, Principal principal) {
+        controller.deleteProduct(Long.parseLong(id), principal.getName());
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 

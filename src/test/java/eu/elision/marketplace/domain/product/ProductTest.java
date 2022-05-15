@@ -86,7 +86,8 @@ class ProductTest
     }
 
     @Test
-    void testEquals() {
+    void testEquals()
+    {
         Category category = new Category();
         Vendor vendor = new Vendor();
 

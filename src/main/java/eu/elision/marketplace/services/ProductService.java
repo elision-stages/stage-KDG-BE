@@ -34,6 +34,7 @@ public class ProductService {
     private Product toProduct(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
         Product product = new Product();
         product.setPrice(productDto.price());
+        product.setTitle(productDto.title());
         product.setVendor(vendor);
         product.setDescription(productDto.description());
         product.setImages(productDto.images());
@@ -67,5 +68,9 @@ public class ProductService {
             throw new NotFoundException(String.format("Product with id %s not found", productId));
         }
         return product;
+    }
+
+    public void delete(long productId) {
+        productRepository.deleteById(productId);
     }
 }

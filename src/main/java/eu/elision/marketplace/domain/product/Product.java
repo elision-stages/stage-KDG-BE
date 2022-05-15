@@ -16,12 +16,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Entity
-public class Product {
+public class Product
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private double price;
     private String title;
+    private double price;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -35,7 +36,8 @@ public class Product {
     /**
      * Constructor of product. Creates a new product with empty parameters
      */
-    public Product() {
+    public Product()
+    {
         this.images = new ArrayList<>();
         this.attributes = new ArrayList<>();
     }
