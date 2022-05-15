@@ -292,10 +292,17 @@ public class Controller {
         return categoryService.findAll();
     }
 
-    public void editProduct(EditProductDto editProductDto) {
+    public void editProduct(EditProductDto editProductDto, String userEmail) {
+        User user = userService.findUserByEmail(userEmail);
+        if (user == null) {
+            throw new NotFoundException(String.format("User with email %s not found", userEmail));
+        }
+        if (!(user instanceof Vendor vendor))
+            throw new NotFoundException(String.format("User with email %s is not a vendor", userEmail));
+
         final List<DynamicAttributeValue<?>> attributeValues = dynamicAttributeService.getSavedAttributes(editProductDto.attributes()).stream().toList();
         dynamicAttributeValueService.save(attributeValues);
-        productService.editProduct(Mapper.toProduct(editProductDto, categoryService.findById(editProductDto.categoryId()), userService.findVendorById(editProductDto.vendorId()), attributeValues));
+        productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, attributeValues));
     }
 
     /**

@@ -21,7 +21,6 @@ import java.util.Collection;
 @RestController
 public class ProductController
 {
-
     final Controller controller;
     final UserService userService;
     static final String SUCCESS = "success";
@@ -65,9 +64,10 @@ public class ProductController
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
+    @Secured("ROLE_VENDOR")
     @PostMapping("/editProduct")
-    ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto) {
-        controller.editProduct(editProductDto);
+    ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto, Principal principal) {
+        controller.editProduct(editProductDto, principal.getName());
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
