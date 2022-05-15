@@ -99,8 +99,8 @@ class OrderLineTest
         ol.setVendor(null);
         ol.setOrderLineNumber(orderLineNumber);
 
-        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, title=%s, price=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
-                orderLineNumber, orderNumber, id, name, price, description, quantity));
+        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, price=%s, title=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
+                orderLineNumber, orderNumber, id, price, name, description, quantity));
     }
 
     @Test
