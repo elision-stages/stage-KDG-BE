@@ -24,6 +24,11 @@ public class PickListItem {
     private Long id;
     private String value;
 
+    /**
+     * Constructor with value
+     *
+     * @param value the value of the pick list item
+     */
     public PickListItem(String value) {
         this.value = value;
     }

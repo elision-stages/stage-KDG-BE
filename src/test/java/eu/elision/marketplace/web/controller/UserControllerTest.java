@@ -47,10 +47,6 @@ class UserControllerTest {
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
 
-        final String street = RandomStringUtils.randomAlphabetic(4);
-        final String number = String.valueOf(RandomUtils.nextInt(1, 100));
-        final String postalCode = String.valueOf(RandomUtils.nextInt(1, 9999));
-        final String city = RandomStringUtils.randomAlphabetic(10);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/register/customer", base),

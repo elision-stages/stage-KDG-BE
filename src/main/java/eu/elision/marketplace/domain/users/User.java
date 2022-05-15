@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,11 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -39,6 +38,7 @@ public abstract class User implements UserDetails
     @Email(message = "Email format is wrong")
     private String email;
     @NotBlank(message = "Password is required")
+    @JsonIgnore // Prevent accidentally sending the password in any kind of JSON message
     // This will be bCrypt encoded
     //@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", message = "Password must have at least 8 characters, at least one uppercase and one lowercase letter and one number")
     private String password;

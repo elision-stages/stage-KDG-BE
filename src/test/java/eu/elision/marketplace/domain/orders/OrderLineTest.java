@@ -1,6 +1,7 @@
 package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Vendor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -21,7 +22,7 @@ class OrderLineTest
         double price = Math.random();
         int quantity = RandomUtils.nextInt();
 
-        orderLine.setProduct(new Product(RandomUtils.nextLong(1, 100), price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
+        orderLine.setProduct(new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(4), new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
         orderLine.setQuantity(quantity);
 
         assertThat(orderLine.getTotalPrice()).isEqualTo(price * quantity);
@@ -85,6 +86,7 @@ class OrderLineTest
     {
         OrderLine ol = new OrderLine();
         final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
+        final String name = RandomStringUtils.random(10);
         final String description = RandomStringUtils.random(10);
         final int orderLineNumber = RandomUtils.nextInt(1, 100);
         final int quantity = RandomUtils.nextInt(1, 100);
@@ -93,12 +95,12 @@ class OrderLineTest
 
         ol.setOrderNumber(orderNumber);
         ol.setQuantity(quantity);
-        ol.setProduct(new Product(id, price, null, description, new ArrayList<>(), new ArrayList<>()));
+        ol.setProduct(new Product(id, price, name, null, null, description, new ArrayList<>(), new ArrayList<>()));
         ol.setVendor(null);
         ol.setOrderLineNumber(orderLineNumber);
 
-        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, price=%s, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
-                orderLineNumber, orderNumber, id, price, description, quantity));
+        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, price=%s, title=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
+                orderLineNumber, orderNumber, id, price, name, description, quantity));
     }
 
     @Test

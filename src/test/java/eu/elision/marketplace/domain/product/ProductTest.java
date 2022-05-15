@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product;
 
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeBoolValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeDoubleValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeEnumValue;
@@ -85,14 +86,14 @@ class ProductTest
     }
 
     @Test
-    void testEquals()
-    {
+    void testEquals() {
+        Category category = new Category();
         Vendor vendor = new Vendor();
 
         final String description = RandomStringUtils.random(4);
 
-        Product product1 = new Product(1L, 2, vendor, description, new ArrayList<>(), new ArrayList<>());
-        Product product2 = new Product(1L, 2, vendor, description, new ArrayList<>(), new ArrayList<>());
+        Product product1 = new Product(1L, 2, "", category, vendor, description, new ArrayList<>(), new ArrayList<>());
+        Product product2 = new Product(1L, 2, "", category, vendor, description, new ArrayList<>(), new ArrayList<>());
 
         assertThat(product1.equals(product2)).isTrue();
 
@@ -142,6 +143,6 @@ class ProductTest
     void testToString()
     {
         Product product = new Product();
-        assertThat(product.toString()).hasToString("Product(id=null, price=0.0, vendor=null, description=null, images=[], attributes=[])");
+        assertThat(product.toString()).hasToString("Product(id=null, price=0.0, title=null, category=null, vendor=null, description=null, images=[], attributes=[])");
     }
 }

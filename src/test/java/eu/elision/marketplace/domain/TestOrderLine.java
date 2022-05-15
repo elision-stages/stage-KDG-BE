@@ -2,6 +2,7 @@ package eu.elision.marketplace.domain;
 
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Vendor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -19,7 +20,7 @@ class TestOrderLine
         final double price = RandomUtils.nextDouble(1, 100);
         final int quantity = RandomUtils.nextInt();
 
-        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(RandomUtils.nextLong(1,100), price, new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()), quantity);
+        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(4), new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()), quantity);
         assertThat(ol.getTotalPrice()).isEqualTo(price * quantity);
     }
 }

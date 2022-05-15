@@ -7,29 +7,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for addresses
+ */
 @Service
-public class AddressService
-{
+public class AddressService {
     private final AddressRepository addressRepository;
 
+    /**
+     * Public constructor
+     *
+     * @param addressRepository autowired repository
+     */
     @Autowired
-    public AddressService(AddressRepository addressRepository)
-    {
+    public AddressService(AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
     }
 
-    public List<Address> findAll()
-    {
+    /**
+     * Find all of the addresses in the repository
+     *
+     * @return a list with all of the addresses
+     */
+    public List<Address> findAll() {
         return addressRepository.findAll();
     }
 
-    public Address save(Address address)
-    {
+    public Address save(Address address) {
         return addressRepository.save(address);
     }
 
-    public Address findById(long id)
-    {
+    public Address findById(long id) {
         return addressRepository.findById(id).orElse(null);
     }
 }
