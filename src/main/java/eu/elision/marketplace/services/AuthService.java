@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 
+/**
+ * Service for authentication
+ */
 @Service
 @NoArgsConstructor
 public class AuthService {

@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Service for categories
+ */
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;

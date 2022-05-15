@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-
+/**
+ * Service for jwt tokens
+ */
 @Service
 public class JwtService {
     @Value("${jwt.durationInMinutes}")

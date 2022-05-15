@@ -23,7 +23,7 @@ public class Product
     private Long id;
     private String title;
     private double price;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;

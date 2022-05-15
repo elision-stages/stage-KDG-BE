@@ -16,7 +16,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Customer extends User {
+public class Customer extends User
+{
     @OneToOne(cascade = CascadeType.ALL)
     private Cart cart;
     @OneToOne
@@ -24,7 +25,11 @@ public class Customer extends User {
     @OneToMany
     private List<Address> otherAddresses;
 
-    public Customer() {
+    /**
+     * No args constructor. Initialises other adresses array and cart
+     */
+    public Customer()
+    {
         this.otherAddresses = new ArrayList<>();
         this.cart = new Cart();
     }

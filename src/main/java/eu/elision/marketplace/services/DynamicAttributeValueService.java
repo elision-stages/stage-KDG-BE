@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+/**
+ * Service for dynamic attribute values
+ */
 @Service
 public class DynamicAttributeValueService {
     private final DynamicAttributeValueRepository dynamicAttributeValueRepository;
