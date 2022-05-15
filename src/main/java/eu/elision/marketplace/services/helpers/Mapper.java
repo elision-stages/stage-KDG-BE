@@ -122,7 +122,8 @@ public class Mapper
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getId(), product.getPrice(), product.getName(), product.getDescription(), product.getCategory().getId(), product.getImages(), attributes)));
+            long category = product.getCategory() == null ? 0 : product.getCategory().getId();
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getId(), product.getPrice(), product.getName(), product.getDescription(), category, product.getImages(), attributes)));
         }
 
         return cartDto;
