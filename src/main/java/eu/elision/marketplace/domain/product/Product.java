@@ -9,6 +9,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This product contains the info of a product
@@ -36,9 +37,15 @@ public class Product
     /**
      * Constructor of product. Creates a new product with empty parameters
      */
-    public Product()
-    {
+    public Product() {
         this.images = new ArrayList<>();
         this.attributes = new ArrayList<>();
+    }
+
+    /**
+     * Remove the attributes that are not in the category of the product
+     */
+    public void removeNonCategoryAttributes() {
+        attributes.removeIf(attribute -> category.getCharacteristics().stream().noneMatch(characteristic -> Objects.equals(attribute.getAttributeName(), characteristic.getName())));
     }
 }
