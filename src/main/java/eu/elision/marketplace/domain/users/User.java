@@ -56,6 +56,7 @@ public abstract class User implements UserDetails
         Set<GrantedAuthority> roles = new java.util.HashSet<>();
         roles.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         if(this instanceof Vendor) roles.add(new SimpleGrantedAuthority("ROLE_VENDOR"));
+        if(this instanceof Admin) roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return roles;
     }
 

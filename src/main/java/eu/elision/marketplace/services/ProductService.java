@@ -2,7 +2,6 @@ package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
@@ -22,9 +21,8 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public void save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, User vendor) {
-        if (!(vendor instanceof Vendor)) throw new NotFoundException("No vendor with id %s found");
-        productRepository.save(toProduct(productDto, attributeValues, (Vendor) vendor));
+    public void save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
+        productRepository.save(toProduct(productDto, attributeValues, vendor));
     }
 
     public Product save(Product product) {
@@ -38,6 +36,7 @@ public class ProductService {
         product.setVendor(vendor);
         product.setDescription(productDto.description());
         product.setImages(productDto.images());
+        product.setCategory(productDto.category());
         product.setAttributes(attributeValues.stream().toList());
 
         return product;

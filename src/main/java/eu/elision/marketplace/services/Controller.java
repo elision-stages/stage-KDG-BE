@@ -61,7 +61,8 @@ public class Controller {
      * @param orderService                 order service
      */
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService) {
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService)
+    {
         this.addressService = addressService;
         this.userService = userService;
         this.categoryService = categoryService;
@@ -81,7 +82,8 @@ public class Controller {
      *
      * @return a list with addresses
      */
-    public List<Address> findAllAddresses() {
+    public List<Address> findAllAddresses()
+    {
         return addressService.findAll();
     }
 
@@ -90,7 +92,8 @@ public class Controller {
      *
      * @return a list with users
      */
-    public List<User> findAllUsers() {
+    public List<User> findAllUsers()
+    {
         return userService.findAllUsers();
     }
 
@@ -99,7 +102,8 @@ public class Controller {
      *
      * @return a list with customer dto
      */
-    public List<CustomerDto> findAllCustomerDto() {
+    public List<CustomerDto> findAllCustomerDto()
+    {
         return findAllUsers().stream()
                 .filter(Customer.class::isInstance)
                 .map(user -> userService.toCustomerDto((Customer) user))
@@ -112,7 +116,8 @@ public class Controller {
      * @param vendor the vendor
      * @return a list of products of a given vendor
      */
-    public Collection<Product> findProductsByVendor(Vendor vendor) {
+    public Collection<Product> findProductsByVendor(Vendor vendor)
+    {
         return productService.findProductsByVendor(vendor);
     }
 
@@ -121,7 +126,8 @@ public class Controller {
      *
      * @return a list of products
      */
-    public Collection<Product> findAllProducts() {
+    public Collection<Product> findAllProducts()
+    {
         return productService.findAllProducts();
     }
 
@@ -131,7 +137,8 @@ public class Controller {
      * @param id the id of the product
      * @return the product with given id
      */
-    public Product findProduct(long id) {
+    public Product findProduct(long id)
+    {
         return productService.findProductById(id);
     }
 
@@ -142,7 +149,8 @@ public class Controller {
      *
      * @return a list of category dtos
      */
-    public Collection<CategoryDto> findAllCategoriesDto() {
+    public Collection<CategoryDto> findAllCategoriesDto()
+    {
         return categoryService.findAllDto();
     }
 
@@ -154,7 +162,8 @@ public class Controller {
      * @param address the address that needs to be saved
      * @return the saved address
      */
-    public Address saveAddress(Address address) {
+    public Address saveAddress(Address address)
+    {
         return addressService.save(address);
     }
 
@@ -164,7 +173,8 @@ public class Controller {
      * @param user the user that needs to be saved
      * @return the saved object
      */
-    public User saveUser(User user) {
+    public User saveUser(User user)
+    {
         return userService.save(user);
     }
 
@@ -173,7 +183,8 @@ public class Controller {
      *
      * @param customerDto the customer dto that needs to be saved
      */
-    public void saveCustomer(CustomerDto customerDto) {
+    public void saveCustomer(CustomerDto customerDto)
+    {
         String password = bCryptPasswordEncoder.encode(customerDto.password());
         CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
         Customer customer = userService.toCustomer(newCustomerDto);
@@ -188,9 +199,9 @@ public class Controller {
      *
      * @param productDto the object that needs to be saved
      */
-    public void saveProduct(ProductDto productDto) {
+    public void saveProduct(Vendor vendor, ProductDto productDto)
+    {
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
-        final User vendor = userService.findUserById(productDto.vendorId());
         dynamicAttributeValueService.save(productAttributes);
         productService.save(productDto, productAttributes, vendor);
     }
@@ -201,7 +212,8 @@ public class Controller {
      * @param product the product that needs to be saved
      * @return the saved object
      */
-    public Product saveProduct(Product product) {
+    public Product saveProduct(Product product)
+    {
         userService.save(product.getVendor());
         return productService.save(product);
     }
@@ -212,7 +224,8 @@ public class Controller {
      * @param dynamicAttributeDto the dynamic attribute in dto object
      * @param category            the category of the dynamic attribute
      */
-    public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
+    public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
+    {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
         dynamicAttribute.setCategory(category);
         if (dynamicAttribute.getType() == Type.ENUMERATION) {
@@ -230,7 +243,8 @@ public class Controller {
      * @param id the id of the address
      * @return the address with given id
      */
-    public Address findAddressById(long id) {
+    public Address findAddressById(long id)
+    {
         return addressService.findById(id);
     }
 
@@ -240,7 +254,8 @@ public class Controller {
      * @param id the id of the user
      * @return the user with given id
      */
-    public User findUserById(long id) {
+    public User findUserById(long id)
+    {
         return userService.findUserById(id);
     }
 
@@ -250,9 +265,22 @@ public class Controller {
      * @param vendorDto the dto object that needs to be saved
      * @return the saved object
      */
-    public Vendor saveVendor(VendorDto vendorDto) {
+    public Vendor saveVendor(VendorDto vendorDto)
+    {
         String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
-        VendorDto newVendorDto = new VendorDto(vendorDto.firstName(), vendorDto.lastName(), vendorDto.email(), password, false, vendorDto.logo(), vendorDto.theme(), vendorDto.introduction(), vendorDto.vatNumber(), vendorDto.phoneNumber(), vendorDto.businessName());
+        VendorDto newVendorDto = new VendorDto(
+                vendorDto.firstName(),
+                vendorDto.lastName(),
+                vendorDto.email(),
+                password,
+                false,
+                vendorDto.logo(),
+                vendorDto.theme(),
+                vendorDto.introduction(),
+                vendorDto.vatNumber(),
+                vendorDto.phoneNumber(),
+                vendorDto.businessName()
+        );
         return userService.save(newVendorDto);
     }
 
@@ -262,7 +290,8 @@ public class Controller {
      * @param email the email of the user
      * @return user with given email
      */
-    public User findUserByEmail(String email) {
+    public User findUserByEmail(String email)
+    {
         return userService.findUserByEmail(email);
     }
 
@@ -271,7 +300,8 @@ public class Controller {
      *
      * @param categoryMakeDto the dto object that needs to be saved
      */
-    public void saveCategory(CategoryMakeDto categoryMakeDto) {
+    public void saveCategory(CategoryMakeDto categoryMakeDto)
+    {
         categoryService.save(categoryMakeDto);
     }
 
@@ -281,7 +311,8 @@ public class Controller {
      * @param name the name of the category
      * @return the category with given name
      */
-    public Category findCategoryByName(String name) {
+    public Category findCategoryByName(String name)
+    {
         return categoryService.findByName(name);
     }
 
@@ -290,7 +321,8 @@ public class Controller {
      *
      * @return a list of categories
      */
-    public List<Category> findAllCategories() {
+    public List<Category> findAllCategories()
+    {
         return categoryService.findAll();
     }
 
@@ -314,7 +346,8 @@ public class Controller {
      * @param addProductDto the dto of the product that has to be added
      * @return the cart dto of the user
      */
-    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto) {
+    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto)
+    {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count(), addProductDto.add());
         userService.save(customer);
@@ -343,7 +376,8 @@ public class Controller {
      * @param customerName the email of the user
      * @return the cart dto of the user
      */
-    public CartDto getCustomerCart(String customerName) {
+    public CartDto getCustomerCart(String customerName)
+    {
         return Mapper.toCartDto(((Customer) userService.loadUserByUsername(customerName)).getCart());
     }
 
@@ -353,7 +387,8 @@ public class Controller {
      * @param userEmail the email of the user
      * @return the id of the order. 0 if no order was created
      */
-    public long checkoutCart(String userEmail) {
+    public long checkoutCart(String userEmail)
+    {
         User user = userService.findUserByEmail(userEmail);
 
         if (!(user instanceof Customer customer))
@@ -371,7 +406,8 @@ public class Controller {
      * @param orderId the id of an order
      * @return the order with the given id
      */
-    public Order findOrderById(long orderId) {
+    public Order findOrderById(long orderId)
+    {
         return orderService.findOrderById(orderId);
     }
 }
