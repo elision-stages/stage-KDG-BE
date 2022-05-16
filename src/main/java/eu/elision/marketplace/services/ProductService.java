@@ -1,11 +1,8 @@
 package eu.elision.marketplace.services;
 
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.repositories.CategoryRepository;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.ProductDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
@@ -19,11 +16,9 @@ import java.util.Collection;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
     }
 
     public void save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
@@ -35,14 +30,13 @@ public class ProductService {
     }
 
     private Product toProduct(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
-        Category cat = categoryRepository.getById((long) productDto.categoryId());
         Product product = new Product();
         product.setPrice(productDto.price());
         product.setTitle(productDto.title());
         product.setVendor(vendor);
         product.setDescription(productDto.description());
         product.setImages(productDto.images());
-        product.setCategory(cat);
+        product.setCategory(productDto.category());
         product.setAttributes(attributeValues.stream().toList());
 
         return product;
