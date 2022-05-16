@@ -70,6 +70,21 @@ class TestCart {
     }
 
     @Test
+    void addNoProductTest() {
+        Cart cart = new Cart();
+        Product product = new Product();
+        final int price = RandomUtils.nextInt(1, 100);
+        final int quantity = 0;
+
+        product.setId(1L);
+        product.setPrice(price);
+
+        cart.addProduct(product, quantity, false);
+        assertThat(cart.getOrderLines()).hasSize(1);
+        assertThat(cart.getTotalPrice()).isEqualTo(price * quantity);
+    }
+
+    @Test
     void add2ProductTest() {
         Cart cart = new Cart();
         Product product = new Product();
