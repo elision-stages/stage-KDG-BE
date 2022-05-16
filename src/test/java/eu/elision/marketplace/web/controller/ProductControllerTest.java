@@ -54,8 +54,9 @@ class ProductControllerTest
         final String name = RandomStringUtils.randomAlphabetic(4);
         Category category = categoryService.save(new CategoryMakeDto("Test", 0, new ArrayList<>()));
         controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()), category);
+        final String vendorName = RandomStringUtils.randomAlphabetic(4);
         final long vendorId = controller.saveVendor(new VendorDto(
-                RandomStringUtils.randomAlphabetic(4),
+                vendorName,
                 RandomStringUtils.randomAlphabetic(4),
                 String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)),
                 String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)),
@@ -72,7 +73,7 @@ class ProductControllerTest
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/addProduct", base),
-                new ProductDto(RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), new Category(), attributes, vendorId),
+                new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), new Category(), attributes, vendorId, vendorName),
                 String.class
         );
 

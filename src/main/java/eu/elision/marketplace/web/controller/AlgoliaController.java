@@ -14,7 +14,7 @@ public class AlgoliaController {
     }
 
     @PostMapping("/updatealgolia")
-    ResponseEntity<String> registerVendor() {
+    ResponseEntity<String> updateAlgolia() {
         algoliaIndexerService.indexAllProducts();
         return ResponseEntity.ok("{\"status\": \"ok\"}");
     }

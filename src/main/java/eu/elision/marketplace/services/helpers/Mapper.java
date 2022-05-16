@@ -74,6 +74,16 @@ public class Mapper {
         return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList() != null ? dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null);
     }
 
+
+    /**
+     * Create a Product of all their seperate attributes
+     *
+     * @param editProductDto The dto with global info
+     * @param category the category in which the product needs to be added
+     * @param vendor the vendor that created the product
+     * @param attributeValues the dynamic atttributes that are part of the product
+     * @return a Product
+     */
     public static Product toProduct(EditProductDto editProductDto, Category category, Vendor vendor, List<DynamicAttributeValue<?>> attributeValues) {
         return new Product(editProductDto.id(), editProductDto.price(), editProductDto.title(), category, vendor, editProductDto.description(), editProductDto.images(), attributeValues);
     }
@@ -122,7 +132,7 @@ public class Mapper {
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), product.getCategory(), attributes, product.getVendor().getId())));
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getId(), product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), product.getCategory(), attributes, product.getVendor().getId(), product.getVendor().getBusinessName())));
         }
 
         return cartDto;
