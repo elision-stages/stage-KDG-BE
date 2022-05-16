@@ -26,7 +26,8 @@ import java.util.Locale;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductControllerTest {
+class ProductControllerTest
+{
     private static URL base;
     private TestRestTemplate restTemplate;
     @LocalServerPort
@@ -37,13 +38,15 @@ class ProductControllerTest {
     private Controller controller;
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() throws MalformedURLException
+    {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void addProduct() {
+    void addProduct()
+    {
         final String name = RandomStringUtils.randomAlphabetic(4);
         Category category = categoryService.save(new CategoryMakeDto("Test", 0, new ArrayList<>()));
         controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()), category);
@@ -65,17 +68,17 @@ class ProductControllerTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/addProduct", base),
-                new ProductDto(RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), attributes, vendorId),
+                new ProductDto(RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), new Category(), attributes, vendorId),
                 String.class
         );
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody()).contains("success");
     }
 
     @Test
-    void addCategory() {
+    void addCategory()
+    {
         assertThat(
                 restTemplate.postForEntity(
                         String.format("%s/addCategory", base),
@@ -84,7 +87,8 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetProductById() {
+    void testGetProductById()
+    {
         final Product product = new Product();
         final String description = RandomStringUtils.randomAlphabetic(5);
         final int price = RandomUtils.nextInt();
