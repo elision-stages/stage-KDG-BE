@@ -74,7 +74,7 @@ class TestCart {
         Cart cart = new Cart();
         Product product = new Product();
         final int price = RandomUtils.nextInt(1, 100);
-        final int quantity = 0;
+        final int quantity = RandomUtils.nextInt(1, 100);
 
         product.setId(1L);
         product.setPrice(price);
@@ -82,6 +82,10 @@ class TestCart {
         cart.addProduct(product, quantity, false);
         assertThat(cart.getOrderLines()).hasSize(1);
         assertThat(cart.getTotalPrice()).isEqualTo(price * quantity);
+
+        cart.addProduct(product, 0, false);
+        assertThat(cart.getOrderLines()).hasSize(0);
+        assertThat(cart.getTotalPrice()).isEqualTo(0);
     }
 
     @Test
