@@ -13,11 +13,13 @@ import javax.persistence.*;
  * This class is used to dynamicly assign attributes to a category
  */
 @Getter
-@Setter @AllArgsConstructor @NoArgsConstructor
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class DynamicAttribute
-{
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+public class DynamicAttribute {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private boolean required;

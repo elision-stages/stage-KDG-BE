@@ -24,6 +24,7 @@ public class ProductController
 {
     final Controller controller;
     final UserService userService;
+    private static final String SUCCESS = "success";
 
     public ProductController(Controller controller, UserService userService)
     {
@@ -36,7 +37,7 @@ public class ProductController
     ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestBody ProductDto productDto) {
         Vendor user = (Vendor)userService.loadUserByUsername(principal.getName());
         controller.saveProduct(user, productDto);
-        return ResponseEntity.ok(new ResponseDto("success"));
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
     @GetMapping("/getAllProducts")
@@ -48,7 +49,7 @@ public class ProductController
     @GetMapping("/getMyProducts")
     @Secured("ROLE_VENDOR")
     ResponseEntity<Collection<SmallProductDto>> getMyProducts(Principal principal) {
-        Vendor vendor = (Vendor)userService.loadUserByUsername(principal.getName());
+        Vendor vendor = (Vendor) userService.loadUserByUsername(principal.getName());
         Collection<Product> products = controller.findProductsByVendor(vendor);
 
         return new ResponseEntity<>(products.stream().map(Mapper::toSmallProductDto).toList(), HttpStatus.OK);
@@ -59,7 +60,7 @@ public class ProductController
     {
         long id = Long.parseLong(ids);
         Product product = controller.findProduct(id);
-        if(product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
@@ -67,6 +68,12 @@ public class ProductController
     ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto)
     {
         controller.saveCategory(categoryMakeDto);
-        return ResponseEntity.ok(new ResponseDto("success"));
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
+    }
+
+    @PostMapping("/deleteProduct/{id}")
+    ResponseEntity<ResponseDto> deleteProduct(@PathVariable String id, Principal principal) {
+        controller.deleteProduct(Long.parseLong(id), principal.getName());
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 }

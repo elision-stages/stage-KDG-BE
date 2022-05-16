@@ -13,7 +13,7 @@ class AlgoliaProductDefaultAttributePopulatorTest {
         Vendor vendor = new Vendor();
         vendor.setBusinessName("Business");
         Product product = new Product();
-        product.setName("name");
+        product.setTitle("name");
         product.setId(123L);
         product.setVendor(vendor);
         product.setPrice(55.95);

@@ -68,13 +68,13 @@ class ProductControllerTest
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/addProduct", base),
-                new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), 0, new ArrayList<>(), attributes),
+                new ProductDto(RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), attributes, vendorId),
                 String.class
         );
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        //assertThat(response.getBody()).isNotNull();
-        //assertThat(response.getBody()).contains("success");
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).contains("success");
     }
 
     @Test
@@ -104,7 +104,7 @@ class ProductControllerTest
 
         product.setDescription(description);
         product.setPrice(price);
-        product.setName(name);
+        product.setTitle(name);
         //product.setVendor(vendor);
 
         vendor.setFirstName(firstName);
@@ -121,6 +121,6 @@ class ProductControllerTest
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getDescription()).isEqualTo(description);
         assertThat(response.getBody().getPrice()).isEqualTo(price);
-        assertThat(response.getBody().getName()).isEqualTo(name);
+        assertThat(response.getBody().getTitle()).isEqualTo(name);
     }
 }

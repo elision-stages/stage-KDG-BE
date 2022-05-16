@@ -10,7 +10,7 @@ public class AlgoliaProductDefaultAttributePopulator implements Populator<Produc
     @Override
     public void populate(Product source, AlgoliaProductDto target) {
         target.setObjectID(source.getId());
-        target.setName(source.getName());
+        target.setName(source.getTitle());
         target.setVendor(source.getVendor().getBusinessName());
         target.setPrice(source.getPrice());
     }
