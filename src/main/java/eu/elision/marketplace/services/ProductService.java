@@ -16,9 +16,11 @@ import java.util.Collection;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final DynamicAttributeValueService dynamicAttributeValueService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, DynamicAttributeValueService dynamicAttributeValueService) {
         this.productRepository = productRepository;
+        this.dynamicAttributeValueService = dynamicAttributeValueService;
     }
 
     public void save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
@@ -56,9 +58,14 @@ public class ProductService {
      * @param product the product you want to save
      */
     public void editProduct(Product product) {
-        if (productRepository.findById(product.getId()).orElse(null) == null)
+        final Product fromRepo = productRepository.findById(product.getId()).orElse(null);
+        if (fromRepo == null)
             throw new NotFoundException(String.format("Product with id %s not found", product.getId()));
-        productRepository.save(product);
+
+        fromRepo.getAttributes().addAll(product.getAttributes());
+        fromRepo.setCategory(product.getCategory());
+        dynamicAttributeValueService.deleteNonCategoryAttributes(fromRepo);
+        productRepository.save(fromRepo);
     }
 
     public Product findProductById(long productId) {
