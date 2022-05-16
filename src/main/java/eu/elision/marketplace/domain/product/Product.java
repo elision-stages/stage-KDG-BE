@@ -42,6 +42,9 @@ public class Product
         this.attributes = new ArrayList<>();
     }
 
+    /**
+     * Remove the attributes that are not in the category of the product
+     */
     public void removeNonCategoryAttributes() {
         attributes.removeIf(attribute -> category.getCharacteristics().stream().noneMatch(characteristic -> Objects.equals(attribute.getAttributeName(), characteristic.getName())));
     }
