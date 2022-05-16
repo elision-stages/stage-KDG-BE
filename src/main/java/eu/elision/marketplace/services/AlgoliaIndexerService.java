@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 /**
  * Service for algolia indexer
@@ -37,7 +39,6 @@ public class AlgoliaIndexerService implements IndexerService {
 
     @Override
     @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
-    @Async
     public void indexAllProducts() {
         try {
             List<Product> productList = this.productRepository.findAll();

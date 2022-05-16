@@ -39,10 +39,11 @@ public class CategoryService
     public Category save(CategoryMakeDto categoryMakeDto) {
         Category category = categoryRepository.save(toCategory(categoryMakeDto));
 
-        for (DynamicAttribute attr : attributeService.toDynamicAttributes(categoryMakeDto.characteristics())) {
+        // Can't add dynamic attributes yet in the FE
+        /*for (DynamicAttribute attr : attributeService.toDynamicAttributes(categoryMakeDto.characteristics())) {
             attr.setCategory(category);
             attributeService.save(attr);
-        }
+        }*/
         return category;
     }
 
@@ -104,6 +105,7 @@ public class CategoryService
     {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
+        if(categoryMakeDto.parentId() > 0) category.setParent(categoryRepository.getById(categoryMakeDto.parentId()));
 
         return category;
     }

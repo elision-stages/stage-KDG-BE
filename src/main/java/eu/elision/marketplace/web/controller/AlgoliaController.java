@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 public class AlgoliaController {
     private AlgoliaIndexerService algoliaIndexerService;
@@ -14,7 +16,7 @@ public class AlgoliaController {
     }
 
     @PostMapping("/updatealgolia")
-    ResponseEntity<String> registerVendor() {
+    ResponseEntity<String> updateAlgolia() {
         algoliaIndexerService.indexAllProducts();
         return ResponseEntity.ok("{\"status\": \"ok\"}");
     }

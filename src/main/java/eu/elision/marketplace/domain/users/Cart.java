@@ -49,13 +49,17 @@ public class Cart {
      * @param add      if true, the quantity will be added to the quantity if there is already a order line with the same proudct. If false the previous quantity will be overwritten
      */
     public void addProduct(Product product, int quantity, boolean add) {
-        if (orderLines.stream().anyMatch(orderLine -> Objects.equals(orderLine.getProduct().getId(), product.getId())))
-            for (OrderLine ol : orderLines) {
-                if (Objects.equals(ol.getProduct().getId(), product.getId())) {
-                    ol.setQuantity(add ? ol.getQuantity() + quantity : quantity);
+        for (OrderLine ol : orderLines) {
+            if (Objects.equals(ol.getProduct().getId(), product.getId())) {
+                int newQuantity = add ? ol.getQuantity() + quantity : quantity;
+                if(newQuantity == 0) {
+                    orderLines.remove(ol);
                     return;
                 }
+                ol.setQuantity(newQuantity);
+                return;
             }
+        }
 
         final OrderLine orderLine = new OrderLine();
         orderLine.setProduct(product);
