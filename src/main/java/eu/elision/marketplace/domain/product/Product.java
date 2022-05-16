@@ -21,8 +21,8 @@ public class Product
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
     private double price;
+    private String title;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;
     @ManyToOne(cascade = CascadeType.MERGE)

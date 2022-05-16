@@ -41,7 +41,7 @@ class CategoryTest
         Category sub1 = new Category();
         PickList pickList = new PickList();
         pickList.setCode(String.valueOf(RandomUtils.nextInt(1, 1000)));
-        pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1,100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1,100), RandomStringUtils.random(1)))));
+        pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)))));
         sub1.setName(subName);
         DynamicAttribute characteristic1 = new DynamicAttribute(RandomUtils.nextLong(1, 100), firstName, true, Type.DECIMAL, null, sub1);
         DynamicAttribute characteristic2 = new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, null, sub1);

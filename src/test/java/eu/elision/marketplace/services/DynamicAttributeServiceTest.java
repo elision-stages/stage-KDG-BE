@@ -5,8 +5,8 @@ import eu.elision.marketplace.domain.product.category.attributes.PickList;
 import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.repositories.DynamicAttributeRepository;
-import eu.elision.marketplace.web.dtos.AttributeValue;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -23,8 +23,7 @@ import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class DynamicAttributeServiceTest
-{
+class DynamicAttributeServiceTest {
 
     @InjectMocks
     private DynamicAttributeService dynamicAttributeService;
@@ -32,8 +31,7 @@ class DynamicAttributeServiceTest
     private DynamicAttributeRepository dynamicAttributeRepository;
 
     @Test
-    void toDynamicAttributeTest()
-    {
+    void toDynamicAttributeTest() {
         final String name1 = RandomStringUtils.randomAlphabetic(5);
         DynamicAttributeDto dynamicAttributeDto = new DynamicAttributeDto(name1, RandomUtils.nextBoolean(), Type.DECIMAL, null);
         final String name2 = RandomStringUtils.randomAlphabetic(5);
@@ -47,8 +45,7 @@ class DynamicAttributeServiceTest
     }
 
     @Test
-    void testNotFoundSavedAttributes()
-    {
+    void testNotFoundSavedAttributes() {
         AttributeValue<String, String> attributeValue = new AttributeValue<>();
         final String attributeName = RandomStringUtils.randomAlphabetic(5);
         attributeValue.setAttributeName(attributeName);
@@ -60,8 +57,7 @@ class DynamicAttributeServiceTest
     }
 
     @Test
-    void testSavedAttributesBool()
-    {
+    void testSavedAttributesBool() {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
@@ -76,8 +72,7 @@ class DynamicAttributeServiceTest
     }
 
     @Test
-    void testSavedAttributesDecimal()
-    {
+    void testSavedAttributesDecimal() {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
@@ -92,8 +87,7 @@ class DynamicAttributeServiceTest
     }
 
     @Test
-    void testSavedAttributesEnumFails()
-    {
+    void testSavedAttributesEnumFails() {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
@@ -112,8 +106,7 @@ class DynamicAttributeServiceTest
     }
 
     @Test
-    void testSavedAttributesEnum()
-    {
+    void testSavedAttributesEnum() {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);

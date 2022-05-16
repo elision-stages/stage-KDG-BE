@@ -11,9 +11,15 @@ import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.helpers.Mapper;
-import eu.elision.marketplace.web.dtos.*;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.product.CategoryDto;
+import eu.elision.marketplace.web.dtos.product.EditProductDto;
+import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -318,6 +324,19 @@ public class Controller {
     public List<Category> findAllCategories()
     {
         return categoryService.findAll();
+    }
+
+    public void editProduct(EditProductDto editProductDto, String userEmail) {
+        User user = userService.findUserByEmail(userEmail);
+        if (user == null) {
+            throw new NotFoundException(String.format("User with email %s not found", userEmail));
+        }
+        if (!(user instanceof Vendor vendor))
+            throw new NotFoundException(String.format("User with email %s is not a vendor", userEmail));
+
+        final List<DynamicAttributeValue<?>> attributeValues = dynamicAttributeService.getSavedAttributes(editProductDto.attributes()).stream().toList();
+        dynamicAttributeValueService.save(attributeValues);
+        productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, attributeValues));
     }
 
     /**

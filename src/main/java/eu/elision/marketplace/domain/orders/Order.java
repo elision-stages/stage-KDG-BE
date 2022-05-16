@@ -14,8 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @SequenceGenerator(name = "sequence", sequenceName = "mySequence", initialValue = 100)
-public class Order
-{
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long orderNumber;
@@ -27,8 +26,7 @@ public class Order
     /**
      * Public no args constructor. Initialises the orderlines array
      */
-    public Order()
-    {
+    public Order() {
         lines = new ArrayList<>();
     }
 
@@ -37,8 +35,7 @@ public class Order
      *
      * @return the total price of an order
      */
-    public double getTotalPrice()
-    {
+    public double getTotalPrice() {
         return lines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 }

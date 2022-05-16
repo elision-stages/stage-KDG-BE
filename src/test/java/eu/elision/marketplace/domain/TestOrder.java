@@ -49,7 +49,7 @@ class TestOrder
         final int quantity1 = RandomUtils.nextInt(1, 10);
         final int quantity2 = RandomUtils.nextInt(1, 10);
 
-        var product = new Product(RandomUtils.nextLong(1,100), RandomStringUtils.random(4), price, new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>());
+        var product = new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(4), new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>());
         var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
         var ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 

@@ -5,10 +5,10 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.web.dtos.CustomerDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
+import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -207,7 +207,7 @@ class ControllerTest {
         controller.deleteProduct(id);
         assertThat(controller.findAllProducts()).hasSize(initSize);
     }
-  
+
     @Test
     void checkoutCartTest()
     {

@@ -6,10 +6,11 @@ import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.services.Controller;
 import eu.elision.marketplace.services.UserService;
 import eu.elision.marketplace.services.helpers.Mapper;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.ProductDto;
 import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.SmallProductDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.product.EditProductDto;
+import eu.elision.marketplace.web.dtos.product.ProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -76,4 +77,12 @@ public class ProductController
         controller.deleteProduct(Long.parseLong(id), principal.getName());
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
+
+    @Secured("ROLE_VENDOR")
+    @PostMapping("/editProduct")
+    ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto, Principal principal) {
+        controller.editProduct(editProductDto, principal.getName());
+        return ResponseEntity.ok(new ResponseDto(SUCCESS));
+    }
+
 }

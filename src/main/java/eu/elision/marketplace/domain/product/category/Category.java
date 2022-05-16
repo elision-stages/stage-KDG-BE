@@ -16,8 +16,7 @@ import java.util.Set;
  */
 @Getter
 @Entity
-public class Category
-{
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
@@ -38,8 +37,7 @@ public class Category
     /**
      * No args constructor. Initialises the sub categories and characteristics array.
      */
-    public Category()
-    {
+    public Category() {
         subCategories = new HashSet<>();
         characteristics = new ArrayList<>();
     }

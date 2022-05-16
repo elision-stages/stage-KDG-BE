@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.dtos.cart;
 
-import eu.elision.marketplace.web.dtos.ProductDto;
+
+import eu.elision.marketplace.web.dtos.product.ProductDto;
 
 import java.io.Serializable;
 

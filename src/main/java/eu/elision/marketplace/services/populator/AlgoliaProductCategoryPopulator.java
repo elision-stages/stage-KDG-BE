@@ -16,14 +16,14 @@ public class AlgoliaProductCategoryPopulator implements Populator<Product, Algol
     public void populate(Product source, AlgoliaProductDto target) {
         List<String> catStructure = new ArrayList<>();
         Category current = source.getCategory();
-        while(current != null) {
+        while (current != null) {
             catStructure.add(current.getName());
             current = current.getParent();
         }
         Collections.reverse(catStructure);
 
-        while(!catStructure.isEmpty()) {
-            String paramName = String.format("categories.lvl%d", catStructure.size()-1);
+        while (!catStructure.isEmpty()) {
+            String paramName = String.format("categories.lvl%d", catStructure.size() - 1);
             String paramValue = String.join(" > ", catStructure);
             target.getParameters().put(paramName, paramValue);
             catStructure.remove(catStructure.size() - 1);

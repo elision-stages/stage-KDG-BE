@@ -93,8 +93,8 @@ class ProductTest
 
         final String description = RandomStringUtils.random(4);
 
-        Product product1 = new Product(1L, "", 2, category, vendor, description, new ArrayList<>(), new ArrayList<>());
-        Product product2 = new Product(1L, "", 2, category, vendor, description, new ArrayList<>(), new ArrayList<>());
+        Product product1 = new Product(1L, 2, "", category, vendor, description, new ArrayList<>(), new ArrayList<>());
+        Product product2 = new Product(1L, 2, "", category, vendor, description, new ArrayList<>(), new ArrayList<>());
 
         assertThat(product1.equals(product2)).isTrue();
 
@@ -144,6 +144,6 @@ class ProductTest
     void testToString()
     {
         Product product = new Product();
-        assertThat(product.toString()).hasToString("Product(id=null, title=null, price=0.0, category=null, vendor=null, description=null, images=[], attributes=[])");
+        assertThat(product.toString()).hasToString("Product(id=null, price=0.0, title=null, category=null, vendor=null, description=null, images=[], attributes=[])");
     }
 }

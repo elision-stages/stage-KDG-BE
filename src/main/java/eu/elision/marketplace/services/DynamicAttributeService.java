@@ -6,8 +6,8 @@ import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.*;
 import eu.elision.marketplace.repositories.DynamicAttributeRepository;
-import eu.elision.marketplace.web.dtos.AttributeValue;
-import eu.elision.marketplace.web.dtos.DynamicAttributeDto;
+import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +27,7 @@ public class DynamicAttributeService
     private final DynamicAttributeRepository dynamicAttributeRepository;
     Logger logger = LoggerFactory.getLogger(DynamicAttributeService.class);
 
-    public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository)
-    {
+    public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository) {
         this.dynamicAttributeRepository = dynamicAttributeRepository;
     }
 
@@ -40,16 +39,14 @@ public class DynamicAttributeService
             if (dynamicAttribute == null)
                 throw new NotFoundException(String.format("Attribute with name %s not found", attribute.getAttributeName()));
 
-            switch (dynamicAttribute.getType())
-            {
+            switch (dynamicAttribute.getType()) {
                 case BOOL ->
                         dynamicAttributeValues.add(new DynamicAttributeBoolValue(attribute.getAttributeName(), Boolean.valueOf(attribute.getValue())));
                 case DECIMAL ->
                         dynamicAttributeValues.add(new DynamicAttributeDoubleValue(attribute.getAttributeName(), Double.parseDouble(attribute.getValue())));
                 case INTEGER ->
                         dynamicAttributeValues.add(new DynamicAttributeIntValue(attribute.getAttributeName(), Integer.parseInt(attribute.getValue())));
-                case ENUMERATION ->
-                {
+                case ENUMERATION -> {
                     if (dynamicAttribute.getEnumList().getItems().stream().noneMatch(pickListItem -> Objects.equals(pickListItem.getValue(), attribute.getValue())))
                         throw new NotFoundException(String.format("Value %s is not found in enum %s", attribute.getValue(), dynamicAttribute.getName()));
 
@@ -61,13 +58,14 @@ public class DynamicAttributeService
         return dynamicAttributeValues;
     }
 
-    public DynamicAttribute save(DynamicAttribute dynamicAttribute)
-    {
+    public DynamicAttribute save(DynamicAttribute dynamicAttribute) {
+        if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName())) {
+            logger.warn("Dynamic attribute with name {} already exists, not saving instance", dynamicAttribute.getName());
+        }
         return dynamicAttributeRepository.save(dynamicAttribute);
     }
 
-    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto)
-    {
+    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         dynamicAttribute.setName(dynamicAttributeDto.name());
         dynamicAttribute.setRequired(dynamicAttributeDto.required());
@@ -76,8 +74,7 @@ public class DynamicAttributeService
         PickList pickList = new PickList();
         if (pickList.getItems() == null) pickList.setItems(new ArrayList<>());
 
-        if (dynamicAttribute.getType() == Type.ENUMERATION)
-        {
+        if (dynamicAttribute.getType() == Type.ENUMERATION) {
             for (String enumValue : dynamicAttributeDto.enumValues())
                 pickList.getItems().add(new PickListItem(enumValue));
             dynamicAttribute.setEnumList(pickList);
@@ -87,8 +84,7 @@ public class DynamicAttributeService
         return dynamicAttribute;
     }
 
-    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos)
-    {
+    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos) {
         return dynamicAttributeDtos.stream().map(this::toDynamicAttribute).toList();
     }
 }

@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
  * Service for orders
  */
 @Service
-public class OrderService
-{
+public class OrderService {
     private final OrderRepository repository;
 
     /**
@@ -18,8 +17,7 @@ public class OrderService
      * @param repository the repository with orders
      */
 
-    public OrderService(OrderRepository repository)
-    {
+    public OrderService(OrderRepository repository) {
         this.repository = repository;
     }
 
@@ -29,8 +27,7 @@ public class OrderService
      * @param order the order that needs to be saved
      * @return the saved order
      */
-    public Order save(Order order)
-    {
+    public Order save(Order order) {
         return repository.save(order);
     }
 
@@ -40,8 +37,7 @@ public class OrderService
      * @param orderId the id of the order
      * @return the order with given id
      */
-    public Order findOrderById(long orderId)
-    {
+    public Order findOrderById(long orderId) {
         return repository.findById(orderId).orElse(null);
     }
 }

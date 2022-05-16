@@ -17,8 +17,7 @@ import java.util.Objects;
 @Getter
 @Entity
 
-public class Cart
-{
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
@@ -29,8 +28,7 @@ public class Cart
     /**
      * No args constructor. Initalises order lines array
      */
-    public Cart()
-    {
+    public Cart() {
         orderLines = new ArrayList<>();
     }
 
@@ -39,8 +37,7 @@ public class Cart
      *
      * @return the value of all the orderLines in the cart
      */
-    public double getTotalPrice()
-    {
+    public double getTotalPrice() {
         return orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 
@@ -51,13 +48,10 @@ public class Cart
      * @param quantity the amount of products you want to add
      * @param add      if true, the quantity will be added to the quantity if there is already a order line with the same proudct. If false the previous quantity will be overwritten
      */
-    public void addProduct(Product product, int quantity, boolean add)
-    {
+    public void addProduct(Product product, int quantity, boolean add) {
         if (orderLines.stream().anyMatch(orderLine -> Objects.equals(orderLine.getProduct().getId(), product.getId())))
-            for (OrderLine ol : orderLines)
-            {
-                if (Objects.equals(ol.getProduct().getId(), product.getId()))
-                {
+            for (OrderLine ol : orderLines) {
+                if (Objects.equals(ol.getProduct().getId(), product.getId())) {
                     ol.setQuantity(add ? ol.getQuantity() + quantity : quantity);
                     return;
                 }
@@ -76,8 +70,7 @@ public class Cart
      * @param user the user who wants to checkout
      * @return the order created from the cart
      */
-    public Order checkout(User user)
-    {
+    public Order checkout(User user) {
         if (orderLines.isEmpty()) return null;
         Order order = new Order();
         order.getLines().addAll(orderLines);

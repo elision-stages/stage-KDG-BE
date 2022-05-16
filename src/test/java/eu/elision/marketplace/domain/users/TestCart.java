@@ -11,19 +11,16 @@ import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TestCart
-{
+class TestCart {
     @Test
-    void testConstructor()
-    {
+    void testConstructor() {
         Cart cart = new Cart();
 
         assertThat(cart.getOrderLines()).isNotNull();
     }
 
     @Test
-    void testGetter()
-    {
+    void testGetter() {
         var cart = new Cart();
         cart.getOrderLines().add(new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(), RandomUtils.nextInt()));
 
@@ -31,13 +28,12 @@ class TestCart
     }
 
     @Test
-    void cartTotalPrice()
-    {
+    void cartTotalPrice() {
         final double price = Math.round(RandomUtils.nextDouble(1, 100));
         final int quantity1 = RandomUtils.nextInt(1, 10);
         final int quantity2 = RandomUtils.nextInt(1, 10);
 
-        Product product = new Product(RandomUtils.nextLong(1, 100), RandomStringUtils.random(5), price, new Category(), new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
+        Product product = new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(5), new Category(), new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
         OrderLine ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
         OrderLine ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 
@@ -50,8 +46,7 @@ class TestCart
     }
 
     @Test
-    void getSetId()
-    {
+    void getSetId() {
         Cart cart = new Cart();
         long id = RandomUtils.nextLong();
         cart.setId(id);
@@ -60,8 +55,7 @@ class TestCart
     }
 
     @Test
-    void addProductTest()
-    {
+    void addProductTest() {
         Cart cart = new Cart();
         Product product = new Product();
         final int price = RandomUtils.nextInt(1, 100);
@@ -76,8 +70,7 @@ class TestCart
     }
 
     @Test
-    void add2ProductTest()
-    {
+    void add2ProductTest() {
         Cart cart = new Cart();
         Product product = new Product();
         Product product1 = new Product();
@@ -100,8 +93,7 @@ class TestCart
     }
 
     @Test
-    void add2ProductAddTest()
-    {
+    void add2ProductAddTest() {
         Cart cart = new Cart();
         Product product = new Product();
         final int price = 2;
@@ -119,8 +111,7 @@ class TestCart
     }
 
     @Test
-    void add2ProductUpdateTest()
-    {
+    void add2ProductUpdateTest() {
         Cart cart = new Cart();
         Product product = new Product();
 

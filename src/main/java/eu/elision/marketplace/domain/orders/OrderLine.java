@@ -32,8 +32,7 @@ public class OrderLine
      * @param product         the product in the
      * @param quantity        the quantity of the product
      */
-    public OrderLine(int orderLineNumber, Vendor vendor, String orderNumber, Product product, int quantity)
-    {
+    public OrderLine(int orderLineNumber, Vendor vendor, String orderNumber, Product product, int quantity) {
         this.orderLineNumber = orderLineNumber;
         this.vendor = vendor;
         this.orderNumber = orderNumber;
@@ -41,8 +40,7 @@ public class OrderLine
         this.quantity = quantity;
     }
 
-    public OrderLine()
-    {
+    public OrderLine() {
     }
 
     /**

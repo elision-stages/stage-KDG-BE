@@ -18,8 +18,7 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class PickListItem
-{
+public class PickListItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,8 +29,7 @@ public class PickListItem
      *
      * @param value the value of the pick list item
      */
-    public PickListItem(String value)
-    {
+    public PickListItem(String value) {
         this.value = value;
     }
 }

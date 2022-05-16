@@ -5,10 +5,10 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.web.dtos.CategoryDto;
-import eu.elision.marketplace.web.dtos.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.SmallProductDto;
 import eu.elision.marketplace.web.dtos.UserDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -19,11 +19,9 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapperTest
-{
+class MapperTest {
     @Test
-    void toCategoryDtoList()
-    {
+    void toCategoryDtoList() {
         Category parent = new Category();
         Category child = new Category();
 
@@ -45,8 +43,7 @@ class MapperTest
     }
 
     @Test
-    void categoryInDtoListTest()
-    {
+    void categoryInDtoListTest() {
         final Category category = new Category();
         category.setName(RandomStringUtils.randomAlphabetic(4));
         category.setId(RandomUtils.nextLong(1, 10));
@@ -57,8 +54,7 @@ class MapperTest
     }
 
     @Test
-    void toCategoryTest()
-    {
+    void toCategoryTest() {
         CategoryMakeDto categoryMakeDto = new CategoryMakeDto("Name", 0, new ArrayList<>());
         Category category = Mapper.toCategory(categoryMakeDto);
 
@@ -66,8 +62,7 @@ class MapperTest
     }
 
     @Test
-    void toUserDtoTest()
-    {
+    void toUserDtoTest() {
         User user = new Vendor();
         Long id = RandomUtils.nextLong(1, 10);
         String firstName = RandomStringUtils.randomAlphabetic(4);
@@ -87,8 +82,7 @@ class MapperTest
     }
 
     @Test
-    void testToSmallDto()
-    {
+    void testToSmallDto() {
         final long id = RandomUtils.nextLong(1, 100);
         final String name = RandomStringUtils.randomAlphabetic(5);
         final String image1 = RandomStringUtils.randomAlphabetic(5);
@@ -98,7 +92,7 @@ class MapperTest
         final String description = RandomStringUtils.randomAlphabetic(5);
         final ArrayList<DynamicAttributeValue<?>> attributes = new ArrayList<>();
         final int price = RandomUtils.nextInt(1, 100);
-        Product product = new Product(id, name, price, category, vendor, description, List.of(image1, RandomStringUtils.randomAlphabetic(5)), attributes);
+        Product product = new Product(id, price, name, category, vendor, description, List.of(image1, RandomStringUtils.randomAlphabetic(5)), attributes);
 
         SmallProductDto smallProductDto = Mapper.toSmallProductDto(product);
 

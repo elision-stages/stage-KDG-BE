@@ -22,7 +22,7 @@ class OrderLineTest
         double price = Math.random();
         int quantity = RandomUtils.nextInt();
 
-        orderLine.setProduct(new Product(RandomUtils.nextLong(1, 100), RandomStringUtils.random(4), price, new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
+        orderLine.setProduct(new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(4), new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>()));
         orderLine.setQuantity(quantity);
 
         assertThat(orderLine.getTotalPrice()).isEqualTo(price * quantity);
@@ -95,12 +95,12 @@ class OrderLineTest
 
         ol.setOrderNumber(orderNumber);
         ol.setQuantity(quantity);
-        ol.setProduct(new Product(id, name, price, null, null, description, new ArrayList<>(), new ArrayList<>()));
+        ol.setProduct(new Product(id, price, name, null, null, description, new ArrayList<>(), new ArrayList<>()));
         ol.setVendor(null);
         ol.setOrderLineNumber(orderLineNumber);
 
-        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, title=%s, price=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
-                orderLineNumber, orderNumber, id, name, price, description, quantity));
+        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, price=%s, title=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
+                orderLineNumber, orderNumber, id, price, name, description, quantity));
     }
 
     @Test

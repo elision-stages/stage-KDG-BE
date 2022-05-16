@@ -22,8 +22,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CartControllerTest
-{
+class CartControllerTest {
     @Autowired
     Controller controller;
     private static URL base;
@@ -32,15 +31,13 @@ class CartControllerTest
     private Integer port;
 
     @BeforeEach
-    void setUp() throws MalformedURLException
-    {
+    void setUp() throws MalformedURLException {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
 
     @Test
-    void testCheckout()
-    {
+    void testCheckout() {
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);

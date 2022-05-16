@@ -14,8 +14,7 @@ import java.security.Principal;
  */
 @RestController
 @RequestMapping("cart")
-public class CartController
-{
+public class CartController {
     private final Controller controller;
 
     /**
@@ -23,8 +22,7 @@ public class CartController
      *
      * @param controller the controller
      */
-    public CartController(Controller controller)
-    {
+    public CartController(Controller controller) {
         this.controller = controller;
     }
 
@@ -37,8 +35,7 @@ public class CartController
      */
     @PostMapping("add")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<CartDto> addProductToCart(Principal principal, @RequestBody AddProductToCartDto addProductDto)
-    {
+    public ResponseEntity<CartDto> addProductToCart(Principal principal, @RequestBody AddProductToCartDto addProductDto) {
         return ResponseEntity.ok(controller.addProductToCart(principal.getName(), addProductDto));
     }
 
@@ -50,8 +47,7 @@ public class CartController
      */
     @GetMapping("/get")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<CartDto> getCart(Principal principal)
-    {
+    public ResponseEntity<CartDto> getCart(Principal principal) {
         return ResponseEntity.ok(controller.getCustomerCart(principal.getName()));
     }
 
@@ -63,8 +59,7 @@ public class CartController
      */
     @GetMapping("/checkout")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<Long> checkoutCart(Principal principal)
-    {
+    public ResponseEntity<Long> checkoutCart(Principal principal) {
         return ResponseEntity.ok(controller.checkoutCart(principal.getName()));
     }
 }

@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface DynamicAttributeRepository extends JpaRepository<DynamicAttribute, Long> {
     DynamicAttribute findDynamicAttributeByName(String name);
+
+    boolean existsByName(String name);
 }
