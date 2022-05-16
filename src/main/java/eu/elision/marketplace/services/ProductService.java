@@ -112,6 +112,10 @@ public class ProductService {
         return product;
     }
 
+    /**
+     * Delete a product based on an id
+     * @param productId the id of the product that needs to be deleted
+     */
     public void delete(long productId) {
         productRepository.deleteById(productId);
     }

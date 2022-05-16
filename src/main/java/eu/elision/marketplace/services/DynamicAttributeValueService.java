@@ -46,7 +46,7 @@ public class DynamicAttributeValueService {
     /**
      * Delete the attributes from a product both from the product itself and from the repository
      *
-     * @param product
+     * @param product the product where the attributes need to be updated
      */
     public void deleteNonCategoryAttributes(Product product) {
         for (DynamicAttributeValue<?> attribute : product.getAttributes()) {
@@ -57,6 +57,10 @@ public class DynamicAttributeValueService {
         product.removeNonCategoryAttributes();
     }
 
+    /**
+     * Find all the attribute values, only used for testing
+     * @return returns a list of all the attribute values
+     */
     public Collection<DynamicAttributeValue<?>> findAll() {
         return dynamicAttributeValueRepository.findAll();
     }
