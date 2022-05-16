@@ -84,8 +84,8 @@ class TestCart {
         assertThat(cart.getTotalPrice()).isEqualTo(price * quantity);
 
         cart.addProduct(product, 0, false);
-        assertThat(cart.getOrderLines()).hasSize(0);
-        assertThat(cart.getTotalPrice()).isEqualTo(0);
+        assertThat(cart.getOrderLines()).isEmpty();
+        assertThat(cart.getTotalPrice()).isZero(0);
     }
 
     @Test
