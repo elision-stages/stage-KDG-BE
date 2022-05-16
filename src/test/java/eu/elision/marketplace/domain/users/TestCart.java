@@ -85,7 +85,7 @@ class TestCart {
 
         cart.addProduct(product, 0, false);
         assertThat(cart.getOrderLines()).isEmpty();
-        assertThat(cart.getTotalPrice()).isZero(0);
+        assertThat(cart.getTotalPrice()).isZero();
     }
 
     @Test
