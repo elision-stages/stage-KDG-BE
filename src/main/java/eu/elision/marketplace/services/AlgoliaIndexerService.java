@@ -5,15 +5,12 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.services.converter.Converter;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 /**
  * Service for algolia indexer

@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This is a product DTO used to send products for the shopping cart
+ */
 public record ProductDto(long id, double price, String description, String title, List<String> images, Category category,
                          Collection<AttributeValue<String, String>> attributes, long vendorId, String vendorName) implements Serializable {
 }

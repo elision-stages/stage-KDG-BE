@@ -37,14 +37,7 @@ public class CategoryService
     }
 
     public Category save(CategoryMakeDto categoryMakeDto) {
-        Category category = categoryRepository.save(toCategory(categoryMakeDto));
-
-        // Can't add dynamic attributes yet in the FE
-        /*for (DynamicAttribute attr : attributeService.toDynamicAttributes(categoryMakeDto.characteristics())) {
-            attr.setCategory(category);
-            attributeService.save(attr);
-        }*/
-        return category;
+        return categoryRepository.save(toCategory(categoryMakeDto));
     }
 
     public Category save(Category category)
