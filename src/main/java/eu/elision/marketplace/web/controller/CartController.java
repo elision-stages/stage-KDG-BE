@@ -1,6 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.services.Controller;
+import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import org.springframework.http.ResponseEntity;

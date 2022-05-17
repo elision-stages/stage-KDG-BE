@@ -1,7 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.services.Controller;
+import eu.elision.marketplace.logic.Controller;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

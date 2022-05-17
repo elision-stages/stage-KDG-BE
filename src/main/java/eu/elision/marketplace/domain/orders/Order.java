@@ -2,8 +2,11 @@ package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.users.User;
 import lombok.Data;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +24,16 @@ public class Order {
     @ManyToOne
     private User user;
     @OneToMany(cascade = CascadeType.MERGE)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<OrderLine> lines;
+    private final LocalDate createdDate;
 
     /**
      * Public no args constructor. Initialises the orderlines array
      */
     public Order() {
         lines = new ArrayList<>();
+        createdDate = LocalDate.now();
     }
 
     /**
