@@ -3,6 +3,7 @@ package eu.elision.marketplace.logic.services.users;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;

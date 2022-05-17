@@ -9,7 +9,6 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.users.Cart;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.web.dtos.SmallProductDto;
 import eu.elision.marketplace.web.dtos.UserDto;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
@@ -19,6 +18,7 @@ import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 
 import java.util.ArrayList;
 import java.util.Collection;

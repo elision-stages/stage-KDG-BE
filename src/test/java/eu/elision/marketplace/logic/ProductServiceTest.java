@@ -1,6 +1,7 @@
-package eu.elision.marketplace.services;
+package eu.elision.marketplace.logic;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.logic.services.users.ProductService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
