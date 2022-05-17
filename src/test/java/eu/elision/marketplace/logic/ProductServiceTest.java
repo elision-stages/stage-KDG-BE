@@ -1,13 +1,18 @@
 package eu.elision.marketplace.logic;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.users.ProductService;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
+import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -38,4 +43,24 @@ class ProductServiceTest {
         assertThat(fromRepo.getDescription()).isNotEqualTo(description);
 
     }
+
+    @Test
+    void editProductFail() {
+        Product product = new Product();
+        product.setId(RandomUtils.nextLong());
+
+        assertThrows(NotFoundException.class, () ->
+                productService.editProduct(product));
+    }
+
+    @Test
+    void editProductFail2() {
+        Product newProduct = new Product();
+        newProduct.setId(productService.save(new Product()).getId());
+        newProduct.setVendor(new Vendor());
+        assertThrows(UnauthorisedException.class, () ->
+                productService.editProduct(newProduct));
+    }
+
+
 }
