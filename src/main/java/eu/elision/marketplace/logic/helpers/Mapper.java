@@ -9,6 +9,7 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.users.Cart;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.web.dtos.SmallProductDto;
 import eu.elision.marketplace.web.dtos.UserDto;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
@@ -18,7 +19,6 @@ import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
-import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,14 +74,15 @@ public class Mapper {
         return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList() != null ? dynamicAttribute.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null);
     }
 
+
     /**
-     * Convert an Edit product dto object to a product object
+     * Create a Product of all their seperate attributes
      *
-     * @param editProductDto  the data of the edit product dto
-     * @param category        the category object of the product
-     * @param vendor          the vendor object of the product
-     * @param attributeValues the attribute values of the object
-     * @return the product with all the data of the dto object
+     * @param editProductDto The dto with global info
+     * @param category the category in which the product needs to be added
+     * @param vendor the vendor that created the product
+     * @param attributeValues the dynamic atttributes that are part of the product
+     * @return a Product
      */
     public static Product toProduct(EditProductDto editProductDto, Category category, Vendor vendor, List<DynamicAttributeValue<?>> attributeValues) {
         return new Product(editProductDto.id(), editProductDto.price(), editProductDto.title(), category, vendor, editProductDto.description(), editProductDto.images(), attributeValues);
@@ -131,7 +132,7 @@ public class Mapper {
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), product.getCategory(), attributes, product.getVendor().getId())));
+            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getId(), product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), product.getCategory(), attributes, product.getVendor().getId(), product.getVendor().getBusinessName())));
         }
 
         return cartDto;

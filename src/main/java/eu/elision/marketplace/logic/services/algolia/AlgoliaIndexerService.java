@@ -5,7 +5,6 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.logic.converter.Converter;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,6 @@ public class AlgoliaIndexerService implements IndexerService {
 
     @Override
     @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
-    @Async
     public void indexAllProducts() {
         try {
             List<Product> productList = this.productRepository.findAll();
