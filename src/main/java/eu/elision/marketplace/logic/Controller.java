@@ -199,11 +199,12 @@ public class Controller {
      *
      * @param vendor     the vendor that wants to save the product
      * @param productDto the object that needs to be saved
+     * @return the created product
      */
-    public void saveProduct(Vendor vendor, ProductDto productDto) {
+    public Product saveProduct(Vendor vendor, ProductDto productDto) {
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes());
         dynamicAttributeValueService.save(productAttributes);
-        productService.save(productDto, productAttributes, vendor);
+        return productService.save(productDto, productAttributes, vendor);
     }
 
     /**
@@ -293,9 +294,10 @@ public class Controller {
      * Save a category from dto object
      *
      * @param categoryMakeDto the dto object that needs to be saved
+     * @return the created category
      */
-    public void saveCategory(CategoryMakeDto categoryMakeDto) {
-        categoryService.save(categoryMakeDto);
+    public Category saveCategory(CategoryMakeDto categoryMakeDto) {
+        return categoryService.save(categoryMakeDto);
     }
 
     /**

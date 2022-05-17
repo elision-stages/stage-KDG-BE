@@ -38,9 +38,10 @@ public class ProductService {
      * @param productDto      the product dto
      * @param attributeValues a list of saved attribute values
      * @param vendor          the vendor of the product
+     * @return the created product
      */
-    public void save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
-        productRepository.save(toProduct(productDto, attributeValues, vendor));
+    public Product save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
+        return productRepository.save(toProduct(productDto, attributeValues, vendor));
     }
 
     /**

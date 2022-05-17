@@ -3,6 +3,7 @@ package eu.elision.marketplace.logic;
 import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
@@ -10,7 +11,9 @@ import eu.elision.marketplace.repositories.OrderRepository;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
+import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -22,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
@@ -315,6 +319,37 @@ class ControllerTest {
         assertThat(vendorOrderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
         assertThat(vendorOrderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
         assertThat(vendorOrderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+    }
+
+    @Test
+    void saveProductTest() {
+        Vendor vendor = new Vendor();
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        final String phoneNumber = RandomStringUtils.random(10, false, true);
+
+        vendor.setFirstName(firstName);
+        vendor.setLastName(lastName);
+        vendor.setEmail(email);
+        vendor.setPassword(password);
+        vendor.setPhoneNumber(phoneNumber);
+        controller.saveUser(vendor);
+
+        final CategoryMakeDto categoryMakeDto = new CategoryMakeDto(RandomStringUtils.randomAlphabetic(5), 0L, new ArrayList<>());
+        Category category = controller.saveCategory(categoryMakeDto);
+        ProductDto productDto = new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), category, new ArrayList<>(), vendor.getId(), vendor.getBusinessName());
+
+        Product product = controller.findProduct(controller.saveProduct(vendor, productDto).getId());
+
+        assertThat(product.getDescription()).isEqualTo(productDto.description());
+        assertThat(product.getPrice()).isEqualTo(productDto.price());
+        assertThat(product.getTitle()).isEqualTo(productDto.title());
+        assertThat(product.getVendor().getId()).isEqualTo(productDto.vendorId());
+        assertThat(product.getAttributes()).hasSize(productDto.attributes().size());
+        assertThat(product.getCategory().getName()).isEqualTo(productDto.category().getName());
+
     }
 
 }
