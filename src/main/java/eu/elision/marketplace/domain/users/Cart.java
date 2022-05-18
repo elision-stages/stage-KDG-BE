@@ -52,7 +52,7 @@ public class Cart {
         for (OrderLine ol : orderLines) {
             if (Objects.equals(ol.getProduct().getId(), product.getId())) {
                 int newQuantity = add ? ol.getQuantity() + quantity : quantity;
-                if(newQuantity == 0) {
+                if (newQuantity == 0) {
                     orderLines.remove(ol);
                     return;
                 }
@@ -80,6 +80,8 @@ public class Cart {
         order.getLines().addAll(orderLines);
         order.setUser(user);
         orderLines.forEach(orderLine -> orderLine.setOrderNumber(String.valueOf(order.getOrderNumber())));
+
+        orderLines.clear();
 
         return order;
     }

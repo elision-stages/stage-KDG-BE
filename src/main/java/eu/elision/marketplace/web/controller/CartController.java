@@ -57,7 +57,7 @@ public class CartController {
      * @param principal the principal of the logged in user
      * @return a response entity with the id of the order that is created
      */
-    @GetMapping("/checkout")
+    @PostMapping("/checkout")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<Long> checkoutCart(Principal principal) {
         return ResponseEntity.ok(controller.checkoutCart(principal.getName()));
