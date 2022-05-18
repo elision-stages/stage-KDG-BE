@@ -12,7 +12,7 @@ import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -312,15 +312,15 @@ class ControllerTest {
         order.setUser(customer);
         controller.saveOrder(order);
 
-        Collection<VendorOrderDto> orders = controller.getVendorOrders(vendor.getEmail());
+        Collection<OrderDto> orders = controller.getOrders(vendor.getEmail());
 
         assertThat(orders).hasSize(1);
-        final VendorOrderDto vendorOrderDto = orders.stream().findFirst().orElse(null);
-        assertThat(vendorOrderDto).isNotNull();
-        assertThat(vendorOrderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
-        assertThat(vendorOrderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
-        assertThat(vendorOrderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
-        assertThat(vendorOrderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+        final OrderDto orderDto = orders.stream().findFirst().orElse(null);
+        assertThat(orderDto).isNotNull();
+        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
+        assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
+        assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
+        assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
     }
 
     @Test

@@ -16,7 +16,6 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "orders")
-@SequenceGenerator(name = "sequence", sequenceName = "mySequence", initialValue = 100)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -43,5 +42,9 @@ public class Order {
      */
     public double getTotalPrice() {
         return lines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
+    }
+
+    public int getProductCount() {
+        return lines.stream().map(OrderLine::getQuantity).reduce(0, Integer::sum);
     }
 }

@@ -1,5 +1,6 @@
 package eu.elision.marketplace.logic.helpers;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
@@ -15,6 +16,7 @@ import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
@@ -136,6 +138,26 @@ public class Mapper {
         }
 
         return cartDto;
+    }
+
+    /**
+     * Convert a list of orders into a list of order dto
+     *
+     * @param orders the list of orders that needs to be converted
+     * @return The list of order dto
+     */
+    public static Collection<OrderDto> toOrderDto(Collection<Order> orders) {
+        return orders.stream().map(Mapper::toOrderDto).toList();
+    }
+
+    /**
+     * Convert an order to a order dto
+     *
+     * @param order the order that needs to be converted
+     * @return the order dto
+     */
+    public static OrderDto toOrderDto(Order order) {
+        return new OrderDto(order.getOrderNumber(), order.getUser().getFullName(), order.getCreatedDate().toString(), order.getTotalPrice(), order.getProductCount());
     }
 }
 

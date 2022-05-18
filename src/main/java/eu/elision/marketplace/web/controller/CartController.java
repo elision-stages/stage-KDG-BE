@@ -29,7 +29,7 @@ public class CartController {
     /**
      * Rest call to add a product to a cart of a user
      *
-     * @param principal     the principal the the logged in user
+     * @param principal     the principal the logged-in user
      * @param addProductDto the product dto with product id and quantity
      * @return a response entity with cart dto
      */
@@ -45,7 +45,7 @@ public class CartController {
      * @param principal the principal of the logged in user
      * @return a response entity with a cart dto of the given user
      */
-    @PostMapping("/get")
+    @GetMapping("/get")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<CartDto> getCart(Principal principal) {
         return ResponseEntity.ok(controller.getCustomerCart(principal.getName()));
