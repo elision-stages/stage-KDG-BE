@@ -251,6 +251,8 @@ class ControllerTest {
         assertThat(order.getUser().getPassword()).isEqualTo(password);
         assertThat(order.getUser().getEmail()).isEqualTo(email);
 
+        assertThat(customer.getCart().getOrderLines()).isEmpty();
+
     }
 
 }

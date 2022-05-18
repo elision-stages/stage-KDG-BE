@@ -52,7 +52,7 @@ public class Cart {
         for (OrderLine ol : orderLines) {
             if (Objects.equals(ol.getProduct().getId(), product.getId())) {
                 int newQuantity = add ? ol.getQuantity() + quantity : quantity;
-                if(newQuantity == 0) {
+                if (newQuantity == 0) {
                     orderLines.remove(ol);
                     return;
                 }
@@ -79,6 +79,8 @@ public class Cart {
         Order order = new Order();
         order.getLines().addAll(orderLines);
         order.setUser(user);
+
+        orderLines.clear();
 
         return order;
     }
