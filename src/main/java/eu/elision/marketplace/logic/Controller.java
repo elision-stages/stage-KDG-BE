@@ -280,7 +280,7 @@ public class Controller {
      * @return the created category
      */
     public Category saveCategory(CategoryMakeDto categoryMakeDto) {
-        return categoryService.save(categoryMakeDto);
+        return categoryService.save(categoryMakeDto, dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics()));
     }
 
     /**
@@ -369,8 +369,14 @@ public class Controller {
      * @param customerName the email of the user
      * @return the cart dto of the user
      */
-    public CartDto getCustomerCart(String customerName) {
-        return Mapper.toCartDto(((Customer) userService.loadUserByUsername(customerName)).getCart());
+    public CartDto getCustomerCart(String customerName)
+    {
+        final User user = userService.findUserByEmail(customerName);
+
+        if (user == null) throw new NotFoundException("User not found");
+        if (user instanceof Vendor) throw new UnauthorisedException("Vendors don't have carts");
+
+        return Mapper.toCartDto(((Customer) user).getCart());
     }
 
     /**
