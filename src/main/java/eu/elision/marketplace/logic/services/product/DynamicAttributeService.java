@@ -27,10 +27,19 @@ public class DynamicAttributeService
     private final DynamicAttributeRepository dynamicAttributeRepository;
     Logger logger = LoggerFactory.getLogger(DynamicAttributeService.class);
 
+    /**
+     * DynamicAttributeService
+     * @param dynamicAttributeRepository DynamicAttributeRepository
+     */
     public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository) {
         this.dynamicAttributeRepository = dynamicAttributeRepository;
     }
 
+    /**
+     * Get the values of specific attributes
+     * @param attributes Collection of AttributeValue you want to retrieve the values of
+     * @return List of DynamicAttributeValue
+     */
     public Collection<DynamicAttributeValue<?>> getSavedAttributes(Collection<AttributeValue<String, String>> attributes) {
         Collection<DynamicAttributeValue<?>> dynamicAttributeValues = new ArrayList<>();
 
@@ -58,6 +67,11 @@ public class DynamicAttributeService
         return dynamicAttributeValues;
     }
 
+    /**
+     * Save a DynamicAttribute
+     * @param dynamicAttribute DynamicAttribute to save
+     * @return Saved DynamicAttribute
+     */
     public DynamicAttribute save(DynamicAttribute dynamicAttribute) {
         if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName())) {
             logger.warn("Dynamic attribute with name {} already exists, not saving instance", dynamicAttribute.getName());
@@ -65,6 +79,11 @@ public class DynamicAttributeService
         return dynamicAttributeRepository.save(dynamicAttribute);
     }
 
+    /**
+     * Convert a DynamicAttributeDto to a DynamicAttribute
+     * @param dynamicAttributeDto DynamicAttributeDto to convert to a DynamicAttribute
+     * @return The DynamicAttribute
+     */
     public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto) {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         dynamicAttribute.setName(dynamicAttributeDto.name());
@@ -84,6 +103,11 @@ public class DynamicAttributeService
         return dynamicAttribute;
     }
 
+    /**
+     * Convert a collection of DynamicAttributeDto to DynamicAttribute
+     * @param dynamicAttributeDtos Collection of DTOs
+     * @return Collection of DynamicAttribute
+     */
     public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos) {
         return dynamicAttributeDtos.stream().map(this::toDynamicAttribute).toList();
     }

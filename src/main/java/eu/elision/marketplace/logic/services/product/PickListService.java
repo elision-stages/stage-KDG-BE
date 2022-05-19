@@ -11,10 +11,18 @@ import org.springframework.stereotype.Service;
 public class PickListService {
     private final PickListRepository pickListRepository;
 
+    /**
+     * Constructor of the PickListService
+     * @param pickListRepository PickListRepository (autowired)
+     */
     public PickListService(PickListRepository pickListRepository) {
         this.pickListRepository = pickListRepository;
     }
 
+    /**
+     * Save a PickList
+     * @param pickList PickList to save
+     */
     public void save(PickList pickList) {
         pickListRepository.save(pickList);
     }
