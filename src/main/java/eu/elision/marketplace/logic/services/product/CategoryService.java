@@ -24,6 +24,11 @@ public class CategoryService
     private final CategoryRepository categoryRepository;
     private final DynamicAttributeService attributeService;
 
+    /**
+     *
+     * @param categoryRepository CategoryRepository (autowired)
+     * @param attributeService AttributeService (autowired)
+     */
     @Autowired
     public CategoryService(CategoryRepository categoryRepository, DynamicAttributeService attributeService)
     {
@@ -31,20 +36,39 @@ public class CategoryService
         this.attributeService = attributeService;
     }
 
+    /**
+     * Get all the categories
+     * @return List with all the categories
+     */
     public List<Category> findAll()
     {
         return categoryRepository.findAll();
     }
 
+    /**
+     * Save a category with a CategoryMakeDto
+     * @param categoryMakeDto DTO of category to save
+     * @return Saved Category
+     */
     public Category save(CategoryMakeDto categoryMakeDto) {
         return categoryRepository.save(toCategory(categoryMakeDto));
     }
 
+    /**
+     * Save a category
+     * @param category Category to save
+     * @return Saved category
+     */
     public Category save(Category category)
     {
         return categoryRepository.save(category);
     }
 
+    /**
+     * Save a category as a child of another category
+     * @param category Category to save
+     * @param parentId ID of parent category
+     */
     public void save(Category category, long parentId)
     {
         if (parentId != 0L)
@@ -60,21 +84,39 @@ public class CategoryService
         categoryRepository.save(category);
     }
 
+    /**
+     * Get a category by its name
+     * @param name Name of category to look for
+     * @return The found category
+     */
     public Category findByName(String name)
     {
         return categoryRepository.findCategoryByName(name);
     }
 
+    /**
+     * Get a category by its ID
+     * @param id ID of category to look for
+     * @return The found category
+     */
     public Category findById(long id)
     {
         return categoryRepository.findById(id).orElse(null);
     }
 
-
+    /**
+     * Get all categories as DTOs
+     * @return A list with all the categories as DTO
+     */
     public Collection<CategoryDto> findAllDto() {
         return categoryRepository.findAll().stream().map(this::toCategoryDto).toList();
     }
 
+    /**
+     * Convert a category to a category DTO
+     * @param category A category
+     * @return The category DTO
+     */
     public CategoryDto toCategoryDto(Category category) {
         Collection<DynamicAttributeDto> characteristics = new ArrayList<>();
 
@@ -94,6 +136,11 @@ public class CategoryService
         );
     }
 
+    /**
+     * Convert a categoryDTO to a category
+     * @param categoryMakeDto DTO of a category
+     * @return A category
+     */
     private Category toCategory(CategoryMakeDto categoryMakeDto)
     {
         final Category category = new Category();
@@ -103,6 +150,12 @@ public class CategoryService
         return category;
     }
 
+    /**
+     * Save a category with attributes
+     * @param categoryMakeDto DTO of the category
+     * @param dynamicAttributes Collection of dynamic attributes
+     * @return Saved category
+     */
     public Category save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
         Category category = categoryRepository.save(toCategory(categoryMakeDto));
         for (DynamicAttribute attr : dynamicAttributes)

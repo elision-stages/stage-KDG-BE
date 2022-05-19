@@ -451,6 +451,7 @@ public class Controller {
     /**
      * Get the order details with the orderlines
      * @param mail The mailaddress of the user asking for the order details
+     * @param id THe ID of the order you need info of
      * @return VendorOrderDto
      */
     public CustomerOrderDto getOrder(String mail, long id) {

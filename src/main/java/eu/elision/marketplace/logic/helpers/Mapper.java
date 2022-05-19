@@ -139,6 +139,11 @@ public class Mapper {
         return cartDto;
     }
 
+    /**
+     * Takes an OrderLine and converts it to a data transfer object
+     * @param orderLine input Orderline
+     * @return output DTO
+     */
     public static OrderLineDto toOrderLineDto(OrderLine orderLine) {
         return new OrderLineDto(orderLine.getQuantity(), toSmallProductDto(orderLine.getProduct()));
     }

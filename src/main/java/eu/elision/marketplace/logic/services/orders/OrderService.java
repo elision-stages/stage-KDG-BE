@@ -88,6 +88,12 @@ public class OrderService {
         return vendorOrders;
     }
 
+    /**
+     * Get the order information of an order as a customer
+     * @param user User requesting the order information
+     * @param id ID of the order you want info about
+     * @return CustomerOrderDto
+     */
     public CustomerOrderDto getCustomerOrder(User user, long id) {
         Order order = repository.findById(id).orElse(null);
         if(order == null) throw new NotFoundException("Order not found");
