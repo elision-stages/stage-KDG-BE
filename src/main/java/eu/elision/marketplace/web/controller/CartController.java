@@ -1,6 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.services.Controller;
+import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class CartController {
     /**
      * Rest call to add a product to a cart of a user
      *
-     * @param principal     the principal the the logged in user
+     * @param principal     the principal the logged-in user
      * @param addProductDto the product dto with product id and quantity
      * @return a response entity with cart dto
      */

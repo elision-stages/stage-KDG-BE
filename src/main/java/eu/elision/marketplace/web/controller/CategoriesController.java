@@ -1,8 +1,8 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.services.helpers.Mapper;
+import eu.elision.marketplace.logic.Controller;
+import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;

@@ -1,6 +1,6 @@
 package eu.elision.marketplace.web.config.filters;
 
-import eu.elision.marketplace.services.JwtService;
+import eu.elision.marketplace.logic.services.users.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;

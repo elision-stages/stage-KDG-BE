@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Entity
 public class DynamicAttribute {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String name;
     private boolean required;
