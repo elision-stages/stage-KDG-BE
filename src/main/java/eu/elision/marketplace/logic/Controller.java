@@ -18,6 +18,7 @@ import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
@@ -51,6 +52,7 @@ public class Controller {
     private final PickListService pickListService;
     private final OrderService orderService;
     private final OrderLineService orderLineService;
+    private static final String USER_NOT_FOUND = "User with email %s not found";
 
     /**
      * Public constructor with all services
@@ -64,7 +66,7 @@ public class Controller {
      * @param pickListItemService          pick list item service
      * @param pickListService              pick list service
      * @param orderService                 order service
-     * @param orderLineService order line service
+     * @param orderLineService             order line service
      */
     @Autowired
     public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService, OrderLineService orderLineService) {
@@ -97,10 +99,7 @@ public class Controller {
      * @return a list with customer dto
      */
     public List<CustomerDto> findAllCustomerDto() {
-        return findAllUsers().stream()
-                .filter(Customer.class::isInstance)
-                .map(user -> userService.toCustomerDto((Customer) user))
-                .toList();
+        return findAllUsers().stream().filter(Customer.class::isInstance).map(user -> userService.toCustomerDto((Customer) user)).toList();
     }
 
     /**
@@ -225,19 +224,7 @@ public class Controller {
      */
     public Vendor saveVendor(VendorDto vendorDto) {
         String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
-        VendorDto newVendorDto = new VendorDto(
-                vendorDto.firstName(),
-                vendorDto.lastName(),
-                vendorDto.email(),
-                password,
-                false,
-                vendorDto.logo(),
-                vendorDto.theme(),
-                vendorDto.introduction(),
-                vendorDto.vatNumber(),
-                vendorDto.phoneNumber(),
-                vendorDto.businessName()
-        );
+        VendorDto newVendorDto = new VendorDto(vendorDto.firstName(), vendorDto.lastName(), vendorDto.email(), password, false, vendorDto.logo(), vendorDto.theme(), vendorDto.introduction(), vendorDto.vatNumber(), vendorDto.phoneNumber(), vendorDto.businessName());
         return userService.save(newVendorDto);
     }
 
@@ -258,7 +245,7 @@ public class Controller {
      * @return the created category
      */
     public Category saveCategory(CategoryMakeDto categoryMakeDto) {
-        return categoryService.save(categoryMakeDto);
+        return categoryService.save(categoryMakeDto, dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics()));
     }
 
     /**
@@ -289,7 +276,7 @@ public class Controller {
     public void editProduct(EditProductDto editProductDto, String userEmail) {
         User user = userService.findUserByEmail(userEmail);
         if (user == null) {
-            throw new NotFoundException(String.format("User with email %s not found", userEmail));
+            throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
         }
         if (!(user instanceof Vendor vendor))
             throw new NotFoundException(String.format("User with email %s is not a vendor", userEmail));
@@ -330,7 +317,7 @@ public class Controller {
      */
     public void deleteProduct(long productId, String userEmail) {
         User user = userService.findUserByEmail(userEmail);
-        if (user == null) throw new NotFoundException(String.format("User with email %s not found", userEmail));
+        if (user == null) throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
         if (!(user instanceof Vendor vendor))
             throw new NotFoundException(String.format("User with id %s is not a vendor", user.getId()));
 
@@ -348,7 +335,8 @@ public class Controller {
      * @return the cart dto of the user
      */
     public CartDto getCustomerCart(String customerName) {
-        User user = (User)userService.loadUserByUsername(customerName);
+        final User user = (User)userService.loadUserByUsername(customerName);
+        if (user == null) throw new NotFoundException("User not found");
         if(!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
         return Mapper.toCartDto(((Customer) user).getCart());
     }
@@ -384,12 +372,19 @@ public class Controller {
     /**
      * Get all the orders of a given vendor
      *
-     * @param vendorEmail the email of the venodor
+     * @param userEmail the email of the venodor
      * @return all the vendor orders
      */
-    public Collection<VendorOrderDto> getVendorOrders(String vendorEmail) {
-        Vendor vendor = userService.findVendorByEmail(vendorEmail);
-        return orderService.findVendorOrders(vendor);
+    public Collection<OrderDto> getOrders(String userEmail) {
+        User user = userService.findUserByEmail(userEmail);
+        if (user == null) {
+            throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
+        }
+
+        if (user instanceof Vendor vendor) return orderService.findVendorOrders(vendor);
+        if (user instanceof Customer customer) return orderService.findCustomerOrders(customer);
+        if (user instanceof Admin) return orderService.findAdminOrders();
+        throw new UnauthorisedException(String.format("User with email %s is not a vendor, customer or admin", userEmail));
     }
 
     /**

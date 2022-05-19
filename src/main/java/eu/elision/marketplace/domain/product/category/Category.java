@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Setter
     private Long id;
     @Setter

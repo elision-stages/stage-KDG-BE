@@ -2,11 +2,10 @@ package eu.elision.marketplace.logic.services.orders;
 
 import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
-import eu.elision.marketplace.domain.users.Admin;
-import eu.elision.marketplace.domain.users.User;
-import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.domain.users.*;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.repositories.OrderRepository;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
@@ -65,19 +64,19 @@ public class OrderService {
      * @param vendor the vendor whose orders you want
      * @return a collection of vendor orders in dto format
      */
-    public Collection<VendorOrderDto> findVendorOrders(Vendor vendor) {
+    public Collection<OrderDto> findVendorOrders(Vendor vendor) {
         List<Order> orders = repository.findAll();
-        ArrayList<VendorOrderDto> vendorOrders = new ArrayList<>();
+        ArrayList<OrderDto> vendorOrders = new ArrayList<>();
 
 
         for (Order order : orders) {
             var test = order.getLines();
             final List<OrderLine> orderLines = test.stream().filter(ol -> Objects.equals(ol.getProduct().getVendor().getId(), vendor.getId())).toList();
             for (OrderLine orderLine : orderLines) {
-                final VendorOrderDto vendorOrder = vendorOrders.stream().filter(vendorOrderDto -> Objects.equals(String.valueOf(vendorOrderDto.getOrderNumber()), orderLine.getOrderNumber())).findAny().orElse(null);
+                final OrderDto vendorOrder = vendorOrders.stream().filter(vendorOrderDto -> Objects.equals(String.valueOf(vendorOrderDto.getOrderNumber()), orderLine.getOrderNumber())).findAny().orElse(null);
 
                 if (vendorOrder == null) {
-                    final VendorOrderDto voDto = new VendorOrderDto(Long.parseLong(orderLine.getOrderNumber()), order.getUser().getFullName(), Date.valueOf(order.getCreatedDate()).toString(), orderLine.getTotalPrice(), orderLine.getQuantity());
+                    final OrderDto voDto = new OrderDto(Long.parseLong(orderLine.getOrderNumber()), order.getUser().getFullName(), Date.valueOf(order.getCreatedDate()).toString(), orderLine.getTotalPrice(), orderLine.getQuantity());
                     vendorOrders.add(voDto);
                 } else {
                     vendorOrder.setTotalPrice(vendorOrder.getTotalPrice() + orderLine.getTotalPrice());
@@ -86,6 +85,25 @@ public class OrderService {
             }
         }
         return vendorOrders;
+    }
+
+    /**
+     * Find all the orders of a customer
+     *
+     * @param customer the customer whose orders you need
+     * @return a collection of order dto
+     */
+    public Collection<OrderDto> findCustomerOrders(Customer customer) {
+        return Mapper.toOrderDto(repository.findAllByUser(customer));
+    }
+
+    /**
+     * Find orders for admin. Returns all the orders in the repository
+     *
+     * @return a collection of order dto
+     */
+    public Collection<OrderDto> findAdminOrders() {
+        return Mapper.toOrderDto(repository.findAll());
     }
 
     /**

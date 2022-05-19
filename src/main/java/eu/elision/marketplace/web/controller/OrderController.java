@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.logic.Controller;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,8 @@ public class OrderController {
      * @return a response entity with a collection of vendor dto orders
      */
     @GetMapping("myOrders")
-    public ResponseEntity<Collection<VendorOrderDto>> getVendorOrders(Principal principal) {
-        return ResponseEntity.ok(controller.getVendorOrders(principal.getName()));
+    public ResponseEntity<Collection<OrderDto>> getVendorOrders(Principal principal) {
+        return ResponseEntity.ok(controller.getOrders(principal.getName()));
     }
 
     /**
