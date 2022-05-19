@@ -25,7 +25,7 @@ public class AlgoliaIndexerService implements IndexerService {
      * Public constructor
      *
      * @param productRepository        autowired constructor
-     * @param indexSearchClientService autorwired service
+     * @param indexSearchClientService autowired service
      * @param algoliaProductConverter  autowired converter
      */
     public AlgoliaIndexerService(ProductRepository productRepository, SearchClientService<SearchIndex<AlgoliaProductDto>> indexSearchClientService, Converter<Product, AlgoliaProductDto> algoliaProductConverter) {

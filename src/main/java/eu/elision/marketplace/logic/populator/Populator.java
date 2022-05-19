@@ -2,6 +2,8 @@ package eu.elision.marketplace.logic.populator;
 
 /**
  * Populator interface to convert an object
+ * @param <S> Source type
+ * @param <T> Target type
  */
 public interface Populator<S, T> {
     /**

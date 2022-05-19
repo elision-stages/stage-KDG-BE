@@ -25,7 +25,7 @@ public class CategoryService
     private final DynamicAttributeService attributeService;
 
     /**
-     *
+     * Category Service
      * @param categoryRepository CategoryRepository (autowired)
      * @param attributeService AttributeService (autowired)
      */

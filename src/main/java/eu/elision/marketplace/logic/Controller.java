@@ -12,7 +12,6 @@ import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.*;
-import eu.elision.marketplace.logic.services.users.AddressService;
 import eu.elision.marketplace.logic.services.users.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
@@ -42,7 +41,6 @@ import java.util.Objects;
  */
 @Service
 public class Controller {
-    private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -58,7 +56,6 @@ public class Controller {
      * Public constructor with all services
      *
      * @param bCryptPasswordEncoder        password encoder
-     * @param addressService               address service
      * @param userService                  user service
      * @param categoryService              category service
      * @param productService               product service
@@ -70,8 +67,7 @@ public class Controller {
      * @param orderLineService order line service
      */
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService, OrderLineService orderLineService) {
-        this.addressService = addressService;
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService, OrderLineService orderLineService) {
         this.userService = userService;
         this.categoryService = categoryService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -85,15 +81,6 @@ public class Controller {
     }
 
     //---------------------------------- Find all - only for testing
-
-    /**
-     * get all addresses from the repository
-     *
-     * @return a list with addresses
-     */
-    public List<Address> findAllAddresses() {
-        return addressService.findAll();
-    }
 
     /**
      * get all users from the repository
@@ -156,18 +143,6 @@ public class Controller {
         return categoryService.findAllDto();
     }
 
-    //--------------------------------- Save
-
-    /**
-     * Save an address
-     *
-     * @param address the address that needs to be saved
-     * @return the saved address
-     */
-    public Address saveAddress(Address address) {
-        return addressService.save(address);
-    }
-
     /**
      * Save a user
      *
@@ -187,9 +162,6 @@ public class Controller {
         String password = bCryptPasswordEncoder.encode(customerDto.password());
         CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
         Customer customer = userService.toCustomer(newCustomerDto);
-        if (customer.getMainAddress() != null) {
-            saveAddress(customer.getMainAddress());
-        }
         saveUser(customer);
     }
 
@@ -234,16 +206,6 @@ public class Controller {
     }
 
     //--------------------------------- findById
-
-    /**
-     * Find an address by id
-     *
-     * @param id the id of the address
-     * @return the address with given id
-     */
-    public Address findAddressById(long id) {
-        return addressService.findById(id);
-    }
 
     /**
      * Find an user by id

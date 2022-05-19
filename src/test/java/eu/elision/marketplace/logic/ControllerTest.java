@@ -51,7 +51,6 @@ class ControllerTest {
     @Test
     void saveCostumerWithAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
-        final int initAddressRepoSize = controller.findAllAddresses().size();
 
         final Customer customer = new Customer();
         final Address address = new Address();
@@ -74,24 +73,14 @@ class ControllerTest {
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(email);
-        customer.setMainAddress(address);
         customer.setPassword(password);
 
-        long addressId = controller.saveAddress(address).getId();
         long customerId = controller.saveUser(customer).getId();
 
-        assertThat(controller.findAllAddresses()).hasSize(1 + initAddressRepoSize);
         assertThat(controller.findAllUsers()).hasSize(1 + initUserRepoSize);
 
-        Address addressFromRepo = controller.findAddressById(addressId);
         Customer customerFromRepo = (Customer) controller.findUserById(customerId);
-        assertThat(addressFromRepo).isNotNull();
         assertThat(customerFromRepo).isNotNull();
-
-        assertThat(addressFromRepo.getPostalCode()).hasToString(postalCode);
-        assertThat(addressFromRepo.getCity()).hasToString(city);
-        assertThat(addressFromRepo.getNumber()).hasToString(number);
-        assertThat(addressFromRepo.getStreet()).hasToString(street);
 
         assertThat(customerFromRepo.getEmail()).hasToString(email);
         assertThat(customerFromRepo.getFirstName()).hasToString(firstName);

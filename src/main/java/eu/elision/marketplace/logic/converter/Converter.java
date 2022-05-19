@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * Convertor class to convert items to other items with the help of populators
+ * @param <S> Source type
+ * @param <T> Target type
  */
 public abstract class Converter<S, T> {
     private final List<Populator<S, T>> populatorList;

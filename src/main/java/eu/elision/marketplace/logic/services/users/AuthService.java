@@ -17,6 +17,11 @@ public class AuthService {
     @Value("${ssl}")
     private boolean ssl;
 
+    /**
+     * Create a Cookie of a specifik token
+     * @param token String with the token to save as jwt cookie
+     * @return The Cookie object
+     */
     public Cookie generateTokenCookie(String token) {
         Cookie cookie = new Cookie("jwt", token);
         cookie.setMaxAge((int) (jwtTokenValidity * 60));
