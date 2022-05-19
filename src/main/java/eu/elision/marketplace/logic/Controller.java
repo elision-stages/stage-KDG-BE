@@ -387,7 +387,7 @@ public class Controller {
      */
     public CartDto getCustomerCart(String customerName) {
         User user = (User)userService.loadUserByUsername(customerName);
-        if(!(user instanceof Admin)) throw new UnauthorisedException("Only customers have a shopping cart");
+        if(!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
         return Mapper.toCartDto(((Customer) user).getCart());
     }
 

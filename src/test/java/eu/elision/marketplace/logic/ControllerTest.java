@@ -206,12 +206,12 @@ class ControllerTest {
         controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
 
         CartDto cartDto = controller.getCustomerCart(email);
-        assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.productDto().description(), description))).isTrue();
-        final OrderLineDto orderLineDto = cartDto.orderLines().stream().filter(old -> Objects.equals(old.productDto().description(), description)).findFirst().orElse(null);
+        assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.product().description(), description))).isTrue();
+        final OrderLineDto orderLineDto = cartDto.orderLines().stream().filter(old -> Objects.equals(old.product().description(), description)).findFirst().orElse(null);
 
         assertThat(orderLineDto).isNotNull();
         assertThat(orderLineDto.quantity()).isEqualTo(count);
-        assertThat(orderLineDto.productDto().price()).isEqualTo(price);
+        assertThat(orderLineDto.product().price()).isEqualTo(price);
 
         assertThat(cartDto.totalPrice()).isEqualTo(price * count);
     }
@@ -305,7 +305,6 @@ class ControllerTest {
 
         Order order = new Order();
         OrderLine orderLine = new OrderLine();
-        orderLine.setVendor(vendor);
         orderLine.setProduct(product);
         controller.saveOrderLine(orderLine);
         order.getLines().add(orderLine);

@@ -39,16 +39,6 @@ class OrderLineTest
     }
 
     @Test
-    void getVendor()
-    {
-        OrderLine ol = new OrderLine();
-        Vendor vendor = new Vendor();
-        ol.setVendor(vendor);
-
-        assertThat(ol.getVendor()).isEqualTo(vendor);
-    }
-
-    @Test
     void getOrderNumber()
     {
         OrderLine ol = new OrderLine();
@@ -96,25 +86,23 @@ class OrderLineTest
         ol.setOrderNumber(orderNumber);
         ol.setQuantity(quantity);
         ol.setProduct(new Product(id, price, name, null, null, description, new ArrayList<>(), new ArrayList<>()));
-        ol.setVendor(null);
         ol.setOrderLineNumber(orderLineNumber);
 
-        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, vendor=null, orderNumber=%s, product=Product(id=%s, price=%s, title=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
+        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, orderNumber=%s, product=Product(id=%s, price=%s, title=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
                 orderLineNumber, orderNumber, id, price, name, description, quantity));
     }
 
     @Test
     void testEquals()
     {
-        Vendor vendor = new Vendor();
         Product product = new Product();
 
         final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
         final int orderLineNumber = RandomUtils.nextInt(1, 100);
         final int quantity = RandomUtils.nextInt(1, 100);
 
-        OrderLine ol1 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
-        OrderLine ol2 = new OrderLine(orderLineNumber, vendor, orderNumber, product, quantity);
+        OrderLine ol1 = new OrderLine(orderLineNumber, orderNumber, product, quantity);
+        OrderLine ol2 = new OrderLine(orderLineNumber, orderNumber, product, quantity);
 
         assertThat(ol1.equals(ol2)).isTrue();
 
@@ -135,11 +123,7 @@ class OrderLineTest
         final Vendor vendor1 = new Vendor();
         vendor1.setFirstName(RandomStringUtils.random(10));
         vendor1.setLastName(RandomStringUtils.random(10));
-        ol2.setVendor(vendor1);
-        assertThat(ol1.equals(ol2)).isFalse();
-
-        assertThat(ol1.equals(ol1)).isTrue();
-        assertThat(ol1.equals(new Vendor())).isFalse();
+        assertThat(ol1.equals(ol2)).isTrue();
     }
 
     @Test

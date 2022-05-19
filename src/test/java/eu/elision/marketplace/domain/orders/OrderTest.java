@@ -21,7 +21,7 @@ class OrderTest {
         Order order1 = new Order();
         Order order2 = new Order();
 
-        User customer = new Customer();
+        Customer customer = new Customer();
         List<OrderLine> lines = new ArrayList<>();
 
         final long orderNumber = RandomUtils.nextLong(1, 100);

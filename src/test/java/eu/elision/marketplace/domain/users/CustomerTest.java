@@ -19,7 +19,6 @@ class CustomerTest {
         ol.setOrderNumber(String.valueOf(RandomUtils.nextInt()));
         ol.setProduct(new Product());
         ol.setQuantity(RandomUtils.nextInt());
-        ol.setVendor(new Vendor());
         ol.setOrderLineNumber(RandomUtils.nextInt());
         cart.getOrderLines().add(ol);
         customer.setCart(cart);

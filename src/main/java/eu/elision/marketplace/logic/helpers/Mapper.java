@@ -112,7 +112,9 @@ public class Mapper {
      */
     public static SmallProductDto toSmallProductDto(Product product) {
         String image = product.getImages().isEmpty() ? null : product.getImages().get(0);
-        return new SmallProductDto(product.getId(), product.getTitle(), product.getCategory().getName(), product.getCategory().getId(), image, product.getDescription(), product.getPrice(), product.getVendor().getId(), product.getVendor().getBusinessName());
+        String categoryName = product.getCategory() == null ? "Root" : product.getCategory().getName();
+        long categoryId = product.getCategory() == null ? 0L : product.getCategory().getId();
+        return new SmallProductDto(product.getId(), product.getTitle(), categoryName, categoryId, image, product.getDescription(), product.getPrice(), product.getVendor().getId(), product.getVendor().getBusinessName());
     }
 
     /**
