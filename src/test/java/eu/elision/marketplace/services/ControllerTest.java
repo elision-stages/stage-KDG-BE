@@ -23,13 +23,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-class ControllerTest {
+class ControllerTest
+{
 
     @Autowired
     Controller controller;
+    @Autowired
+    UserService userService;
 
     @Test
-    void saveCostumerWithAddress() {
+    void saveCostumerWithAddress()
+    {
         final int initUserRepoSize = controller.findAllUsers().size();
         final int initAddressRepoSize = controller.findAllAddresses().size();
 
@@ -235,14 +239,14 @@ class ControllerTest {
         final int price = RandomUtils.nextInt(1, 100);
         product.setPrice(price);
         product.setVendor(vendor);
-        controller.saveUser(vendor);
+        userService.editUser(vendor);
         controller.saveUser(customer);
 
         final int count = RandomUtils.nextInt(1, 100);
         controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count, false));
 
 
-        controller.saveUser(customer);
+        userService.editUser(customer);
         final long orderId = controller.checkoutCart(email);
         Order order = controller.findOrderById(orderId);
         assertThat(order).isNotNull();

@@ -197,7 +197,8 @@ public class Controller {
     /**
      * Save a product from a dto object
      *
-     * @param productDto the object that needs to be saved
+     * @param vendor     the vendor to whom the product belongs
+     * @param productDto the basic information of the product object that needs to be saved
      */
     public void saveProduct(Vendor vendor, ProductDto productDto)
     {
@@ -214,7 +215,6 @@ public class Controller {
      */
     public Product saveProduct(Product product)
     {
-        userService.save(product.getVendor());
         return productService.save(product);
     }
 
@@ -326,6 +326,7 @@ public class Controller {
         return categoryService.findAll();
     }
 
+
     public void editProduct(EditProductDto editProductDto, String userEmail) {
         User user = userService.findUserByEmail(userEmail);
         if (user == null) {
@@ -350,7 +351,9 @@ public class Controller {
     {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count(), addProductDto.add());
-        userService.save(customer);
+        userService.editUser(customer);
+        customer = (Customer) userService.findUserByEmail(customerEmail);
+
         return Mapper.toCartDto(customer.getCart());
     }
 
