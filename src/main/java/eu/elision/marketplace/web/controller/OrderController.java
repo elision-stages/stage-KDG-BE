@@ -1,10 +1,11 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.logic.Controller;
+import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Collection;
@@ -12,7 +13,8 @@ import java.util.Collection;
 /**
  * Rest controller for managing calls about orders
  */
-@RestController("order")
+@RestController()
+@RequestMapping("order")
 public class OrderController {
     private final Controller controller;
 
@@ -34,5 +36,15 @@ public class OrderController {
     @GetMapping("myOrders")
     public ResponseEntity<Collection<VendorOrderDto>> getVendorOrders(Principal principal) {
         return ResponseEntity.ok(controller.getVendorOrders(principal.getName()));
+    }
+
+    /**
+     *
+     *
+     */
+    @GetMapping("{id}")
+    @Secured({"ROLE_CUSTOMER", "ROLE_VENDOR", "ROLE_ADMIN"})
+    public ResponseEntity<CustomerOrderDto> getOrder(Principal principal, @PathVariable long id) {
+        return ResponseEntity.ok(controller.getOrder(principal.getName(), id));
     }
 }

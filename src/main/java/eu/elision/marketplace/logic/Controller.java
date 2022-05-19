@@ -7,10 +7,7 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.users.Address;
-import eu.elision.marketplace.domain.users.Customer;
-import eu.elision.marketplace.domain.users.User;
-import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.domain.users.*;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
@@ -22,6 +19,7 @@ import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
@@ -30,6 +28,7 @@ import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -387,7 +386,9 @@ public class Controller {
      * @return the cart dto of the user
      */
     public CartDto getCustomerCart(String customerName) {
-        return Mapper.toCartDto(((Customer) userService.loadUserByUsername(customerName)).getCart());
+        User user = (User)userService.loadUserByUsername(customerName);
+        if(!(user instanceof Admin)) throw new UnauthorisedException("Only customers have a shopping cart");
+        return Mapper.toCartDto(((Customer) user).getCart());
     }
 
     /**
@@ -445,5 +446,18 @@ public class Controller {
      */
     public void saveOrderLine(OrderLine orderLine) {
         orderLineService.save(orderLine);
+    }
+
+    /**
+     * Get the order details with the orderlines
+     * @param mail The mailaddress of the user asking for the order details
+     * @return VendorOrderDto
+     */
+    public CustomerOrderDto getOrder(String mail, long id) {
+        User user = userService.findUserByEmail(mail);
+        if(user instanceof Customer || user instanceof Admin) {
+            return orderService.getCustomerOrder(user, id);
+        }
+        throw new NotImplementedException();
     }
 }

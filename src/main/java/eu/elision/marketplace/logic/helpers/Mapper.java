@@ -17,7 +17,6 @@ import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
-import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public class Mapper {
      */
     public static SmallProductDto toSmallProductDto(Product product) {
         String image = product.getImages().isEmpty() ? null : product.getImages().get(0);
-        return new SmallProductDto(product.getId(), product.getTitle(), product.getCategory().getName(), image, product.getDescription(), product.getPrice());
+        return new SmallProductDto(product.getId(), product.getTitle(), product.getCategory().getName(), product.getCategory().getId(), image, product.getDescription(), product.getPrice(), product.getVendor().getId(), product.getVendor().getBusinessName());
     }
 
     /**
@@ -132,10 +131,14 @@ public class Mapper {
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getId(), product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), product.getCategory(), attributes, product.getVendor().getId(), product.getVendor().getBusinessName())));
+            cartDto.orderLines().add(toOrderLineDto(orderLine));
         }
 
         return cartDto;
+    }
+
+    public static OrderLineDto toOrderLineDto(OrderLine orderLine) {
+        return new OrderLineDto(orderLine.getQuantity(), toSmallProductDto(orderLine.getProduct()));
     }
 }
 
