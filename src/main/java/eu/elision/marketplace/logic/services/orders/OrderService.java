@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Service for orders
@@ -111,16 +113,27 @@ public class OrderService {
      * @param id ID of the order you want info about
      * @return CustomerOrderDto
      */
-    public CustomerOrderDto getCustomerOrder(User user, long id) {
+    public CustomerOrderDto getOrder(User user, long id) {
         Order order = repository.findById(id).orElse(null);
         if(order == null) throw new NotFoundException("Order not found");
-        if(!(user instanceof Admin) && !order.getUser().getEmail().equals(user.getEmail())) throw new UnauthorisedException("This isn't your order");
+
+        boolean allowed = user instanceof Admin;
+        allowed = allowed || order.getUser().getEmail().equals(user.getEmail());
+        allowed = allowed || (user instanceof Vendor && order.getLines().stream().anyMatch(line -> line.getProduct().getVendor().getId().equals(user.getId())));
+        if(!allowed) throw new UnauthorisedException("This isn't your order");
+
+        Supplier<Stream<OrderLine>> orderLines;
+        if(user instanceof Vendor){
+            orderLines = () -> order.getLines().stream().filter(line -> line.getProduct().getVendor().getId().equals(user.getId()));
+        }else{
+            orderLines = () -> order.getLines().stream();
+        }
         return new CustomerOrderDto(
                 order.getOrderNumber(),
                 order.getUser().getEmail(),
                 order.getUser().getFullName(),
-                order.getLines().stream().map(Mapper::toOrderLineDto).toList(),
-                order.getTotalPrice(),
+                orderLines.get().map(Mapper::toOrderLineDto).toList(),
+                orderLines.get().mapToDouble(OrderLine::getTotalPrice).sum(),
                 order.getCreatedDate()
                 );
     }

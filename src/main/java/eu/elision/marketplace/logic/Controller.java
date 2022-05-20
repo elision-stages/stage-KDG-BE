@@ -143,8 +143,6 @@ public class Controller {
         return categoryService.findAllDto();
     }
 
-    //--------------------------------- Save
-
     /**
      * Save a user
      *
@@ -332,6 +330,7 @@ public class Controller {
 
         productService.delete(productId);
     }
+
     /**
      * Get the cart in dto form of a customer
      *
@@ -421,9 +420,6 @@ public class Controller {
      */
     public CustomerOrderDto getOrder(String mail, long id) {
         User user = userService.findUserByEmail(mail);
-        if(user instanceof Customer || user instanceof Admin) {
-            return orderService.getCustomerOrder(user, id);
-        }
-        throw new UnauthorisedException("Vendor can not view customer orders");
+        return orderService.getOrder(user, id);
     }
 }

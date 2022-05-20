@@ -391,6 +391,7 @@ class ControllerTest
     void getCustomerOrderTest()
     {
         Vendor vendor = new Vendor();
+        Admin admin = new Admin();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
         final String lastName = RandomStringUtils.randomAlphabetic(4);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -404,6 +405,12 @@ class ControllerTest
         vendor.setPassword(password);
         vendor.setPhoneNumber(phoneNumber);
         controller.saveUser(vendor);
+
+        admin.setFirstName(firstName);
+        admin.setLastName(lastName);
+        admin.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
+        admin.setPassword(password);
+        controller.saveUser(admin);
 
         Customer customer = new Customer();
         customer.setFirstName(firstName);
@@ -435,6 +442,8 @@ class ControllerTest
 
         final long orderNumber = controller.saveOrder(order).getOrderNumber();
         CustomerOrderDto customerOrderDto = controller.getOrder(customer.getEmail(), orderNumber);
+        CustomerOrderDto vendorOrderDto = controller.getOrder(vendor.getEmail(), orderNumber);
+        CustomerOrderDto adminOrderDto = controller.getOrder(admin.getEmail(), orderNumber);
 
         assertThat(customerOrderDto.getId()).isEqualTo(orderNumber);
         assertThat(customerOrderDto.getCustomerMail()).isEqualTo(customer.getEmail());
@@ -442,5 +451,7 @@ class ControllerTest
         assertThat(customerOrderDto.getLines()).hasSize(order.getLines().size());
         assertThat(customerOrderDto.getTotalPrice()).isEqualTo(order.getTotalPrice());
         assertThat(customerOrderDto.getOrderDate()).isEqualTo(order.getCreatedDate());
+        assertThat(vendorOrderDto.getId()).isEqualTo(orderNumber);
+        assertThat(adminOrderDto.getId()).isEqualTo(orderNumber);
     }
 }

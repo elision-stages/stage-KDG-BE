@@ -45,7 +45,7 @@ public class CartController {
      * @param principal the principal of the logged in user
      * @return a response entity with a cart dto of the given user
      */
-    @GetMapping("/get")
+    @GetMapping
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<CartDto> getCart(Principal principal) {
         return ResponseEntity.ok(controller.getCustomerCart(principal.getName()));
