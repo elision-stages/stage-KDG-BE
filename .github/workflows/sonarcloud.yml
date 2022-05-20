@@ -31,6 +31,11 @@ jobs:
         run: ./gradlew test
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+          DATASOURCE_URL: 'jdbc:h2:file:./data/test'
+          DATASOURCE_DRIVER: 'org.h2.Driver'
+          DATASOURCE_USERNAME: 'sa'
+          DATASOURCE_PASSWORD: 'password'
+          DATABASE_PLATFORM: 'org.hibernate.dialect.H2Dialect'
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
