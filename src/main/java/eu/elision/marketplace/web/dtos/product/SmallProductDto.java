@@ -12,3 +12,4 @@ package eu.elision.marketplace.web.dtos.product;
  */
 public record SmallProductDto(long id, String name, String category, long categoryId, String image, String description, double price, long vendorId, String vendorName) {
 }
+
