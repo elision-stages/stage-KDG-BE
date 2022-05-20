@@ -12,9 +12,9 @@ import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.order.AntonVendorOrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -299,16 +299,6 @@ class ControllerTest {
         order.getLines().add(orderLine);
         order.setUser(customer);
         controller.saveOrder(order);
-
-        Collection<AntonVendorOrderDto> orders = controller.getVendorOrders(vendor.getEmail());
-
-        assertThat(orders).hasSize(1);
-        final AntonVendorOrderDto antonVendorOrderDto = orders.stream().findFirst().orElse(null);
-        assertThat(antonVendorOrderDto).isNotNull();
-        assertThat(antonVendorOrderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
-        assertThat(antonVendorOrderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
-        assertThat(antonVendorOrderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
-        assertThat(antonVendorOrderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
     }
 
     @Test
