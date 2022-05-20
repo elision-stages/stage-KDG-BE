@@ -51,7 +51,8 @@ public class UserService implements UserDetailsService {
      */
     public void editUser(User user)
     {
-        if (user == null) return;
+        if (user == null)
+            throw new InvalidDataException("User can not be null");
         if (findUserByEmail(user.getEmail()) == null)
             throw new InvalidDataException(String.format("User with email %s does not exist", user.getEmail()));
         if (findUserById(user.getId()) == null)
