@@ -31,7 +31,7 @@ public class Product
     @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
     private String description;
-    @ElementCollection()
+    @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
     private List<String> images;
     @OneToMany(fetch = FetchType.EAGER)
