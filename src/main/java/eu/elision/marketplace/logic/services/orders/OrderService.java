@@ -5,7 +5,6 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.users.*;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.repositories.OrderRepository;
-import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
