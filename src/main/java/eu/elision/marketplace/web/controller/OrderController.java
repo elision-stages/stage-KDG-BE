@@ -3,7 +3,6 @@ package eu.elision.marketplace.web.controller;
 import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
-import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;

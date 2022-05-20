@@ -20,7 +20,6 @@ import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
-import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
@@ -409,7 +408,7 @@ public class Controller {
      * Get the order details with the orderlines
      * @param mail The mailaddress of the user asking for the order details
      * @param id THe ID of the order you need info of
-     * @return VendorOrderDto
+     * @return CustomerOrderDto
      */
     public CustomerOrderDto getOrder(String mail, long id) {
         User user = userService.findUserByEmail(mail);

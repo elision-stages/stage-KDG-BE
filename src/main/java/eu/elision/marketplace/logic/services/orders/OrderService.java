@@ -7,7 +7,6 @@ import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.repositories.OrderRepository;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
-import eu.elision.marketplace.web.dtos.order.VendorOrderDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.stereotype.Service;

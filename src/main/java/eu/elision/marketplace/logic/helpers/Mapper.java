@@ -1,5 +1,6 @@
 package eu.elision.marketplace.logic.helpers;
 
+import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
