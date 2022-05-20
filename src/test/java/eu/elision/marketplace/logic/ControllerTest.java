@@ -5,6 +5,7 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
+import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
@@ -15,6 +16,7 @@ import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 
 @SpringBootTest
@@ -323,6 +326,28 @@ class ControllerTest
         assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
         assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
         assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+
+        Admin admin = new Admin();
+        admin.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
+        admin.setFirstName(firstName);
+        admin.setLastName(lastName);
+        admin.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
+        controller.saveUser(admin);
+
+        orders = controller.getOrders(admin.getEmail());
+        orderDto = orders.stream().findFirst().orElse(null);
+        assertThat(orderDto).isNotNull();
+        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
+        assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
+        assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
+        assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+    }
+
+    @Test
+    void getOrdersUserNotFound()
+    {
+        final String userEmail = RandomStringUtils.randomAlphabetic(4);
+        assertThrows(NotFoundException.class, () -> controller.getOrders(userEmail));
     }
 
     @Test
