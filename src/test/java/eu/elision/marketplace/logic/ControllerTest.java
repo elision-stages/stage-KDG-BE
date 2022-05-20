@@ -7,21 +7,16 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.repositories.OrderRepository;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
-import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -36,17 +31,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class ControllerTest {
 
-
-    @InjectMocks
     @Autowired
     Controller controller;
-    @Mock
-    OrderRepository orderRepository;
 
-    @BeforeEach
-    public void init() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void saveCostumerWithAddress() {
@@ -299,6 +286,16 @@ class ControllerTest {
         order.getLines().add(orderLine);
         order.setUser(customer);
         controller.saveOrder(order);
+
+        Collection<OrderDto> orders = controller.getOrders(vendor.getEmail());
+
+        assertThat(orders).hasSize(1);
+        final OrderDto orderDto = orders.stream().findFirst().orElse(null);
+        assertThat(orderDto).isNotNull();
+        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
+        assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
+        assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
+        assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
     }
 
     @Test

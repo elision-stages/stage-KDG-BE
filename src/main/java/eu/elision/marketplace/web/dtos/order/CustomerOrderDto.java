@@ -7,6 +7,9 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Dto used to pass order info
+ */
 @Getter
 @AllArgsConstructor
 public final class CustomerOrderDto {
