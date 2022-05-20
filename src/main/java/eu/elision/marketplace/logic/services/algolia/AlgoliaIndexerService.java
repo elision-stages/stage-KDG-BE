@@ -3,6 +3,7 @@ package eu.elision.marketplace.logic.services.algolia;
 import com.algolia.search.SearchIndex;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.logic.converter.Converter;
+import eu.elision.marketplace.logic.converter.exeption.ConversionException;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,11 +42,11 @@ public class AlgoliaIndexerService implements IndexerService {
         try {
             List<Product> productList = this.productRepository.findAll();
             Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
-            SearchIndex<AlgoliaProductDto> searchClient = null;
+            SearchIndex<AlgoliaProductDto> searchClient;
             searchClient = indexSearchClientService.getSearchClient();
             searchClient.saveObjects(algoliaProductList);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ConversionException(e.getMessage());
         }
     }
 }

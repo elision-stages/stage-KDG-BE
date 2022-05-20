@@ -7,9 +7,13 @@ import lombok.Setter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Dto used for sending product information to algolia
+ */
 @Setter
 @Getter
-public final class AlgoliaProductDto {
+public final class AlgoliaProductDto
+{
     private long objectID;
     private String name;
     private String vendor;
@@ -18,13 +22,18 @@ public final class AlgoliaProductDto {
     private String image;
     private Map<String, Object> parameters;
 
-    public AlgoliaProductDto() {
+    /**
+     * Public constructor. Instanciates parameters list.
+     */
+    public AlgoliaProductDto()
+    {
         parameters = new LinkedHashMap<>();
     }
 
     // Makes all the parameters available at the top-level of the object
     @JsonAnyGetter
-    public Map<String, Object> getParameters() {
+    public Map<String, Object> getParameters()
+    {
         return parameters;
     }
 }

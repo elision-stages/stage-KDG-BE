@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Configuration of the application security
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -39,8 +42,10 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
     @Autowired
     private JwtFilter jwtFilter;
 
-    @Override @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception
+    {
         return super.authenticationManagerBean();
     }
 
@@ -67,10 +72,10 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
                 .exceptionHandling()
                 .authenticationEntryPoint(
                         (request, response, ex) ->
-                            response.sendError(
-                                    HttpServletResponse.SC_UNAUTHORIZED,
-                                    ex.getMessage()
-                            )
+                                response.sendError(
+                                        HttpServletResponse.SC_UNAUTHORIZED,
+                                        ex.getMessage()
+                                )
                 )
                 .and();
 
@@ -82,14 +87,16 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
                 // Our private endpoints
                 .anyRequest().authenticated();
 
-        http.addFilterBefore(jwtFilter,  UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    CorsConfigurationSource corsConfigurationSource()
+    {
         // Works for OPTIONS request
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -97,9 +104,14 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
         return source;
     }
 
-    // Used by spring security if CORS is enabled.
+    /**
+     * Used by spring security if CORS is enabled.
+     *
+     * @return the corsfilter with settings
+     */
     @Bean
-    public CorsFilter corsFilter() {
+    public CorsFilter corsFilter()
+    {
         // Works for POST, GET, etc requests
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

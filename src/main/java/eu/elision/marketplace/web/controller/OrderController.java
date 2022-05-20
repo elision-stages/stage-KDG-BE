@@ -1,11 +1,14 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.logic.Controller;
-import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.Collection;
@@ -39,8 +42,11 @@ public class OrderController {
     }
 
     /**
+     * Get an order by id
      *
-     *
+     * @param principal the logged in user
+     * @param id        the id of the order that is needed
+     * @return the order in dto form
      */
     @GetMapping("{id}")
     @Secured({"ROLE_CUSTOMER", "ROLE_VENDOR", "ROLE_ADMIN"})
