@@ -6,6 +6,7 @@ import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.repositories.UserRepository;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
+import eu.elision.marketplace.web.webexceptions.InvalidDataException;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,26 +42,51 @@ public class UserService implements UserDetailsService {
         this.validator = validator;
     }
 
+
+
     /**
-     * Find all users - <strong>Only for testing</strong>
+     * Edit a user. Throws an invalid data exception when the user does not exist in the repository
      *
-     * @return a list of all the users in the repository
+     * @param user the user that needs to be edited
      */
-    public List<User> findAllUsers() {
+    public void editUser(User user)
+    {
+        if (user == null)
+            throw new InvalidDataException("User can not be null");
+        if (findUserByEmail(user.getEmail()) == null)
+            throw new InvalidDataException(String.format("User with email %s does not exist", user.getEmail()));
+        if (findUserById(user.getId()) == null)
+            throw new InvalidDataException(String.format("User with id %s does not exist", user.getId()));
+
+        userRepository.save(user);
+    }
+
+/**
+ * Find all users - <strong>Only for testing</strong>
+ *
+ * @return a list of all the users in the repository
+ */
+    public List<User> findAllUsers()
+    {
         return userRepository.findAll();
     }
 
+
     /**
-     * Save a user
+     * Save a <strong>new</strong> user. Throws an invalid data exception when the user with email already exists
      *
      * @param user the user that needs to be saved
-     * @return an object of the saved user with id
+     * @return The saved object of the user
      */
-    public User save(User user) {
+    public User save(User user)
+    {
         if (user == null) return null;
+        if (findUserByEmail(user.getEmail()) != null) throw new InvalidDataException("Email is not valid");
+
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
-        if (!violations.isEmpty()) {
+        if (!violations.isEmpty())
+        {
             StringBuilder stringBuilder = new StringBuilder();
             for (ConstraintViolation<User> constraintViolation : violations)
                 stringBuilder.append(constraintViolation.getMessage());
@@ -110,12 +136,14 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Save a vendor from dto object
+     * Save a <strong>new</strong> vendor from a dto object. Throws an invalid data exception when email already exists
      *
-     * @param vendorDto the vendor that needs to be saved
+     * @param vendorDto the vendor dto object with the data of the vendor
      * @return the saved vendor with id
      */
-    public Vendor save(VendorDto vendorDto) {
+    public Vendor save(VendorDto vendorDto)
+    {
+        if (findUserByEmail(vendorDto.email()) != null) throw new InvalidDataException("Email is not valid");
         return userRepository.save(toVendor(vendorDto));
     }
 

@@ -185,8 +185,8 @@ public class Controller {
      * @param product the product that needs to be saved
      * @return the saved object
      */
-    public Product saveProduct(Product product) {
-        userService.save(product.getVendor());
+    public Product saveProduct(Product product)
+    {
         return productService.save(product);
     }
 
@@ -298,7 +298,9 @@ public class Controller {
     public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto) {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count(), addProductDto.add());
-        userService.save(customer);
+        userService.editUser(customer);
+        customer = (Customer) userService.findUserByEmail(customerEmail);
+
         return Mapper.toCartDto(customer.getCart());
     }
 
@@ -336,8 +338,10 @@ public class Controller {
      * @param customerName the email of the user
      * @return the cart dto of the user
      */
-    public CartDto getCustomerCart(String customerName) {
-        final User user = (User)userService.loadUserByUsername(customerName);
+    public CartDto getCustomerCart(String customerName)
+    {
+        final User user = userService.findUserByEmail(customerName);
+
         if (user == null) throw new NotFoundException("User not found");
         if(!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
         return Mapper.toCartDto(((Customer) user).getCart());
