@@ -7,7 +7,10 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.users.*;
+import eu.elision.marketplace.domain.users.Admin;
+import eu.elision.marketplace.domain.users.Customer;
+import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
@@ -18,8 +21,8 @@ import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
+import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
@@ -390,9 +393,11 @@ public class Controller {
      * Save an order
      *
      * @param order the order you want to save
+     * @return the saved order with id
      */
-    public void saveOrder(Order order) {
-        orderService.save(order);
+    public Order saveOrder(Order order)
+    {
+        return orderService.save(order);
     }
 
     /**
