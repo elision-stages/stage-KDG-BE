@@ -36,6 +36,6 @@ class TestControllerTest {
     void testException() {
         ResponseEntity<String> respent = restTemplate.getForEntity(String.format("%s/testException", base), String.class);
         assertThat(respent.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(respent.getBody()).isEqualTo("not found");
+        assertThat(respent.getBody()).isEqualTo("{\"status\":\"not found\"}");
     }
 }

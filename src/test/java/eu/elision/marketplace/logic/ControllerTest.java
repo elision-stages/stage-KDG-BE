@@ -8,6 +8,8 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.logic.services.orders.OrderService;
+import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
@@ -38,7 +40,10 @@ class ControllerTest
 
     @Autowired
     Controller controller;
-
+    @Autowired
+    UserService userService;
+    @Autowired
+    OrderService orderService;
 
     @Test
     void saveCostumerWithAddress()
@@ -243,14 +248,14 @@ class ControllerTest
         final int price = RandomUtils.nextInt(1, 100);
         product.setPrice(price);
         product.setVendor(vendor);
-        controller.saveUser(vendor);
+        userService.editUser(vendor);
         controller.saveUser(customer);
 
         final int count = RandomUtils.nextInt(1, 100);
         controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count, false));
 
 
-        controller.saveUser(customer);
+        userService.editUser(customer);
         final long orderId = controller.checkoutCart(email);
         Order order = controller.findOrderById(orderId);
         assertThat(order).isNotNull();
