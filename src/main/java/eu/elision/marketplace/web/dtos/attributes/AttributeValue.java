@@ -5,6 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Attibute value dto
+ *
+ * @param <A> the name of the attribute
+ * @param <V> the value of the attribute
+ */
 @Getter
 @Setter
 @AllArgsConstructor

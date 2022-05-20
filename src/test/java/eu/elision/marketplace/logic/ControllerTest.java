@@ -5,27 +5,31 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
+import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.logic.services.orders.OrderService;
-import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 
 
 @SpringBootTest
@@ -34,16 +38,12 @@ class ControllerTest
 
     @Autowired
     Controller controller;
-    @Autowired
-    OrderService orderService;
-    @Autowired
-    UserService userService;
+
 
     @Test
     void saveCostumerWithAddress()
     {
         final int initUserRepoSize = controller.findAllUsers().size();
-        final int initAddressRepoSize = controller.findAllAddresses().size();
 
         final Customer customer = new Customer();
         final Address address = new Address();
@@ -66,24 +66,14 @@ class ControllerTest
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(email);
-        customer.setMainAddress(address);
         customer.setPassword(password);
 
-        long addressId = controller.saveAddress(address).getId();
         long customerId = controller.saveUser(customer).getId();
 
-        assertThat(controller.findAllAddresses()).hasSize(1 + initAddressRepoSize);
         assertThat(controller.findAllUsers()).hasSize(1 + initUserRepoSize);
 
-        Address addressFromRepo = controller.findAddressById(addressId);
         Customer customerFromRepo = (Customer) controller.findUserById(customerId);
-        assertThat(addressFromRepo).isNotNull();
         assertThat(customerFromRepo).isNotNull();
-
-        assertThat(addressFromRepo.getPostalCode()).hasToString(postalCode);
-        assertThat(addressFromRepo.getCity()).hasToString(city);
-        assertThat(addressFromRepo.getNumber()).hasToString(number);
-        assertThat(addressFromRepo.getStreet()).hasToString(street);
 
         assertThat(customerFromRepo.getEmail()).hasToString(email);
         assertThat(customerFromRepo.getFirstName()).hasToString(firstName);
@@ -203,12 +193,12 @@ class ControllerTest
         controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
 
         CartDto cartDto = controller.getCustomerCart(email);
-        assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.productDto().description(), description))).isTrue();
-        final OrderLineDto orderLineDto = cartDto.orderLines().stream().filter(old -> Objects.equals(old.productDto().description(), description)).findFirst().orElse(null);
+        assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.product().description(), description))).isTrue();
+        final OrderLineDto orderLineDto = cartDto.orderLines().stream().filter(old -> Objects.equals(old.product().description(), description)).findFirst().orElse(null);
 
         assertThat(orderLineDto).isNotNull();
         assertThat(orderLineDto.quantity()).isEqualTo(count);
-        assertThat(orderLineDto.productDto().price()).isEqualTo(price);
+        assertThat(orderLineDto.product().price()).isEqualTo(price);
 
         assertThat(cartDto.totalPrice()).isEqualTo(price * count);
     }
@@ -303,24 +293,61 @@ class ControllerTest
         product.setVendor(vendor);
         controller.saveProduct(product);
 
+        Product product2 = new Product();
+        product2.setPrice(RandomUtils.nextDouble(1, 100.1));
+        product2.setVendor(vendor);
+        controller.saveProduct(product);
+
         Order order = new Order();
         OrderLine orderLine = new OrderLine();
-        orderLine.setVendor(vendor);
         orderLine.setProduct(product);
         controller.saveOrderLine(orderLine);
-        order.getLines().add(orderLine);
+        OrderLine orderLine2 = new OrderLine();
+        orderLine2.setProduct(product);
+        controller.saveOrderLine(orderLine2);
+        order.getLines().add(orderLine2);
         order.setUser(customer);
         controller.saveOrder(order);
 
         Collection<OrderDto> orders = controller.getOrders(vendor.getEmail());
 
         assertThat(orders).hasSize(1);
-        final OrderDto orderDto = orders.stream().findFirst().orElse(null);
+        OrderDto orderDto = orders.stream().findFirst().orElse(null);
         assertThat(orderDto).isNotNull();
         assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
         assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
         assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
         assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+
+        orders = controller.getOrders(customer.getEmail());
+        orderDto = orders.stream().findFirst().orElse(null);
+        assertThat(orderDto).isNotNull();
+        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
+        assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
+        assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
+        assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+
+        Admin admin = new Admin();
+        admin.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
+        admin.setFirstName(firstName);
+        admin.setLastName(lastName);
+        admin.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
+        controller.saveUser(admin);
+
+        orders = controller.getOrders(admin.getEmail());
+        orderDto = orders.stream().findFirst().orElse(null);
+        assertThat(orderDto).isNotNull();
+        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
+        assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
+        assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
+        assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+    }
+
+    @Test
+    void getOrdersUserNotFound()
+    {
+        final String userEmail = RandomStringUtils.randomAlphabetic(4);
+        assertThrows(NotFoundException.class, () -> controller.getOrders(userEmail));
     }
 
     @Test
@@ -356,47 +383,59 @@ class ControllerTest
     }
 
     @Test
-    void getCustomerOrdersTest()
+    void getCustomerOrderTest()
     {
+        Vendor vendor = new Vendor();
+        final String firstName = RandomStringUtils.randomAlphabetic(4);
+        final String lastName = RandomStringUtils.randomAlphabetic(4);
+        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String emailCustomer = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
+        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        final String phoneNumber = RandomStringUtils.random(10, false, true);
+
+        vendor.setFirstName(firstName);
+        vendor.setLastName(lastName);
+        vendor.setEmail(email);
+        vendor.setPassword(password);
+        vendor.setPhoneNumber(phoneNumber);
+        controller.saveUser(vendor);
+
         Customer customer = new Customer();
-        customer.setLastName(RandomStringUtils.randomAlphabetic(5));
-        customer.setFirstName(RandomStringUtils.randomAlphabetic(5));
-        customer.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
-        customer.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
-        userService.save(customer);
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setEmail(emailCustomer);
+        customer.setPassword(password);
+        controller.saveUser(customer);
 
-        Order order = new Order();
-        order.setUser(customer);
-        order = orderService.save(order);
-
-        final Product product = new Product();
+        Product product = new Product();
+        product.setPrice(RandomUtils.nextDouble(1, 100.1));
+        product.setVendor(vendor);
         controller.saveProduct(product);
 
-        final Vendor vendor = new Vendor();
-        vendor.setLastName(RandomStringUtils.randomAlphabetic(5));
-        vendor.setFirstName(RandomStringUtils.randomAlphabetic(5));
-        vendor.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
-        vendor.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
-        vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
-        userService.save(vendor);
+        Product product2 = new Product();
+        product2.setPrice(RandomUtils.nextDouble(1, 100.1));
+        product2.setVendor(vendor);
+        controller.saveProduct(product);
 
-        order.setLines(List.of(
-                new OrderLine(RandomUtils.nextInt(), vendor, String.valueOf(order.getOrderNumber()), product, 2)
-        ));
-        orderService.save(order);
+        Order order = new Order();
+        OrderLine orderLine = new OrderLine();
+        orderLine.setProduct(product);
+        controller.saveOrderLine(orderLine);
+        OrderLine orderLine2 = new OrderLine();
+        orderLine2.setProduct(product);
+        controller.saveOrderLine(orderLine2);
+        order.getLines().add(orderLine2);
+        order.setUser(customer);
 
-        Collection<OrderDto> customerOrders = controller.getOrders(customer.getEmail());
 
-        assertThat(customerOrders).hasSize(1);
+        final long orderNumber = controller.saveOrder(order).getOrderNumber();
+        CustomerOrderDto customerOrderDto = controller.getOrder(customer.getEmail(), orderNumber);
 
-        final OrderDto orderDto = customerOrders.stream().findFirst().orElse(null);
-        assertThat(orderDto).isNotNull();
-        assertThat(orderDto.getCustomerName()).isEqualTo(customer.getFullName());
-        assertThat(orderDto.getOrderDate()).isEqualTo(LocalDate.now().toString());
-        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
-        assertThat(orderDto.getNumberProducts()).isEqualTo(order.getProductCount());
-        assertThat(orderDto.getTotalPrice()).isEqualTo(order.getTotalPrice());
+        assertThat(customerOrderDto.getId()).isEqualTo(orderNumber);
+        assertThat(customerOrderDto.getCustomerMail()).isEqualTo(customer.getEmail());
+        assertThat(customerOrderDto.getCustomerName()).isEqualTo(customer.getFullName());
+        assertThat(customerOrderDto.getLines()).hasSize(order.getLines().size());
+        assertThat(customerOrderDto.getTotalPrice()).isEqualTo(order.getTotalPrice());
+        assertThat(customerOrderDto.getOrderDate()).isEqualTo(order.getCreatedDate());
     }
-
-
 }

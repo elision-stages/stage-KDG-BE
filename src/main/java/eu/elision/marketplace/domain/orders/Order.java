@@ -1,6 +1,6 @@
 package eu.elision.marketplace.domain.orders;
 
-import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Customer;
 import lombok.Data;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -21,7 +21,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long orderNumber;
     @ManyToOne
-    private User user;
+    private Customer user;
     @OneToMany(cascade = CascadeType.MERGE)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<OrderLine> lines;

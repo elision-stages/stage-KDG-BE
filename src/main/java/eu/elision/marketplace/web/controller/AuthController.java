@@ -23,32 +23,61 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 
+/**
+ * Controller to handle calls related to authentication
+ */
 @RestController
 @RequestMapping("auth")
-public class AuthController {
+public class AuthController
+{
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserService userService;
     private final AuthService authService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserService userService, AuthService authService) {
+    /**
+     * Public constructor
+     *
+     * @param authenticationManager the authentication manager that the controller has to use
+     * @param jwtService            the jwt service that the controller has to use
+     * @param userService           the user service that the controller has to use
+     * @param authService           the authentication service that the controller has to use
+     */
+    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserService userService, AuthService authService)
+    {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userService = userService;
         this.authService = authService;
     }
 
+    /**
+     * Get the user info of the user logged in
+     *
+     * @param principal the logged in user
+     * @return the user details of the logged in user
+     */
     @GetMapping("userinfo")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<UserDetails> userinfo(Principal principal) {
+    public ResponseEntity<UserDetails> userinfo(Principal principal)
+    {
         UserDetails user = userService.loadUserByUsername(principal.getName());
 
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    /**
+     * Log in with an user
+     *
+     * @param request  The request
+     * @param response the response
+     * @return the user details of the user that is now logged in
+     */
     @PostMapping("login")
-    public ResponseEntity<UserDto> login(@RequestBody @Valid AuthRequestDto request, HttpServletResponse response) {
-        try {
+    public ResponseEntity<UserDto> login(@RequestBody @Valid AuthRequestDto request, HttpServletResponse response)
+    {
+        try
+        {
             Authentication authentication = authenticationManager
                     .authenticate(
                             new UsernamePasswordAuthenticationToken(

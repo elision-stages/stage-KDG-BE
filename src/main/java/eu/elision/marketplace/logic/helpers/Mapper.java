@@ -115,7 +115,9 @@ public class Mapper {
      */
     public static SmallProductDto toSmallProductDto(Product product) {
         String image = product.getImages().isEmpty() ? null : product.getImages().get(0);
-        return new SmallProductDto(product.getId(), product.getTitle(), product.getCategory().getName(), image, product.getDescription(), product.getPrice());
+        String categoryName = product.getCategory() == null ? "Root" : product.getCategory().getName();
+        long categoryId = product.getCategory() == null ? 0L : product.getCategory().getId();
+        return new SmallProductDto(product.getId(), product.getTitle(), categoryName, categoryId, image, product.getDescription(), product.getPrice(), product.getVendor().getId(), product.getVendor().getBusinessName());
     }
 
     /**
@@ -134,7 +136,7 @@ public class Mapper {
                 attributes.add(new AttributeValue<>(attribute.getAttributeName(), attribute.getValue().toString()));
             }
 
-            cartDto.orderLines().add(new OrderLineDto(orderLine.getQuantity(), new ProductDto(product.getId(), product.getPrice(), product.getDescription(), product.getTitle(), product.getImages(), product.getCategory(), attributes, product.getVendor().getId(), product.getVendor().getBusinessName())));
+            cartDto.orderLines().add(toOrderLineDto(orderLine));
         }
 
         return cartDto;
@@ -158,6 +160,15 @@ public class Mapper {
      */
     public static OrderDto toOrderDto(Order order) {
         return new OrderDto(order.getOrderNumber(), order.getUser().getFullName(), order.getCreatedDate().toString(), order.getTotalPrice(), order.getProductCount());
+    }
+
+    /**
+     * Takes an OrderLine and converts it to a data transfer object
+     * @param orderLine input Orderline
+     * @return output DTO
+     */
+    public static OrderLineDto toOrderLineDto(OrderLine orderLine) {
+        return new OrderLineDto(orderLine.getQuantity(), toSmallProductDto(orderLine.getProduct()));
     }
 }
 

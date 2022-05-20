@@ -3,6 +3,7 @@ package eu.elision.marketplace.logic.services.algolia;
 import com.algolia.search.SearchIndex;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.logic.converter.Converter;
+import eu.elision.marketplace.logic.converter.exeption.ConversionException;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,7 +26,7 @@ public class AlgoliaIndexerService implements IndexerService {
      * Public constructor
      *
      * @param productRepository        autowired constructor
-     * @param indexSearchClientService autorwired service
+     * @param indexSearchClientService autowired service
      * @param algoliaProductConverter  autowired converter
      */
     public AlgoliaIndexerService(ProductRepository productRepository, SearchClientService<SearchIndex<AlgoliaProductDto>> indexSearchClientService, Converter<Product, AlgoliaProductDto> algoliaProductConverter) {
@@ -35,16 +36,17 @@ public class AlgoliaIndexerService implements IndexerService {
     }
 
     @Override
-    @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
+    //@Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
+    @Scheduled(cron = "0 0,10,20,30,40,50 * * * *", zone = "Europe/Paris")
     public void indexAllProducts() {
         try {
             List<Product> productList = this.productRepository.findAll();
             Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
-            SearchIndex<AlgoliaProductDto> searchClient = null;
+            SearchIndex<AlgoliaProductDto> searchClient;
             searchClient = indexSearchClientService.getSearchClient();
             searchClient.saveObjects(algoliaProductList);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ConversionException(e.getMessage());
         }
     }
 }

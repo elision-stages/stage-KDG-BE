@@ -7,18 +7,21 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.users.*;
+import eu.elision.marketplace.domain.users.Admin;
+import eu.elision.marketplace.domain.users.Customer;
+import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.*;
-import eu.elision.marketplace.logic.services.users.AddressService;
 import eu.elision.marketplace.logic.services.users.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
+import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
@@ -27,6 +30,7 @@ import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,7 +44,6 @@ import java.util.Objects;
  */
 @Service
 public class Controller {
-    private final AddressService addressService;
     private final UserService userService;
     private final CategoryService categoryService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -57,7 +60,6 @@ public class Controller {
      * Public constructor with all services
      *
      * @param bCryptPasswordEncoder        password encoder
-     * @param addressService               address service
      * @param userService                  user service
      * @param categoryService              category service
      * @param productService               product service
@@ -69,8 +71,7 @@ public class Controller {
      * @param orderLineService             order line service
      */
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, AddressService addressService, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService, OrderLineService orderLineService) {
-        this.addressService = addressService;
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService, OrderLineService orderLineService) {
         this.userService = userService;
         this.categoryService = categoryService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -84,15 +85,6 @@ public class Controller {
     }
 
     //---------------------------------- Find all - only for testing
-
-    /**
-     * get all addresses from the repository
-     *
-     * @return a list with addresses
-     */
-    public List<Address> findAllAddresses() {
-        return addressService.findAll();
-    }
 
     /**
      * get all users from the repository
@@ -152,18 +144,6 @@ public class Controller {
         return categoryService.findAllDto();
     }
 
-    //--------------------------------- Save
-
-    /**
-     * Save an address
-     *
-     * @param address the address that needs to be saved
-     * @return the saved address
-     */
-    public Address saveAddress(Address address) {
-        return addressService.save(address);
-    }
-
     /**
      * Save a user
      *
@@ -183,9 +163,6 @@ public class Controller {
         String password = bCryptPasswordEncoder.encode(customerDto.password());
         CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
         Customer customer = userService.toCustomer(newCustomerDto);
-        if (customer.getMainAddress() != null) {
-            saveAddress(customer.getMainAddress());
-        }
         saveUser(customer);
     }
 
@@ -230,16 +207,6 @@ public class Controller {
     }
 
     //--------------------------------- findById
-
-    /**
-     * Find an address by id
-     *
-     * @param id the id of the address
-     * @return the address with given id
-     */
-    public Address findAddressById(long id) {
-        return addressService.findById(id);
-    }
 
     /**
      * Find an user by id
@@ -369,13 +336,10 @@ public class Controller {
      * @param customerName the email of the user
      * @return the cart dto of the user
      */
-    public CartDto getCustomerCart(String customerName)
-    {
-        final User user = userService.findUserByEmail(customerName);
-
+    public CartDto getCustomerCart(String customerName) {
+        final User user = (User)userService.loadUserByUsername(customerName);
         if (user == null) throw new NotFoundException("User not found");
-        if (user instanceof Vendor) throw new UnauthorisedException("Vendors don't have carts");
-
+        if(!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
         return Mapper.toCartDto(((Customer) user).getCart());
     }
 
@@ -429,9 +393,11 @@ public class Controller {
      * Save an order
      *
      * @param order the order you want to save
+     * @return the saved order with id
      */
-    public void saveOrder(Order order) {
-        orderService.save(order);
+    public Order saveOrder(Order order)
+    {
+        return orderService.save(order);
     }
 
     /**
@@ -441,5 +407,19 @@ public class Controller {
      */
     public void saveOrderLine(OrderLine orderLine) {
         orderLineService.save(orderLine);
+    }
+
+    /**
+     * Get the order details with the orderlines
+     * @param mail The mailaddress of the user asking for the order details
+     * @param id THe ID of the order you need info of
+     * @return CustomerOrderDto
+     */
+    public CustomerOrderDto getOrder(String mail, long id) {
+        User user = userService.findUserByEmail(mail);
+        if(user instanceof Customer || user instanceof Admin) {
+            return orderService.getCustomerOrder(user, id);
+        }
+        throw new NotImplementedException();
     }
 }

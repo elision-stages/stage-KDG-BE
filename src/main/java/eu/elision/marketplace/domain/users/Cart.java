@@ -74,7 +74,7 @@ public class Cart {
      * @param user the user who wants to checkout
      * @return the order created from the cart
      */
-    public Order checkout(User user) {
+    public Order checkout(Customer user) {
         if (orderLines.isEmpty()) return null;
         Order order = new Order();
         order.getLines().addAll(orderLines);

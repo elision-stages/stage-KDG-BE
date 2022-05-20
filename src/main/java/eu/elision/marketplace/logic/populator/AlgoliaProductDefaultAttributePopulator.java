@@ -4,6 +4,9 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.springframework.stereotype.Component;
 
+/**
+ * Algolia populator that converts the default attributes (ID, title, vendor and price) to Algolia attributes
+ */
 @Component
 public class AlgoliaProductDefaultAttributePopulator implements Populator<Product, AlgoliaProductDto> {
 

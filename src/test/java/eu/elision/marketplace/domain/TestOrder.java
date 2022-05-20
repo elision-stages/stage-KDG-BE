@@ -5,6 +5,7 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.users.Address;
+import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -31,7 +32,7 @@ class TestOrder
         order.setOrderNumber(orderNumber);
         assertThat(order.getOrderNumber()).isEqualTo(orderNumber);
 
-        User user = new Vendor();
+        Customer user = new Customer();
         order.setUser(user);
         assertThat(order.getUser()).isEqualTo(user);
 
@@ -50,8 +51,8 @@ class TestOrder
         final int quantity2 = RandomUtils.nextInt(1, 10);
 
         var product = new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(4), new Category(), new Vendor(), RandomStringUtils.random(4), new ArrayList<>(), new ArrayList<>());
-        var ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
-        var ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
+        var ol = new OrderLine(RandomUtils.nextInt(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
+        var ol2 = new OrderLine(RandomUtils.nextInt(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 
         var order = new Order();
 
