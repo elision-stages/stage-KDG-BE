@@ -33,7 +33,7 @@ public class OrderController {
      * @param principal the principal of the vendor
      * @return a response entity with a collection of vendor dto orders
      */
-    @GetMapping("myOrders")
+    @GetMapping
     public ResponseEntity<Collection<OrderDto>> getVendorOrders(Principal principal) {
         return ResponseEntity.ok(controller.getOrders(principal.getName()));
     }

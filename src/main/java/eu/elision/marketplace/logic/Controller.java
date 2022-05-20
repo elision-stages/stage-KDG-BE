@@ -412,9 +412,6 @@ public class Controller {
      */
     public CustomerOrderDto getOrder(String mail, long id) {
         User user = userService.findUserByEmail(mail);
-        if(user instanceof Customer || user instanceof Admin) {
-            return orderService.getCustomerOrder(user, id);
-        }
-        throw new NotImplementedException();
+        return orderService.getOrder(user, id);
     }
 }
