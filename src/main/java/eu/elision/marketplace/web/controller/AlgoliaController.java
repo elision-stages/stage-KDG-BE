@@ -1,6 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.services.AlgoliaIndexerService;
+import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

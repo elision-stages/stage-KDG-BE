@@ -1,5 +1,6 @@
 package eu.elision.marketplace.web.dtos;
 
+import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

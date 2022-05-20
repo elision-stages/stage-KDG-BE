@@ -3,7 +3,7 @@ package eu.elision.marketplace.web.controller;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.Controller;
+import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;

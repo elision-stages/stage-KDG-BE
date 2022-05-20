@@ -1,10 +1,10 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.users.User;
-import eu.elision.marketplace.services.AuthService;
-import eu.elision.marketplace.services.JwtService;
-import eu.elision.marketplace.services.UserService;
-import eu.elision.marketplace.services.helpers.Mapper;
+import eu.elision.marketplace.logic.helpers.Mapper;
+import eu.elision.marketplace.logic.services.users.AuthService;
+import eu.elision.marketplace.logic.services.users.JwtService;
+import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
 import eu.elision.marketplace.web.dtos.UserDto;
 import org.springframework.http.HttpStatus;

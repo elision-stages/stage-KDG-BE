@@ -1,34 +1,39 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.services.Controller;
-import eu.elision.marketplace.services.UserService;
-import eu.elision.marketplace.services.helpers.Mapper;
+import eu.elision.marketplace.logic.Controller;
+import eu.elision.marketplace.logic.helpers.Mapper;
+import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.ResponseDto;
-import eu.elision.marketplace.web.dtos.SmallProductDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Collection;
 
+/**
+ * Rest controller to handle calls about products
+ */
 @RestController
-public class ProductController
-{
+public class ProductController {
     final Controller controller;
     final UserService userService;
     private static final String SUCCESS = "success";
 
-    public ProductController(Controller controller, UserService userService)
-    {
+    /**
+     * Public constructor
+     *
+     * @param controller  the controller that the rest controller needs to use
+     * @param userService the user service that needs to be used
+     */
+    public ProductController(Controller controller, UserService userService) {
         this.controller = controller;
         this.userService = userService;
     }
@@ -36,14 +41,13 @@ public class ProductController
     @PostMapping("/addProduct")
     @Secured("ROLE_VENDOR")
     ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestBody ProductDto productDto) {
-        Vendor user = (Vendor)userService.loadUserByUsername(principal.getName());
+        Vendor user = (Vendor) userService.loadUserByUsername(principal.getName());
         controller.saveProduct(user, productDto);
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
     @GetMapping("/getAllProducts")
-    ResponseEntity<Collection<Product>> getAllProducts()
-    {
+    ResponseEntity<Collection<Product>> getAllProducts() {
         return new ResponseEntity<>(controller.findAllProducts(), HttpStatus.OK);
     }
 
@@ -57,8 +61,7 @@ public class ProductController
     }
 
     @GetMapping("/product/{ids}")
-    ResponseEntity<Product> getProduct(@PathVariable String ids)
-    {
+    ResponseEntity<Product> getProduct(@PathVariable String ids) {
         long id = Long.parseLong(ids);
         Product product = controller.findProduct(id);
         if (product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -66,8 +69,7 @@ public class ProductController
     }
 
     @PostMapping("/addCategory")
-    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto)
-    {
+    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
         controller.saveCategory(categoryMakeDto);
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }

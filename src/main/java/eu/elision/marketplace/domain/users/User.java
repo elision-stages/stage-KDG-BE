@@ -23,8 +23,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "users")
-public abstract class User implements UserDetails
-{
+public abstract class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -45,8 +44,7 @@ public abstract class User implements UserDetails
     private LocalDateTime createdDate;
     private boolean validated;
 
-    protected User()
-    {
+    protected User() {
         validated = false;
         createdDate = LocalDateTime.now();
     }
@@ -55,8 +53,8 @@ public abstract class User implements UserDetails
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> roles = new java.util.HashSet<>();
         roles.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-        if(this instanceof Vendor) roles.add(new SimpleGrantedAuthority("ROLE_VENDOR"));
-        if(this instanceof Admin) roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if (this instanceof Vendor) roles.add(new SimpleGrantedAuthority("ROLE_VENDOR"));
+        if (this instanceof Admin) roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return roles;
     }
 
@@ -83,5 +81,9 @@ public abstract class User implements UserDetails
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
     }
 }

@@ -7,7 +7,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -16,7 +18,7 @@ class OrderTest {
 
     @Test
     void testEquals() {
-        Order order1= new Order();
+        Order order1 = new Order();
         Order order2 = new Order();
 
         User customer = new Customer();
@@ -65,11 +67,11 @@ class OrderTest {
 
     @Test
     void testToString() {
-        Order order= new Order();
+        Order order = new Order();
 
         final long orderNumber = RandomUtils.nextInt();
         order.setOrderNumber(orderNumber);
 
-        assertThat(order.toString()).hasToString(String.format("Order(orderNumber=%s, user=null, lines=[])", orderNumber));
+        assertThat(order.toString()).hasToString(String.format("Order(orderNumber=%s, user=null, lines=[], createdDate=%s)", orderNumber, LocalDate.now()));
     }
 }

@@ -79,6 +79,7 @@ public class Cart {
         Order order = new Order();
         order.getLines().addAll(orderLines);
         order.setUser(user);
+        orderLines.forEach(orderLine -> orderLine.setOrderNumber(String.valueOf(order.getOrderNumber())));
 
         orderLines.clear();
 
