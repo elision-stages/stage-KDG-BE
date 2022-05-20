@@ -2,11 +2,13 @@ package eu.elision.marketplace.logic.services.orders;
 
 import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
-import eu.elision.marketplace.domain.users.Customer;
-import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.domain.users.*;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.repositories.OrderRepository;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
+import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
+import eu.elision.marketplace.web.webexceptions.NotFoundException;
+import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -101,5 +103,25 @@ public class OrderService {
      */
     public Collection<OrderDto> findAdminOrders() {
         return Mapper.toOrderDto(repository.findAll());
+    }
+
+    /**
+     * Get the order information of an order as a customer
+     * @param user User requesting the order information
+     * @param id ID of the order you want info about
+     * @return CustomerOrderDto
+     */
+    public CustomerOrderDto getCustomerOrder(User user, long id) {
+        Order order = repository.findById(id).orElse(null);
+        if(order == null) throw new NotFoundException("Order not found");
+        if(!(user instanceof Admin) && !order.getUser().getEmail().equals(user.getEmail())) throw new UnauthorisedException("This isn't your order");
+        return new CustomerOrderDto(
+                order.getOrderNumber(),
+                order.getUser().getEmail(),
+                order.getUser().getFullName(),
+                order.getLines().stream().map(Mapper::toOrderLineDto).toList(),
+                order.getTotalPrice(),
+                order.getCreatedDate()
+                );
     }
 }

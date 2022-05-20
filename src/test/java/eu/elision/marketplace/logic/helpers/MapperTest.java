@@ -87,8 +87,10 @@ class MapperTest {
         final String name = RandomStringUtils.randomAlphabetic(5);
         final String image1 = RandomStringUtils.randomAlphabetic(5);
         final Category category = new Category();
+        category.setId(RandomUtils.nextLong(1, 100));
         category.setName(RandomStringUtils.randomAlphabetic(5));
         final Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong(1, 100));
         final String description = RandomStringUtils.randomAlphabetic(5);
         final ArrayList<DynamicAttributeValue<?>> attributes = new ArrayList<>();
         final int price = RandomUtils.nextInt(1, 100);

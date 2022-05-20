@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Algolia populator that converts the product category to an Algolia category
+ */
 @Component
 public class AlgoliaProductCategoryPopulator implements Populator<Product, AlgoliaProductDto> {
 

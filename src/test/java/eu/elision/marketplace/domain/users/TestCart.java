@@ -22,7 +22,7 @@ class TestCart {
     @Test
     void testGetter() {
         var cart = new Cart();
-        cart.getOrderLines().add(new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), new Product(), RandomUtils.nextInt()));
+        cart.getOrderLines().add(new OrderLine(RandomUtils.nextInt(), String.valueOf(RandomUtils.nextInt()), new Product(), RandomUtils.nextInt()));
 
         assertThat(cart.getOrderLines()).hasSize(1);
     }
@@ -34,8 +34,8 @@ class TestCart {
         final int quantity2 = RandomUtils.nextInt(1, 10);
 
         Product product = new Product(RandomUtils.nextLong(1, 100), price, RandomStringUtils.random(5), new Category(), new Vendor(), RandomStringUtils.random(5), new ArrayList<>(), new ArrayList<>());
-        OrderLine ol = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
-        OrderLine ol2 = new OrderLine(RandomUtils.nextInt(), new Vendor(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
+        OrderLine ol = new OrderLine(RandomUtils.nextInt(), String.valueOf(RandomUtils.nextInt()), product, quantity1);
+        OrderLine ol2 = new OrderLine(RandomUtils.nextInt(), String.valueOf(RandomUtils.nextInt()), product, quantity2);
 
         var cart = new Cart();
 
