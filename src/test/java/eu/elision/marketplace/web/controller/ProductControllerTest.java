@@ -64,7 +64,7 @@ class ProductControllerTest
                 RandomStringUtils.randomAlphabetic(4),
                 RandomStringUtils.randomAlphabetic(4),
                 RandomStringUtils.randomAlphabetic(4),
-                RandomStringUtils.randomAlphabetic(4),
+                "BE0458402105",
                 RandomStringUtils.random(10, false, true),
                 RandomStringUtils.randomAlphabetic(4))).getId();
 
