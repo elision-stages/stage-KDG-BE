@@ -35,6 +35,7 @@ jobs:
           DATASOURCE_USERNAME: 'sa'
           DATASOURCE_PASSWORD: 'password'
           DATABASE_PLATFORM: 'org.hibernate.dialect.H2Dialect'
+          FE_URL: 'https://gdmxfsu6my.eu-west-1.awsapprunner.com/'
         run: ./gradlew test
       - name: Build and analyze
         env:
