@@ -140,6 +140,11 @@ class ControllerTest
         final String phone = RandomStringUtils.random(10, false, true);
 
         Vendor vendor = new Vendor();
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
+
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         vendor.setFirstName(firstName);
         vendor.setLastName(lastName);
         vendor.setEmail(email);
@@ -179,6 +184,11 @@ class ControllerTest
         final int price = RandomUtils.nextInt(1, 100);
         product.setPrice(price);
         final Vendor vendor = new Vendor();
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
+
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         vendor.setLastName(RandomStringUtils.randomAlphabetic(4));
         vendor.setFirstName(RandomStringUtils.randomAlphabetic(4));
         vendor.setPassword(password);
@@ -237,6 +247,11 @@ class ControllerTest
         customer.setPassword(password);
 
         final Vendor vendor = new Vendor();
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
+
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         vendor.setLastName(RandomStringUtils.randomAlphabetic(4));
         vendor.setFirstName(RandomStringUtils.randomAlphabetic(4));
         vendor.setPassword(password);
@@ -278,7 +293,11 @@ class ControllerTest
         final String emailCustomer = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
         final String phoneNumber = RandomStringUtils.random(10, false, true);
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
 
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         vendor.setFirstName(firstName);
         vendor.setLastName(lastName);
         vendor.setEmail(email);
@@ -364,7 +383,11 @@ class ControllerTest
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
         final String phoneNumber = RandomStringUtils.random(10, false, true);
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
 
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         vendor.setFirstName(firstName);
         vendor.setLastName(lastName);
         vendor.setEmail(email);
@@ -398,7 +421,11 @@ class ControllerTest
         final String emailCustomer = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
         final String phoneNumber = RandomStringUtils.random(10, false, true);
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
 
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         vendor.setFirstName(firstName);
         vendor.setLastName(lastName);
         vendor.setEmail(email);

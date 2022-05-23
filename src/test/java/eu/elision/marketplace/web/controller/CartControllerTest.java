@@ -58,6 +58,10 @@ class CartControllerTest {
         vendor.setPassword(password);
         vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
+        final String businessName = RandomStringUtils.randomAlphabetic(6);
+        final String vatNumber = "BE0458402105";
+        vendor.setVatNumber(vatNumber);
+        vendor.setBusinessName(businessName);
         controller.saveUser(vendor);
 
         Product product = new Product();
