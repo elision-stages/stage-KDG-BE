@@ -82,6 +82,11 @@ jobs:
           # Set this to true to create the repository if it does not already exist
           create_repo: true
           # Extra flags to pass to docker build (see docs.docker.com/engine/reference/commandline/build)
-          extra_build_args: --build-arg JAR_FILE=build/libs/marketplace-0.0.1-SNAPSHOT.jar --build-arg ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY }}
+          extra_build_args: --build-arg JAR_FILE=build/libs/marketplace-0.0.1-SNAPSHOT.jar --build-arg ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY }} DATASOURCE_URL='jdbc:h2:file:./data/test' DATASOURCE_DRIVER= 'org.h2.Driver' DATASOURCE_USERNAME= 'sa' DATASOURCE_PASSWORD= 'password' DATABASE_PLATFORM= 'org.hibernate.dialect.H2Dialect'
           tags: latest,${{ github.sha }}
           dockerfile: dockerfile
+          
+          DATASOURCE_URL: 'jdbc:h2:file:./data/test'
+          
+          
+          

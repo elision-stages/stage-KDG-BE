@@ -28,9 +28,15 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: run tests
-        run: ./gradlew test
         env:
           ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+          DATASOURCE_URL: 'jdbc:h2:file:./data/test'
+          DATASOURCE_DRIVER: 'org.h2.Driver'
+          DATASOURCE_USERNAME: 'sa'
+          DATASOURCE_PASSWORD: 'password'
+          DATABASE_PLATFORM: 'org.hibernate.dialect.H2Dialect'
+          FE_URL: 'https://gdmxfsu6my.eu-west-1.awsapprunner.com/'
+        run: ./gradlew test
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
