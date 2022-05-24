@@ -6,7 +6,6 @@ import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.ResponseDto;
-import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.product.SmallProductDto;
@@ -68,12 +67,7 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PostMapping("/addCategory")
-    ResponseEntity<ResponseDto> addCategory(@RequestBody CategoryMakeDto categoryMakeDto) {
-        controller.saveCategory(categoryMakeDto);
-        return ResponseEntity.ok(new ResponseDto(SUCCESS));
-    }
-
+    @Secured("ROLE_VENDOR")
     @PostMapping("/deleteProduct/{id}")
     ResponseEntity<ResponseDto> deleteProduct(@PathVariable String id, Principal principal) {
         controller.deleteProduct(Long.parseLong(id), principal.getName());

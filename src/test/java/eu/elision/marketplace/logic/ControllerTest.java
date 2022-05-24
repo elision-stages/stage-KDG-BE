@@ -355,12 +355,11 @@ class ControllerTest {
         controller.saveUser(admin);
 
         orders = controller.getOrders(admin.getEmail());
-        orderDto = orders.stream().findFirst().orElse(null);
-        assertThat(orderDto).isNotNull();
-        assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
-        assertThat(orderDto.getOrderDate()).isEqualTo(order.getCreatedDate().toString());
-        assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
-        assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
+        assertThat(orders).isNotNull();
+        assertThat(orders.stream().anyMatch(oDto -> oDto.getOrderNumber() == order.getOrderNumber())).isTrue();
+        assertThat(orders.stream().anyMatch(oDto -> oDto.getTotalPrice() == order.getTotalPrice())).isTrue();
+        assertThat(orders.stream().anyMatch(oDto -> Objects.equals(oDto.getOrderDate(), order.getCreatedDate().toString()))).isTrue();
+        assertThat(orders.stream().anyMatch(oDto -> Objects.equals(oDto.getCustomerName(), order.getUser().getFullName()))).isTrue();
     }
 
     @Test

@@ -1,17 +1,20 @@
 package eu.elision.marketplace.logic.services.users;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.webexceptions.InvalidDataException;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Service for products
@@ -41,7 +44,21 @@ public class ProductService {
      * @return the created product
      */
     public Product save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
-        return productRepository.save(toProduct(productDto, attributeValues, vendor));
+        final Product product = toProduct(productDto, attributeValues, vendor);
+
+        for (DynamicAttribute characteristic : product.getCategory().getCharacteristics()) {
+            if (characteristic.isRequired()) {
+                if (product.getAttributes().stream().noneMatch(dynamicAttributeValue -> Objects.equals(dynamicAttributeValue.getAttributeName(), characteristic.getName()))) {
+                    throw new InvalidDataException(String.format("Product should have a value for characteristic %s", characteristic.getName()));
+                }
+                final DynamicAttributeValue<?> productCharValue = product.getAttributes().stream().filter(dynamicAttributeValue -> dynamicAttributeValue.getAttributeName().equals(characteristic.getName())).findFirst().orElse(null);
+                if (productCharValue != null && productCharValue.getValue() == null) {
+                    throw new InvalidDataException(String.format("Product should have a value for characteristic %s", characteristic.getName()));
+                }
+            }
+        }
+
+        return productRepository.save(product);
     }
 
     /**
@@ -119,6 +136,7 @@ public class ProductService {
 
     /**
      * Delete a product based on an id
+     *
      * @param productId the id of the product that needs to be deleted
      */
     public void delete(long productId) {
