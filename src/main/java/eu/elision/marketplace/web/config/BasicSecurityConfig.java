@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -41,6 +42,8 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private JwtFilter jwtFilter;
+    @Value("${FE_URL}")
+    String frontEndUrl;
 
     @Override
     @Bean
@@ -95,7 +98,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
     {
         // Works for OPTIONS request
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of(frontEndUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
@@ -117,7 +120,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedOrigins(List.of(frontEndUrl));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
