@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,7 +34,9 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Category> subCategories;
     @OneToMany(mappedBy = "category")
-    private final List<DynamicAttribute> characteristics;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @Setter
+    private Collection<DynamicAttribute> characteristics;
 
     /**
      * No args constructor. Initialises the sub categories and characteristics array.

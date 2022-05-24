@@ -20,10 +20,10 @@ import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
+import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
-import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
@@ -184,8 +184,7 @@ public class Controller {
      * @param product the product that needs to be saved
      * @return the saved object
      */
-    public Product saveProduct(Product product)
-    {
+    public Product saveProduct(Product product) {
         return productService.save(product);
     }
 
@@ -196,7 +195,7 @@ public class Controller {
      * @param category            the category of the dynamic attribute
      */
     public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
-        DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto);
+        DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto, category);
         dynamicAttribute.setCategory(category);
         if (dynamicAttribute.getType() == Type.ENUMERATION) {
             pickListItemService.save(dynamicAttribute.getEnumList().getItems());
@@ -246,7 +245,9 @@ public class Controller {
      * @return the created category
      */
     public Category saveCategory(CategoryMakeDto categoryMakeDto) {
-        return categoryService.save(categoryMakeDto, dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics()));
+        final Category category = categoryService.save(categoryMakeDto);
+        dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics(), category);
+        return category;
     }
 
     /**
@@ -337,12 +338,11 @@ public class Controller {
      * @param customerName the email of the user
      * @return the cart dto of the user
      */
-    public CartDto getCustomerCart(String customerName)
-    {
+    public CartDto getCustomerCart(String customerName) {
         final User user = userService.findUserByEmail(customerName);
 
         if (user == null) throw new NotFoundException("User not found");
-        if(!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
+        if (!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
         return Mapper.toCartDto(((Customer) user).getCart());
     }
 
@@ -398,8 +398,7 @@ public class Controller {
      * @param order the order you want to save
      * @return the saved order with id
      */
-    public Order saveOrder(Order order)
-    {
+    public Order saveOrder(Order order) {
         return orderService.save(order);
     }
 
@@ -414,12 +413,22 @@ public class Controller {
 
     /**
      * Get the order details with the orderlines
+     *
      * @param mail The mailaddress of the user asking for the order details
-     * @param id THe ID of the order you need info of
+     * @param id   THe ID of the order you need info of
      * @return CustomerOrderDto
      */
     public CustomerOrderDto getOrder(String mail, long id) {
         User user = userService.findUserByEmail(mail);
         return orderService.getOrder(user, id);
+    }
+
+    /**
+     * Edit a category
+     *
+     * @param editCategoryDto the dto with the data to edit the category
+     */
+    public void editCategory(CategoryDto editCategoryDto) {
+        categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
     }
 }

@@ -4,15 +4,22 @@ import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.domain.product.category.attributes.PickList;
+import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
+import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.orders.OrderService;
+import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
+import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
@@ -25,18 +32,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
 
 @SpringBootTest
-class ControllerTest
-{
+class ControllerTest {
 
     @Autowired
     Controller controller;
@@ -44,10 +47,11 @@ class ControllerTest
     UserService userService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    CategoryService categoryService;
 
     @Test
-    void saveCostumerWithAddress()
-    {
+    void saveCostumerWithAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();
@@ -86,8 +90,7 @@ class ControllerTest
     }
 
     @Test
-    void saveCustomerWithoutAddress()
-    {
+    void saveCustomerWithoutAddress() {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();
@@ -116,14 +119,12 @@ class ControllerTest
     }
 
     @Test
-    void findAllCategoriesTest()
-    {
+    void findAllCategoriesTest() {
         assertThat(controller.findAllCategories()).isNotNull();
     }
 
     @Test
-    void findAllCustomerDtoTest()
-    {
+    void findAllCustomerDtoTest() {
         final int initSize = controller.findAllCustomerDto().size();
 
         controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
@@ -131,8 +132,7 @@ class ControllerTest
     }
 
     @Test
-    void findProductsByVendor()
-    {
+    void findProductsByVendor() {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -164,8 +164,7 @@ class ControllerTest
     }
 
     @Test
-    void addGetProductToCartTest()
-    {
+    void addGetProductToCartTest() {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -219,8 +218,7 @@ class ControllerTest
     }
 
     @Test
-    void deleteProductTest()
-    {
+    void deleteProductTest() {
         final int initSize = controller.findAllProducts().size();
 
         Product product = new Product();
@@ -232,8 +230,7 @@ class ControllerTest
     }
 
     @Test
-    void checkoutCartTest()
-    {
+    void checkoutCartTest() {
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -284,8 +281,7 @@ class ControllerTest
     }
 
     @Test
-    void getVendorOrders()
-    {
+    void getVendorOrders() {
         Vendor vendor = new Vendor();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
         final String lastName = RandomStringUtils.randomAlphabetic(4);
@@ -368,15 +364,13 @@ class ControllerTest
     }
 
     @Test
-    void getOrdersUserNotFound()
-    {
+    void getOrdersUserNotFound() {
         final String userEmail = RandomStringUtils.randomAlphabetic(4);
         assertThrows(NotFoundException.class, () -> controller.getOrders(userEmail));
     }
 
     @Test
-    void saveProductTest()
-    {
+    void saveProductTest() {
         Vendor vendor = new Vendor();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
         final String lastName = RandomStringUtils.randomAlphabetic(4);
@@ -411,8 +405,7 @@ class ControllerTest
     }
 
     @Test
-    void getCustomerOrderTest()
-    {
+    void getCustomerOrderTest() {
         Vendor vendor = new Vendor();
         Admin admin = new Admin();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
@@ -480,5 +473,37 @@ class ControllerTest
         assertThat(customerOrderDto.getOrderDate()).isEqualTo(order.getCreatedDate());
         assertThat(vendorOrderDto.getId()).isEqualTo(orderNumber);
         assertThat(adminOrderDto.getId()).isEqualTo(orderNumber);
+    }
+
+    @Test
+    void testEditCategory() {
+        final int initCapRepo = controller.findAllCategories().size();
+        Type[] types = {Type.ENUMERATION, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
+        final PickList enumList = new PickList();
+        enumList.setItems(new ArrayList<>(List.of(new PickListItem(RandomStringUtils.randomAlphabetic(5)))));
+
+        Category category = new Category();
+        category.setName(RandomStringUtils.randomAlphabetic(5));
+        final DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], enumList, category);
+        category.setCharacteristics(List.of(
+                dynamicAttribute
+
+        ));
+        category.setId(categoryService.save(category).getId());
+        assertThat(controller.findAllCategories()).hasSize(initCapRepo + 1);
+
+        HashSet<DynamicAttributeDto> hashSet = new HashSet<>();
+        hashSet.add(new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], dynamicAttribute.getEnumList().getItems().stream().map(Objects::toString).toList()));
+
+        CategoryDto editCategoryDto = new CategoryDto(category.getId(), RandomStringUtils.randomAlphabetic(10), 0L, hashSet);
+        controller.editCategory(editCategoryDto);
+
+        Category fromRepo = categoryService.findById(category.getId());
+
+        assertThat(fromRepo).isNotEqualTo(category);
+        assertThat(fromRepo.getName()).isNotEqualTo(category.getName());
+        assertThat(fromRepo.getId()).isEqualTo(category.getId());
+        assertThat(fromRepo.getCharacteristics()).hasSize(hashSet.size());
+        assertThat(fromRepo.getName()).isNotEqualTo(category.getName());
     }
 }

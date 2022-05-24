@@ -38,7 +38,7 @@ class CategoriesControllerTest
     @Test
     void getCategories()
     {
-        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/%s", base, "getCategories"), String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/%s", base, "category"), String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -53,7 +53,7 @@ class CategoriesControllerTest
 
         category.setName(name);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(String.format("%s/%s", base, "createCategory"), category, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(String.format("%s/%s", base, "category/create"), category, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         assertThat(controller.findAllCategories()).hasSize(initSize + 1);
