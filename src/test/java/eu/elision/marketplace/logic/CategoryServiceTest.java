@@ -8,7 +8,6 @@ import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.repositories.CategoryRepository;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
-import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -116,12 +115,7 @@ class CategoryServiceTest {
 
         CategoryDto categoryDto = categoryService.toCategoryDto(cat1);
 
-
         assertThat(categoryDto.name()).isEqualTo(name);
-        long savedCatId = categoryService.save(new CategoryMakeDto(cat1.getName(), 0, new ArrayList<>()), cat1.getCharacteristics()).getId();
-
-        final Category byId = categoryService.findById(savedCatId);
-        assertThat(byId).isNotNull();
-        assertThat(byId.getName()).isEqualTo(cat1.getName());
+        assertThat(categoryDto.characteristics()).hasSize(2);
     }
 }
