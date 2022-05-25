@@ -38,9 +38,11 @@ public class DynamicAttributeValueService {
      * Save a dynamic attribute value
      *
      * @param dynamicAttributeValue the dynamic attribute value that needs to be saved
+     * @return the saved dynamic attrubte value
      */
-    public void save(DynamicAttributeValue<?> dynamicAttributeValue) {
-        dynamicAttributeValueRepository.save(dynamicAttributeValue);
+    public DynamicAttributeValue<?> save(DynamicAttributeValue<?> dynamicAttributeValue)
+    {
+        return dynamicAttributeValueRepository.save(dynamicAttributeValue);
     }
 
     /**

@@ -82,16 +82,6 @@ class ProductControllerTest
     }
 
     @Test
-    void addCategory()
-    {
-        assertThat(
-                restTemplate.postForEntity(
-                        String.format("%s/addCategory", base),
-                        new CategoryMakeDto(RandomStringUtils.randomAlphabetic(5), 0, new ArrayList<>()),
-                        String.class).getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
     void testGetProductById()
     {
         final Product product = new Product();
