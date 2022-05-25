@@ -1,23 +1,26 @@
-package eu.elision.marketplace.logic.services.users;
+package eu.elision.marketplace.logic.services.product;
 
 import eu.elision.marketplace.domain.product.Product;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
+import eu.elision.marketplace.web.webexceptions.InvalidDataException;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Service for products
  */
 @Service
-public class ProductService {
+public class ProductService
+{
     private final ProductRepository productRepository;
     private final DynamicAttributeValueService dynamicAttributeValueService;
 
@@ -27,7 +30,8 @@ public class ProductService {
      * @param productRepository            the product repository
      * @param dynamicAttributeValueService dynamic attribute service
      */
-    public ProductService(ProductRepository productRepository, DynamicAttributeValueService dynamicAttributeValueService) {
+    public ProductService(ProductRepository productRepository, DynamicAttributeValueService dynamicAttributeValueService)
+    {
         this.productRepository = productRepository;
         this.dynamicAttributeValueService = dynamicAttributeValueService;
     }
@@ -40,8 +44,32 @@ public class ProductService {
      * @param vendor          the vendor of the product
      * @return the created product
      */
-    public Product save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
-        return productRepository.save(toProduct(productDto, attributeValues, vendor));
+    public Product save(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor)
+    {
+        final Product product = toProduct(productDto, attributeValues, vendor);
+
+        checkCharacteristics(product);
+
+        return productRepository.save(product);
+    }
+
+    private void checkCharacteristics(Product product)
+    {
+        for (DynamicAttribute characteristic : product.getCategory().getCharacteristics())
+        {
+            if (characteristic.isRequired())
+            {
+                if (product.getAttributes().stream().noneMatch(dynamicAttributeValue -> Objects.equals(dynamicAttributeValue.getAttributeName(), characteristic.getName())))
+                {
+                    throw new InvalidDataException(String.format("Product should have a value for characteristic %s", characteristic.getName()));
+                }
+                final DynamicAttributeValue<?> productCharValue = product.getAttributes().stream().filter(dynamicAttributeValue -> dynamicAttributeValue.getAttributeName().equals(characteristic.getName())).findFirst().orElse(null);
+                if (productCharValue != null && productCharValue.getValue() == null)
+                {
+                    throw new InvalidDataException(String.format("Product should have a value for characteristic %s", characteristic.getName()));
+                }
+            }
+        }
     }
 
     /**
@@ -50,11 +78,13 @@ public class ProductService {
      * @param product the product that needs to be saved
      * @return the saved product
      */
-    public Product save(Product product) {
+    public Product save(Product product)
+    {
         return productRepository.save(product);
     }
 
-    private Product toProduct(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor) {
+    private Product toProduct(ProductDto productDto, Collection<DynamicAttributeValue<?>> attributeValues, Vendor vendor)
+    {
         Product product = new Product();
         product.setPrice(productDto.price());
         product.setTitle(productDto.title());
@@ -73,7 +103,8 @@ public class ProductService {
      * @param vendor the vendor whose products you want
      * @return a list of products from given vendor
      */
-    public Collection<Product> findProductsByVendor(Vendor vendor) {
+    public Collection<Product> findProductsByVendor(Vendor vendor)
+    {
         return productRepository.findProductsByVendor(vendor);
     }
 
@@ -82,7 +113,8 @@ public class ProductService {
      *
      * @return list of products
      */
-    public Collection<Product> findAllProducts() {
+    public Collection<Product> findAllProducts()
+    {
         return productRepository.findAll();
     }
 
@@ -91,12 +123,20 @@ public class ProductService {
      *
      * @param product the product you want to save
      */
-    public void editProduct(Product product) {
+    public void editProduct(Product product)
+    {
+        checkCharacteristics(product);
+
         final Product fromRepo = productRepository.findById(product.getId()).orElse(null);
         if (fromRepo == null)
+        {
             throw new NotFoundException(String.format("Product with id %s not found", product.getId()));
+        }
         if (fromRepo.getVendor() != product.getVendor())
+        {
             throw new UnauthorisedException("This vendor does not own this product");
+        }
+
 
         product.setAttributes(new ArrayList<>(product.getAttributes()));
         dynamicAttributeValueService.deleteNonCategoryAttributes(product);
@@ -109,9 +149,11 @@ public class ProductService {
      * @param productId the id of the product
      * @return product with given id
      */
-    public Product findProductById(long productId) {
+    public Product findProductById(long productId)
+    {
         Product product = productRepository.findById(productId).orElse(null);
-        if (product == null) {
+        if (product == null)
+        {
             throw new NotFoundException(String.format("Product with id %s not found", productId));
         }
         return product;
@@ -119,9 +161,11 @@ public class ProductService {
 
     /**
      * Delete a product based on an id
+     *
      * @param productId the id of the product that needs to be deleted
      */
-    public void delete(long productId) {
+    public void delete(long productId)
+    {
         productRepository.deleteById(productId);
     }
 }

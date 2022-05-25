@@ -6,8 +6,8 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.UserDto;
+import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
-import eu.elision.marketplace.web.dtos.product.CategoryDto;
 import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
