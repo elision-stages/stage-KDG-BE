@@ -1,7 +1,6 @@
 package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.users.Customer;
-import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -36,7 +34,7 @@ class OrderTest {
 
         assertThat(order1.equals(order2)).isTrue();
 
-        order2.setOrderNumber(RandomUtils.nextLong(1, 100));
+        order2.setOrderNumber(RandomUtils.nextLong(100, 200));
         assertThat(order1.equals(order2)).isFalse();
         order2.setOrderNumber(orderNumber);
         assertThat(order1.equals(order2)).isTrue();

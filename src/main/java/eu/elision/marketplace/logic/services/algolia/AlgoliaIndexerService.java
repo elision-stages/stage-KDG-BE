@@ -36,15 +36,14 @@ public class AlgoliaIndexerService implements IndexerService {
     }
 
     @Override
-    //@Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
-    @Scheduled(cron = "0 0,10,20,30,40,50 * * * *", zone = "Europe/Paris")
+    @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
     public void indexAllProducts() {
         try {
             List<Product> productList = this.productRepository.findAll();
             Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
             SearchIndex<AlgoliaProductDto> searchClient;
             searchClient = indexSearchClientService.getSearchClient();
-            searchClient.saveObjects(algoliaProductList);
+            searchClient.saveObjectsAsync(algoliaProductList);
         } catch (IOException e) {
             throw new ConversionException(e.getMessage());
         }
