@@ -12,7 +12,7 @@ import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
-import eu.elision.marketplace.logic.services.users.ProductService;
+import eu.elision.marketplace.logic.services.product.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.webexceptions.InvalidDataException;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;

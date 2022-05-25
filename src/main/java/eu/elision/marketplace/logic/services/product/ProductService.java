@@ -1,10 +1,9 @@
-package eu.elision.marketplace.logic.services.users;
+package eu.elision.marketplace.logic.services.product;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.webexceptions.InvalidDataException;
@@ -168,13 +167,5 @@ public class ProductService
     public void delete(long productId)
     {
         productRepository.deleteById(productId);
-    }
-
-    /**
-     * <strong>ONLY FOR TESTING RESET</strong> - REMOVES ALL PRODUCTS
-     */
-    public void removeAll()
-    {
-        productRepository.deleteAll();
     }
 }

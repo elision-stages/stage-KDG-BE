@@ -15,7 +15,6 @@ import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.*;
-import eu.elision.marketplace.logic.services.users.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
