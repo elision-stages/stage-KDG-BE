@@ -36,6 +36,7 @@ dependencies {
     implementation group: 'mysql', name: 'mysql-connector-java'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.apache.httpcomponents:httpclient'
     runtimeOnly group: 'com.h2database', name: 'h2'
 }
 tasks.named('test') {

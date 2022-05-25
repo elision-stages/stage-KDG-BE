@@ -44,7 +44,7 @@ class ProductControllerTest
     @BeforeEach
     void setUp() throws MalformedURLException
     {
-        restTemplate = new TestRestTemplate("user", "password");
+        restTemplate = new TestRestTemplate();
         base = new URL(String.format("http://localhost:%s", port));
     }
 
