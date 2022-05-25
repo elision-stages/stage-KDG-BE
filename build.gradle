@@ -1,78 +1,63 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.7'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-	id "org.sonarqube" version "3.3"
+    id 'org.springframework.boot' version '2.6.7'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id "org.sonarqube" version "3.3"
     id 'jacoco'
 }
-
 group = 'eu.elision'
 version = '0.0.1-SNAPSHOT'
 //sourceCompatibility = '17'
-
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
-
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
-
 def springfoxVersion = "3.0.0"
-
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.20'
-    implementation 'junit:junit:4.13.2'
-    implementation 'com.algolia:algoliasearch-core:3.16.5'
-    implementation 'com.algolia:algoliasearch-apache:3.16.5'
-
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.3.20'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
-    runtimeOnly group: 'com.h2database', name: 'h2'
-    implementation group: 'mysql', name: 'mysql-connector-java'
-
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation "io.springfox:springfox-swagger-ui:$springfoxVersion"
     implementation "io.springfox:springfox-boot-starter:$springfoxVersion"
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: "$springfoxVersion"
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation 'com.algolia:algoliasearch-core:3.16.5'
+    implementation 'com.algolia:algoliasearch-java-net:3.16.5'
+    implementation group: 'mysql', name: 'mysql-connector-java'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.apache.httpcomponents:httpclient'
+    runtimeOnly group: 'com.h2database', name: 'h2'
 }
-
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
-
 sonarqube {
-  properties {
-    property "sonar.projectKey", "elision-stages_stage-KDG-BE"
-    property "sonar.organization", "elision-stages"
-    property "sonar.host.url", "https://sonarcloud.io"
-  }
+    properties {
+        property "sonar.projectKey", "elision-stages_stage-KDG-BE"
+        property "sonar.organization", "elision-stages"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
-
 test {
     finalizedBy jacocoTestReport
 }
-
 jacocoTestReport {
     dependsOn test
 }
-
 jacoco {
     toolVersion = "0.8.8"
 }
-
 jacocoTestReport {
     reports {
         xml.required = true
