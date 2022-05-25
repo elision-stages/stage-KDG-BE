@@ -3,19 +3,18 @@ package eu.elision.marketplace.logic;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeBoolValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeDoubleValue;
-import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeEnumValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeIntValue;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.logic.services.users.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.web.webexceptions.InvalidDataException;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -119,16 +118,7 @@ class ProductServiceTest
         daBool.setCategory(category);
         daBool.setRequired(true);
 
-        final DynamicAttribute daEnum = new DynamicAttribute();
-        daEnum.setType(Type.BOOL);
-        daEnum.setName(RandomStringUtils.randomAlphabetic(5));
-        daEnum.setCategory(category);
-        daEnum.setRequired(true);
-        final PickList enumList = new PickList();
-        enumList.setItems(List.of(new PickListItem(RandomStringUtils.randomAlphabetic(5)), new PickListItem(RandomStringUtils.randomAlphabetic(5))));
-        daEnum.setEnumList(enumList);
-
-        category.setCharacteristics(List.of(dynamicAttributeService.save(daInt), dynamicAttributeService.save(daDouble), dynamicAttributeService.save(daBool), dynamicAttributeService.save(daEnum)));
+        category.setCharacteristics(List.of(dynamicAttributeService.save(daInt), dynamicAttributeService.save(daDouble), dynamicAttributeService.save(daBool)));
         categoryService.save(category);
         // category setup done
 
@@ -147,19 +137,33 @@ class ProductServiceTest
         product.setVendor((Vendor) userService.save(vendor));
         product.setDescription(RandomStringUtils.randomAlphabetic(100));
         product.setTitle(RandomStringUtils.randomAlphabetic(10));
+        product.setCategory(category);
         product.setAttributes(List.of(
                 dynamicAttributeValueService.save(new DynamicAttributeIntValue(daInt.getName(), RandomUtils.nextInt())),
                 dynamicAttributeValueService.save(new DynamicAttributeDoubleValue(daDouble.getName(), RandomUtils.nextDouble())),
-                dynamicAttributeValueService.save(new DynamicAttributeBoolValue(daBool.getName(), RandomUtils.nextBoolean())),
-                dynamicAttributeValueService.save(new DynamicAttributeEnumValue(daEnum.getName(), daEnum.getEnumList().getItems().get(RandomUtils.nextInt(0, 1)).getValue()))));
+                dynamicAttributeValueService.save(new DynamicAttributeBoolValue(daBool.getName(), RandomUtils.nextBoolean()))
+        ));
         product.setId(productService.save(product).getId());
         // base product done
 
+        //verify product repo save
         Product fromRepo = productService.findProductById(product.getId());
+        assertThat(fromRepo.getId()).isEqualTo(product.getId());
         assertThat(fromRepo.getTitle()).isEqualTo(product.getTitle());
+        assertThat(fromRepo.getPrice()).isEqualTo(product.getPrice());
+        assertThat(fromRepo.getCategory().getId()).isEqualTo(product.getCategory().getId());
+        assertThat(fromRepo.getVendor().getId()).isEqualTo(product.getVendor().getId());
         assertThat(fromRepo.getDescription()).isEqualTo(product.getDescription());
-        assertThat(fromRepo.getVendor()).isEqualTo(product.getVendor());
-        assertThat(fromRepo).isEqualTo(product);
+        assertThat(fromRepo.getImages()).hasSize(product.getImages().size());
+        assertThat(fromRepo.getAttributes()).hasSize(product.getAttributes().size());
+
+        ArrayList<DynamicAttributeValue<?>> attributes = new ArrayList<>(product.getAttributes());
+        var deletedAttribute = attributes.remove(RandomUtils.nextInt(0, attributes.size()));
+        product.setAttributes(attributes);
+
+        Exception exception = assertThrows(InvalidDataException.class, () -> productService.editProduct(product));
+
+        assertThat(exception.getMessage()).contains(deletedAttribute.getAttributeName());
     }
 
 

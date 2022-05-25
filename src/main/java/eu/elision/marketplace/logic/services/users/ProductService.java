@@ -169,4 +169,12 @@ public class ProductService
     {
         productRepository.deleteById(productId);
     }
+
+    /**
+     * <strong>ONLY FOR TESTING RESET</strong> - REMOVES ALL PRODUCTS
+     */
+    public void removeAll()
+    {
+        productRepository.deleteAll();
+    }
 }

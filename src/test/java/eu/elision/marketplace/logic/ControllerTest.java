@@ -14,6 +14,7 @@ import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.CategoryService;
+import eu.elision.marketplace.logic.services.users.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
@@ -28,18 +29,21 @@ import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 
-
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
-class ControllerTest {
+class ControllerTest
+{
 
     @Autowired
     Controller controller;
@@ -49,9 +53,18 @@ class ControllerTest {
     OrderService orderService;
     @Autowired
     CategoryService categoryService;
+    @Autowired
+    ProductService productService;
+
+    @BeforeEach
+    void clearDatabase()
+    {
+        //productService.removeAll();
+    }
 
     @Test
-    void saveCostumerWithAddress() {
+    void saveCostumerWithAddress()
+    {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();

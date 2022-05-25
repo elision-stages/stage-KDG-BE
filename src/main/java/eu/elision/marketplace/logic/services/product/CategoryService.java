@@ -190,7 +190,7 @@ public class CategoryService {
 
         category.setParent(findById(editCategoryDto.parentId()));
         category.setName(editCategoryDto.name());
-        category.setCharacteristics(dynamicAttributes);
+        category.setCharacteristics(dynamicAttributes.stream().toList());
 
         categoryRepository.save(category);
     }

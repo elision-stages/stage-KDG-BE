@@ -9,8 +9,8 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,9 +34,9 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Category> subCategories;
     @OneToMany(mappedBy = "category")
-    @LazyCollection(LazyCollectionOption.FALSE)
     @Setter
-    private Collection<DynamicAttribute> characteristics;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<DynamicAttribute> characteristics;
 
     /**
      * No args constructor. Initialises the sub categories and characteristics array.
