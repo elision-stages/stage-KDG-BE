@@ -429,4 +429,8 @@ public class Controller {
     public void editCategory(CategoryDto editCategoryDto) {
         categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
     }
+
+    public Category getCategory(long id) {
+        return categoryService.getCategory(id);
+    }
 }
