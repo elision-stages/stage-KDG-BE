@@ -429,4 +429,14 @@ public class Controller {
     public void editCategory(CategoryDto editCategoryDto) {
         categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
     }
+
+    /**
+     * Retrieves a specific category by ID
+     *
+     * @param id The ID to search for
+     * @return The requested category
+     */
+    public Category getCategory(long id) {
+        return categoryService.getCategory(id);
+    }
 }

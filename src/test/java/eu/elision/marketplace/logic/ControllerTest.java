@@ -511,4 +511,9 @@ class ControllerTest
         assertThat(fromRepo.getCharacteristics()).hasSize(hashSet.size());
         assertThat(fromRepo.getName()).isNotEqualTo(category.getName());
     }
+
+    @Test
+    void getFakeCategoryTest() {
+        assertThrows(NotFoundException.class, () -> controller.getCategory(-1));
+    }
 }

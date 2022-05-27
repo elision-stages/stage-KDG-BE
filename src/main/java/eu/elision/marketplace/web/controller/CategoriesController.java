@@ -37,6 +37,18 @@ public class CategoriesController {
         return ResponseEntity.ok(Mapper.toCategoryDtoList(allCategories));
     }
 
+    /**
+     * Retrieves a specific category by ID
+     *
+     * @param id The ID to search for
+     * @return The requested category
+     */
+    @Secured("ROLE_ADMIN")
+    @GetMapping("{id}")
+    ResponseEntity<Category> getCategory(@PathVariable long id) {
+        return ResponseEntity.ok(controller.getCategory(id));
+    }
+
     @Secured("ROLE_ADMIN")
     @PostMapping("/create")
     ResponseEntity<ResponseDto> createCategory(@RequestBody CategoryMakeDto categoryMakeDto) {

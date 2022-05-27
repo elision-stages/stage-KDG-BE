@@ -194,4 +194,16 @@ public class CategoryService {
 
         categoryRepository.save(category);
     }
+
+    /**
+     * Retrieves a specific category by ID
+     *
+     * @param id The ID to search for
+     * @return The requested category
+     */
+    public Category getCategory(long id) {
+        Category category = categoryRepository.findById(id).orElse(null);
+        if (category == null) throw new NotFoundException();
+        return category;
+    }
 }
