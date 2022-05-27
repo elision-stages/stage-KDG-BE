@@ -36,16 +36,21 @@ class CategoriesControllerTest
     }
 
     @Test
-    void getCategories()
-    {
+    void getCategories() {
         ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/%s", base, "category"), String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void getFakeCategory() {
+        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/%s/%d", base, "category", -1), String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
     //@Test
-    void createCategory()
-    {
+    void createCategory() {
         Category category = new Category();
 
         String name = RandomStringUtils.randomAlphabetic(5);
