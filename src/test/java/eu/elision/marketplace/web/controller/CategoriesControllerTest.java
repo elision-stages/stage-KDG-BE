@@ -2,6 +2,7 @@ package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.logic.Controller;
+import eu.elision.marketplace.logic.services.product.CategoryService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,7 @@ import java.net.URL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CategoriesControllerTest
-{
+class CategoriesControllerTest {
 
     private static URL base;
     private TestRestTemplate restTemplate;
@@ -27,10 +27,11 @@ class CategoriesControllerTest
     private Integer port;
     @Autowired
     private Controller controller;
+    @Autowired
+    private CategoryService categoryService;
 
     @BeforeEach
-    void setUp() throws MalformedURLException
-    {
+    void setUp() throws MalformedURLException {
         restTemplate = new TestRestTemplate("user", "password");
         base = new URL(String.format("http://localhost:%s", port));
     }
@@ -45,6 +46,17 @@ class CategoriesControllerTest
     @Test
     void getFakeCategory() {
         ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/%s/%d", base, "category", -1), String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void getCategory() {
+        Category category = new Category();
+        category.setId(123L);
+        category.setName("nice");
+        categoryService.save(category);
+        ResponseEntity<String> response = restTemplate.getForEntity(String.format("%s/%s/%d", base, "category", 123), String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
