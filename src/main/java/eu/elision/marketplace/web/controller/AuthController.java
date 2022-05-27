@@ -93,8 +93,18 @@ public class AuthController
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
             return new ResponseEntity<>(Mapper.toUserDto(user), HttpStatus.OK);
-        } catch (BadCredentialsException | InternalAuthenticationServiceException ex) {
+        } catch (BadCredentialsException | InternalAuthenticationServiceException ex)
+        {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    /**
+     * Create admin
+     */
+    @GetMapping("createAdmin")
+    public void createAdmin()
+    {
+        userService.createAdmin();
     }
 }
