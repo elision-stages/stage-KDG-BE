@@ -245,8 +245,7 @@ public class Controller {
      */
     public Category saveCategory(CategoryMakeDto categoryMakeDto) {
         final Category category = categoryService.save(categoryMakeDto);
-        dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics(), category);
-        return category;
+        return categoryService.save(category, dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics(), category));
     }
 
     /**

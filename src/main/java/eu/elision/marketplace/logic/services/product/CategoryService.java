@@ -166,13 +166,15 @@ public class CategoryService {
     /**
      * Save a category with attributes
      *
-     * @param categoryMakeDto   DTO of the category
+     * @param category          the category that needs to be saved
      * @param dynamicAttributes Collection of dynamic attributes
      * @return Saved category
      */
-    public Category save(CategoryMakeDto categoryMakeDto, Collection<DynamicAttribute> dynamicAttributes) {
-        Category category = categoryRepository.save(toCategory(categoryMakeDto));
-        for (DynamicAttribute attr : dynamicAttributes) {
+    public Category save(Category category, Collection<DynamicAttribute> dynamicAttributes)
+    {
+        category.setCharacteristics(dynamicAttributes.stream().toList());
+        for (DynamicAttribute attr : dynamicAttributes)
+        {
             attr.setCategory(category);
             attributeService.save(attr);
         }
