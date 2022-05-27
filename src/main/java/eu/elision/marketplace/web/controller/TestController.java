@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * Controller to handle test calls
+ */
 @RestController
 public class TestController
 {
@@ -23,7 +24,7 @@ public class TestController
     @GetMapping("/hello")
     String hello()
     {
-        return "hello";
+        return "hello v1.0";
     }
 
     /**

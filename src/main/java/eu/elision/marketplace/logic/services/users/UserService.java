@@ -1,5 +1,6 @@
 package eu.elision.marketplace.logic.services.users;
 
+import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
@@ -221,5 +222,19 @@ public class UserService implements UserDetailsService
             throw new NotFoundException(String.format("Vendor with email %s not found", vendorEmail));
 
         return vendor;
+    }
+
+    /**
+     * Create an admin account
+     */
+    public void createAdmin()
+    {
+        final Admin admin = new Admin();
+        admin.setFirstName("Admin");
+        admin.setLastName("Admin");
+        admin.setEmail("admin@elision.eu");
+        admin.setPassword("passw0rD");
+
+        userRepository.save(admin);
     }
 }
