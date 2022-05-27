@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
@@ -56,8 +55,8 @@ public class AuthController
     /**
      * Get the user info of the user logged in
      *
-     * @param principal the logged in user
-     * @return the user details of the logged in user
+     * @param principal the logged-in user
+     * @return the user details of the logged-in user
      */
     @GetMapping("userinfo")
     @Secured("ROLE_CUSTOMER")
@@ -69,7 +68,7 @@ public class AuthController
     }
 
     /**
-     * Log in with an user
+     * Log in with a user
      *
      * @param request  The request
      * @param response the response
@@ -101,10 +100,13 @@ public class AuthController
 
     /**
      * Create admin
+     *
+     * @return confirm message that admin is created
      */
     @GetMapping("createAdmin")
-    public void createAdmin()
+    public String createAdmin()
     {
         userService.createAdmin();
+        return "Admin created";
     }
 }
