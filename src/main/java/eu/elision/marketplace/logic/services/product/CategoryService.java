@@ -170,11 +170,9 @@ public class CategoryService {
      * @param dynamicAttributes Collection of dynamic attributes
      * @return Saved category
      */
-    public Category save(Category category, Collection<DynamicAttribute> dynamicAttributes)
-    {
+    public Category save(Category category, Collection<DynamicAttribute> dynamicAttributes) {
         category.setCharacteristics(dynamicAttributes.stream().toList());
-        for (DynamicAttribute attr : dynamicAttributes)
-        {
+        for (DynamicAttribute attr : dynamicAttributes) {
             attr.setCategory(category);
             attributeService.save(attr);
         }
@@ -192,7 +190,7 @@ public class CategoryService {
 
         category.setParent(findById(editCategoryDto.parentId()));
         category.setName(editCategoryDto.name());
-        category.setCharacteristics(dynamicAttributes.stream().toList());
+        category.setCharacteristics(new ArrayList<>(dynamicAttributes.stream().toList()));
 
         categoryRepository.save(category);
     }
