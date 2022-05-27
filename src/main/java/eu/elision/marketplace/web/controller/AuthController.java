@@ -7,7 +7,9 @@ import eu.elision.marketplace.logic.services.users.JwtService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
 import eu.elision.marketplace.web.dtos.UserDto;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -87,8 +89,8 @@ public class AuthController
 
             User user = (User) authentication.getPrincipal();
             String token = jwtService.generateToken(user);
-            Cookie cookie = authService.generateTokenCookie(token);
-            response.addCookie(cookie);
+            ResponseCookie cookie = authService.generateTokenCookie(token);
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
             return new ResponseEntity<>(Mapper.toUserDto(user), HttpStatus.OK);
         } catch (BadCredentialsException | InternalAuthenticationServiceException ex) {
