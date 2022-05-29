@@ -24,7 +24,7 @@ public class TestController
     @GetMapping("/hello")
     String hello()
     {
-        return "hello v1.0.1";
+        return "hello v1.0.2";
     }
 
     /**
