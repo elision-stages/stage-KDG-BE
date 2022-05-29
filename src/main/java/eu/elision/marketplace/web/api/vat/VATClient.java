@@ -39,6 +39,7 @@ public class VATClient {
             String getCheckVatServiceURL = "https://ec.europa.eu/taxation_customs/vies/services/checkVatService";
             String result = this.request(new URL(getCheckVatServiceURL), requestXml);
 
+            if (result.contains("<soap:Fault>")) return new Business(); // Returns a result when the API is down, so it doesn't prevent registration
             if (!result.contains("<valid>true</valid>")) return null;
 
             Business business = new Business();
