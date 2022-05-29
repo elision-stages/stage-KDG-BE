@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.algolia:algoliasearch-core:3.16.5'
     implementation 'com.algolia:algoliasearch-java-net:3.16.5'
     implementation group: 'mysql', name: 'mysql-connector-java'
+    implementation 'org.jsoup:jsoup:1.14.3'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.apache.httpcomponents:httpclient'
