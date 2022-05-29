@@ -229,7 +229,7 @@ public class UserService implements UserDetailsService
      */
     public void createAdmin()
     {
-        final Admin admin = new Admin();
+        Admin admin = (Admin)userRepository.findById(1000L).orElse(new Admin());
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
         admin.setEmail("admin@elision.eu");
