@@ -233,7 +233,7 @@ public class UserService implements UserDetailsService
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
         admin.setEmail("admin@elision.eu");
-        admin.setPassword("passw0rD");
+        admin.setPassword("$2a$12$l65u2sm3M8b1Wumi0Rht1.IOmnKpby9oKvXUIznJjBVE4D26RQtBa"); // passw0rD
         admin.setId(1000L);
 
         userRepository.save(admin);
