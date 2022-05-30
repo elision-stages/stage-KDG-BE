@@ -20,15 +20,19 @@ class ConverterTest {
 
     @Test
     void test() throws ConversionException {
-        Vendor vendor = new Vendor();
-        vendor.setBusinessName("vendor");
-        Product product = new Product();
-        product.setId(123L);
-        product.setVendor(vendor);
-        product.setImages(List.of("test"));
-        AlgoliaProductDto result = algoliaProductConverter.convert(product);
-        assertThat(result.getImage()).isEqualTo("test");
-        assertThat(result.getVendor()).isEqualTo("vendor");
+        for (int i = 0; i < 1000; i++) {
+
+
+            Vendor vendor = new Vendor();
+            vendor.setBusinessName("vendor");
+            Product product = new Product();
+            product.setId(123L);
+            product.setVendor(vendor);
+            product.setImages(List.of("test"));
+            AlgoliaProductDto result = algoliaProductConverter.convert(product);
+            assertThat(result.getImage()).isEqualTo("test");
+            assertThat(result.getVendor()).isEqualTo("vendor");
+        }
     }
 
     @Test

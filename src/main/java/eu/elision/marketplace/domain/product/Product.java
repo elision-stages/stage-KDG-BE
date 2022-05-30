@@ -23,7 +23,7 @@ public class Product
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private double price;
     private String title;
     @ManyToOne(cascade = CascadeType.MERGE)
