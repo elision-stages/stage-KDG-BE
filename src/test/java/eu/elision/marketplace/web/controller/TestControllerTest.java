@@ -29,7 +29,7 @@ class TestControllerTest {
     @Test
     void hello() {
         String response = restTemplate.getForObject(String.format("%s/hello", base), String.class);
-        assertThat(response).isEqualTo("hello");
+        assertThat(response).contains("hello v");
     }
 
     @Test
