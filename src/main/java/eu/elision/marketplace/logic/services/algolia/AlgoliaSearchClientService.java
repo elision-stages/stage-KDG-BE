@@ -29,6 +29,8 @@ public class AlgoliaSearchClientService implements SearchClientService<SearchInd
     public SearchIndex<AlgoliaProductDto> getSearchClient() throws IOException {
         SearchConfig config = new SearchConfig.Builder(applicationId, apiKey)
                 .setConnectTimeOut(2000)
+                .setWriteTimeOut(30000)
+                .setReadTimeOut(1000)
                 .build();
         logger.info(String.format("Retrieving search client %s", String.format("%s_%s", indexPrefix, "kdg_stage_marketplace")));
         try (SearchClient client = DefaultSearchClient.create(config)) {
