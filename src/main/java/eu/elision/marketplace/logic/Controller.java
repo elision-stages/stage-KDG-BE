@@ -5,7 +5,6 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
@@ -14,7 +13,10 @@ import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
-import eu.elision.marketplace.logic.services.product.*;
+import eu.elision.marketplace.logic.services.product.CategoryService;
+import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
+import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
+import eu.elision.marketplace.logic.services.product.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
@@ -48,8 +50,6 @@ public class Controller {
     private final ProductService productService;
     private final DynamicAttributeService dynamicAttributeService;
     private final DynamicAttributeValueService dynamicAttributeValueService;
-    private final PickListItemService pickListItemService;
-    private final PickListService pickListService;
     private final OrderService orderService;
     private final OrderLineService orderLineService;
     private static final String USER_NOT_FOUND = "User with email %s not found";
@@ -63,21 +63,17 @@ public class Controller {
      * @param productService               product service
      * @param dynamicAttributeService      dynamic attribute service
      * @param dynamicAttributeValueService dynamic attribute value service
-     * @param pickListItemService          pick list item service
-     * @param pickListService              pick list service
      * @param orderService                 order service
      * @param orderLineService             order line service
      */
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, PickListItemService pickListItemService, PickListService pickListService, OrderService orderService, OrderLineService orderLineService) {
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, OrderService orderService, OrderLineService orderLineService) {
         this.userService = userService;
         this.categoryService = categoryService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.productService = productService;
         this.dynamicAttributeService = dynamicAttributeService;
         this.dynamicAttributeValueService = dynamicAttributeValueService;
-        this.pickListItemService = pickListItemService;
-        this.pickListService = pickListService;
         this.orderService = orderService;
         this.orderLineService = orderLineService;
     }
@@ -196,10 +192,6 @@ public class Controller {
     public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
         DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto, category);
         dynamicAttribute.setCategory(category);
-        if (dynamicAttribute.getType() == Type.ENUMERATION) {
-            pickListItemService.save(dynamicAttribute.getEnumList().getItems());
-            pickListService.save(dynamicAttribute.getEnumList());
-        }
         dynamicAttributeService.save(dynamicAttribute);
     }
 

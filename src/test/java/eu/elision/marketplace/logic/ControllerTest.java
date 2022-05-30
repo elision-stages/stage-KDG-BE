@@ -5,8 +5,6 @@ import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Admin;
@@ -483,13 +481,11 @@ class ControllerTest
     @Test
     void testEditCategory() {
         final int initCapRepo = controller.findAllCategories().size();
-        Type[] types = {Type.ENUMERATION, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
-        final PickList enumList = new PickList();
-        enumList.setItems(new ArrayList<>(List.of(new PickListItem(RandomStringUtils.randomAlphabetic(5)))));
+        Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
 
         Category category = new Category();
         category.setName(RandomStringUtils.randomAlphabetic(5));
-        final DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], enumList, category);
+        final DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], category);
         category.setCharacteristics(List.of(
                 dynamicAttribute
 
@@ -498,7 +494,7 @@ class ControllerTest
         assertThat(controller.findAllCategories()).hasSize(initCapRepo + 1);
 
         HashSet<DynamicAttributeDto> hashSet = new HashSet<>();
-        hashSet.add(new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], dynamicAttribute.getEnumList().getItems().stream().map(Objects::toString).toList()));
+        hashSet.add(new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)]));
 
         CategoryDto editCategoryDto = new CategoryDto(category.getId(), RandomStringUtils.randomAlphabetic(10), 0L, hashSet);
         controller.editCategory(editCategoryDto);

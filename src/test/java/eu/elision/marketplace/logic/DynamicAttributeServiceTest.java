@@ -2,8 +2,6 @@ package eu.elision.marketplace.logic;
 
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.repositories.DynamicAttributeRepository;
@@ -19,7 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 import static eu.elision.marketplace.domain.product.category.attributes.Type.DECIMAL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,11 +38,11 @@ class DynamicAttributeServiceTest {
     @Test
     void toDynamicAttributeTest() {
         final String name1 = RandomStringUtils.randomAlphabetic(5);
-        DynamicAttributeDto dynamicAttributeDto = new DynamicAttributeDto(name1, RandomUtils.nextBoolean(), DECIMAL, null);
+        DynamicAttributeDto dynamicAttributeDto = new DynamicAttributeDto(name1, RandomUtils.nextBoolean(), DECIMAL);
         final String name2 = RandomStringUtils.randomAlphabetic(5);
-        DynamicAttributeDto dynamicAttributeDto2 = new DynamicAttributeDto(name2, RandomUtils.nextBoolean(), Type.ENUMERATION, new ArrayList<>(List.of(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5))));
+        DynamicAttributeDto dynamicAttributeDto2 = new DynamicAttributeDto(name2, RandomUtils.nextBoolean(), Type.STRING);
         final String name3 = RandomStringUtils.randomAlphabetic(5);
-        DynamicAttributeDto dynamicAttributeDto3 = new DynamicAttributeDto(name3, RandomUtils.nextBoolean(), DECIMAL, new ArrayList<>(List.of(RandomStringUtils.randomAlphabetic(4))));
+        DynamicAttributeDto dynamicAttributeDto3 = new DynamicAttributeDto(name3, RandomUtils.nextBoolean(), DECIMAL);
 
         Category category = new Category();
 
@@ -94,34 +94,12 @@ class DynamicAttributeServiceTest {
     }
 
     @Test
-    void testSavedAttributesEnumFails() {
-        DynamicAttribute dynamicAttribute = new DynamicAttribute();
-        final String name = RandomStringUtils.randomAlphabetic(5);
-        dynamicAttribute.setName(name);
-        dynamicAttribute.setType(Type.ENUMERATION);
-        final PickList enumList = new PickList();
-        enumList.setItems(List.of(new PickListItem(RandomStringUtils.randomAlphabetic(5))));
-        dynamicAttribute.setEnumList(enumList);
-        when(dynamicAttributeRepository.findDynamicAttributeByName(name)).thenReturn(dynamicAttribute);
-
-        AttributeValue<String, String> attributeValue = new AttributeValue<>();
-        attributeValue.setAttributeName(name);
-        attributeValue.setValue(String.valueOf(RandomUtils.nextBoolean()));
-
-        final List<AttributeValue<String, String>> attributeValue1 = List.of(attributeValue);
-        assertThrows(NotFoundException.class, () -> dynamicAttributeService.getSavedAttributes(attributeValue1));
-    }
-
-    @Test
     void testSavedAttributesEnum() {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
-        dynamicAttribute.setType(Type.ENUMERATION);
-        final PickList enumList = new PickList();
+        dynamicAttribute.setType(Type.STRING);
         final String value = RandomStringUtils.randomAlphabetic(5);
-        enumList.setItems(List.of(new PickListItem(value)));
-        dynamicAttribute.setEnumList(enumList);
         when(dynamicAttributeRepository.findDynamicAttributeByName(name)).thenReturn(dynamicAttribute);
 
         AttributeValue<String, String> attributeValue = new AttributeValue<>();
@@ -133,16 +111,14 @@ class DynamicAttributeServiceTest {
 
     @Test
     void testRenewAttributesDoubleAttribute() {
-        Type[] types = {Type.ENUMERATION, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
+        Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
-        final PickList enumList = new PickList();
-        enumList.setItems(new ArrayList<>(List.of(new PickListItem(RandomStringUtils.randomAlphabetic(5)))));
-        DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], enumList, category);
+        DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], category);
 
         when(dynamicAttributeRepository.findDynamicAttributeByName(dynamicAttribute.getName())).thenReturn(dynamicAttribute);
 
-        CategoryDto editCategoryDto = new CategoryDto(category.getId(), dynamicAttribute.getName(), 0L, new HashSet<>(List.of(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList().getItems().stream().map(Objects::toString).toList()), new DynamicAttributeDto(dynamicAttribute.getName(), !dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList().getItems().stream().map(Objects::toString).toList()))) {
+        CategoryDto editCategoryDto = new CategoryDto(category.getId(), dynamicAttribute.getName(), 0L, new HashSet<>(List.of(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType()), new DynamicAttributeDto(dynamicAttribute.getName(), !dynamicAttribute.isRequired(), dynamicAttribute.getType()))) {
         });
         Exception exception = assertThrows(InvalidDataException.class, () -> dynamicAttributeService.renewAttributes(editCategoryDto, category));
 
@@ -151,19 +127,17 @@ class DynamicAttributeServiceTest {
 
     @Test
     void testRenewAttributes2IdenticalCharacteristics() {
-        Type[] types = {Type.ENUMERATION, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
+        Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
-        final PickList enumList = new PickList();
-        enumList.setItems(new ArrayList<>(List.of(new PickListItem(RandomStringUtils.randomAlphabetic(5)))));
-        DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], enumList, category);
+        DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], category);
 
         when(dynamicAttributeRepository.findDynamicAttributeByName(dynamicAttribute.getName())).thenReturn(dynamicAttribute);
         when(dynamicAttributeRepository.saveAll(any())).thenReturn(List.of(dynamicAttribute));
 
         HashSet<DynamicAttributeDto> hashSet = new HashSet<>();
-        hashSet.add(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList().getItems().stream().map(Objects::toString).toList()));
-        hashSet.add(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType(), dynamicAttribute.getEnumList().getItems().stream().map(Objects::toString).toList()));
+        hashSet.add(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType()));
+        hashSet.add(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType()));
 
         CategoryDto editCategoryDto = new CategoryDto(category.getId(), dynamicAttribute.getName(), 0L, hashSet);
 

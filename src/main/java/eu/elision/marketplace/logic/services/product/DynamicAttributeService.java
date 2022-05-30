@@ -2,9 +2,6 @@ package eu.elision.marketplace.logic.services.product;
 
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
-import eu.elision.marketplace.domain.product.category.attributes.Type;
 import eu.elision.marketplace.domain.product.category.attributes.value.*;
 import eu.elision.marketplace.repositories.DynamicAttributeRepository;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
@@ -18,14 +15,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * Service for dynamic attributes
  */
 @Service
-public class DynamicAttributeService
-{
+public class DynamicAttributeService {
 
     private final DynamicAttributeRepository dynamicAttributeRepository;
     Logger logger = LoggerFactory.getLogger(DynamicAttributeService.class);
@@ -35,8 +30,7 @@ public class DynamicAttributeService
      *
      * @param dynamicAttributeRepository DynamicAttributeRepository
      */
-    public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository)
-    {
+    public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository) {
         this.dynamicAttributeRepository = dynamicAttributeRepository;
     }
 
@@ -46,31 +40,24 @@ public class DynamicAttributeService
      * @param attributes Collection of AttributeValue you want to retrieve the values of
      * @return List of DynamicAttributeValue
      */
-    public Collection<DynamicAttributeValue<?>> getSavedAttributes(Collection<AttributeValue<String, String>> attributes)
-    {
+    public Collection<DynamicAttributeValue<?>> getSavedAttributes(Collection<AttributeValue<String, String>> attributes) {
         Collection<DynamicAttributeValue<?>> dynamicAttributeValues = new ArrayList<>();
 
-        for (AttributeValue<String, String> attribute : attributes)
-        {
+        for (AttributeValue<String, String> attribute : attributes) {
             DynamicAttribute dynamicAttribute = dynamicAttributeRepository.findDynamicAttributeByName(attribute.getAttributeName());
             if (dynamicAttribute == null)
                 throw new NotFoundException(String.format("Attribute with name %s not found", attribute.getAttributeName()));
 
-            switch (dynamicAttribute.getType())
-            {
+            switch (dynamicAttribute.getType()) {
                 case BOOL ->
                         dynamicAttributeValues.add(new DynamicAttributeBoolValue(attribute.getAttributeName(), Boolean.valueOf(attribute.getValue())));
                 case DECIMAL ->
                         dynamicAttributeValues.add(new DynamicAttributeDoubleValue(attribute.getAttributeName(), Double.parseDouble(attribute.getValue())));
                 case INTEGER ->
                         dynamicAttributeValues.add(new DynamicAttributeIntValue(attribute.getAttributeName(), Integer.parseInt(attribute.getValue())));
-                case ENUMERATION ->
-                {
-                    if (dynamicAttribute.getEnumList().getItems().stream().noneMatch(pickListItem -> Objects.equals(pickListItem.getValue(), attribute.getValue())))
-                        throw new NotFoundException(String.format("Value %s is not found in enum %s", attribute.getValue(), dynamicAttribute.getName()));
+                case STRING ->
+                        dynamicAttributeValues.add(new DynamicAttributeStringValue(attribute.getAttributeName(), attribute.getValue()));
 
-                    dynamicAttributeValues.add(new DynamicAttributeEnumValue(attribute.getAttributeName(), attribute.getValue()));
-                }
 
             }
         }
@@ -83,10 +70,8 @@ public class DynamicAttributeService
      * @param dynamicAttribute DynamicAttribute to save
      * @return Saved DynamicAttribute
      */
-    public DynamicAttribute save(DynamicAttribute dynamicAttribute)
-    {
-        if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName()))
-        {
+    public DynamicAttribute save(DynamicAttribute dynamicAttribute) {
+        if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName())) {
             logger.warn("Dynamic attribute with name {} already exists, not saving instance", dynamicAttribute.getName());
         }
         return dynamicAttributeRepository.save(dynamicAttribute);
@@ -99,24 +84,12 @@ public class DynamicAttributeService
      * @param category            the category that needs to be set to the attribute
      * @return The DynamicAttribute
      */
-    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
-    {
+    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         dynamicAttribute.setName(dynamicAttributeDto.name());
         dynamicAttribute.setRequired(dynamicAttributeDto.required());
         dynamicAttribute.setType(dynamicAttributeDto.type());
         dynamicAttribute.setCategory(category);
-
-        PickList pickList = new PickList();
-        if (pickList.getItems() == null) pickList.setItems(new ArrayList<>());
-
-        if (dynamicAttribute.getType() == Type.ENUMERATION)
-        {
-            for (String enumValue : dynamicAttributeDto.enumValues())
-                pickList.getItems().add(new PickListItem(enumValue));
-            dynamicAttribute.setEnumList(pickList);
-        } else if (dynamicAttributeDto.enumValues() != null && !dynamicAttributeDto.enumValues().isEmpty())
-            logger.warn("Values in enum list ignored because of type {}", dynamicAttributeDto.type());
 
         return dynamicAttribute;
     }
@@ -128,8 +101,7 @@ public class DynamicAttributeService
      * @param category             the category that needs to be set to the attributes
      * @return Collection of DynamicAttribute
      */
-    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos, Category category)
-    {
+    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos, Category category) {
         return dynamicAttributeDtos.stream().map(dynamicAttributeDto -> toDynamicAttribute(dynamicAttributeDto, category)).toList();
     }
 
@@ -140,8 +112,7 @@ public class DynamicAttributeService
      * @param category        the category that needs the attributes to be reset
      * @return a collection of the new saved attributes
      */
-    public Collection<DynamicAttribute> renewAttributes(CategoryDto editCategoryDto, Category category)
-    {
+    public Collection<DynamicAttribute> renewAttributes(CategoryDto editCategoryDto, Category category) {
         checkDoubles(editCategoryDto.characteristics());
 
         final Collection<DynamicAttribute> allByCategoryId = dynamicAttributeRepository.findAllByCategory(category);
@@ -151,10 +122,8 @@ public class DynamicAttributeService
         return dynamicAttributeRepository.saveAll(entities);
     }
 
-    private void checkDoubles(Collection<DynamicAttributeDto> characteristics)
-    {
-        for (DynamicAttributeDto characteristic : characteristics)
-        {
+    private void checkDoubles(Collection<DynamicAttributeDto> characteristics) {
+        for (DynamicAttributeDto characteristic : characteristics) {
             if (characteristics.stream().filter(dynamicAttributeDto -> dynamicAttributeDto.name().equals(characteristic.name())).count() > 1L)
                 throw new InvalidDataException(String.format("Characteristics have duplicate name %s", characteristic.name()));
         }

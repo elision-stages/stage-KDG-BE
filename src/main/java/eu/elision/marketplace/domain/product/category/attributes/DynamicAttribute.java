@@ -25,8 +25,6 @@ public class DynamicAttribute {
     private boolean required;
     @Enumerated(EnumType.STRING)
     private Type type;
-    @ManyToOne(cascade = CascadeType.ALL)
-    private PickList enumList;
     @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id", columnDefinition = "BIGINT")
