@@ -26,9 +26,11 @@ class ConverterTest {
         product.setId(123L);
         product.setVendor(vendor);
         product.setImages(List.of("test"));
+        product.setDescription("<h1>test</h1>");
         AlgoliaProductDto result = algoliaProductConverter.convert(product);
         assertThat(result.getImage()).isEqualTo("test");
         assertThat(result.getVendor()).isEqualTo("vendor");
+        assertThat(result.getDescription()).isEqualTo("test");
     }
 
     @Test

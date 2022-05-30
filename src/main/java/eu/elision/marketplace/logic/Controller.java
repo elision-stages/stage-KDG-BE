@@ -273,7 +273,7 @@ public class Controller {
      * @param editProductDto the data of the changed product
      * @param userEmail      the email of the vendor that wants to edit the product.
      */
-    public void editProduct(EditProductDto editProductDto, String userEmail) {
+    public Product editProduct(EditProductDto editProductDto, String userEmail) {
         User user = userService.findUserByEmail(userEmail);
         if (user == null) {
             throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
@@ -283,7 +283,7 @@ public class Controller {
 
         final List<DynamicAttributeValue<?>> attributeValues = dynamicAttributeService.getSavedAttributes(editProductDto.attributes()).stream().toList();
         dynamicAttributeValueService.save(attributeValues);
-        productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, attributeValues));
+        return productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, attributeValues));
     }
 
     /**

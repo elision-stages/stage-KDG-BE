@@ -4,6 +4,7 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.logic.helpers.Mapper;
+import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
@@ -26,22 +27,27 @@ public class ProductController {
     final UserService userService;
     private static final String SUCCESS = "success";
 
+    AlgoliaIndexerService algoliaIndexerService;
+
     /**
      * Public constructor
      *
      * @param controller  the controller that the rest controller needs to use
      * @param userService the user service that needs to be used
      */
-    public ProductController(Controller controller, UserService userService) {
+    public ProductController(Controller controller, UserService userService, AlgoliaIndexerService algoliaIndexerService) {
         this.controller = controller;
         this.userService = userService;
+        this.algoliaIndexerService = algoliaIndexerService;
     }
 
     @PostMapping("/addProduct")
     @Secured("ROLE_VENDOR")
     ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestBody ProductDto productDto) {
         Vendor user = (Vendor) userService.loadUserByUsername(principal.getName());
-        controller.saveProduct(user, productDto);
+        Product newProduct = controller.saveProduct(user, productDto);
+
+        algoliaIndexerService.indexProduct(newProduct);
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
@@ -77,7 +83,9 @@ public class ProductController {
     @Secured("ROLE_VENDOR")
     @PostMapping("/editProduct")
     ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto, Principal principal) {
-        controller.editProduct(editProductDto, principal.getName());
+        Product product = controller.editProduct(editProductDto, principal.getName());
+
+        algoliaIndexerService.indexProduct(product);
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 

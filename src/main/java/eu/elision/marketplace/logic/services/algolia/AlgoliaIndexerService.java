@@ -6,6 +6,8 @@ import eu.elision.marketplace.logic.converter.Converter;
 import eu.elision.marketplace.logic.converter.exeption.ConversionException;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class AlgoliaIndexerService implements IndexerService {
     private final ProductRepository productRepository;
     private final SearchClientService<SearchIndex<AlgoliaProductDto>> indexSearchClientService;
     private final Converter<Product, AlgoliaProductDto> algoliaProductConverter;
+    Logger logger = LoggerFactory.getLogger(AlgoliaIndexerService.class);
 
     /**
      * Public constructor
@@ -39,11 +42,28 @@ public class AlgoliaIndexerService implements IndexerService {
     @Scheduled(cron = "0 0 0,12 * * *", zone = "Europe/Paris")
     public void indexAllProducts() {
         try {
+            logger.info("Start indexing all products...");
             List<Product> productList = this.productRepository.findAll();
+            logger.info(String.format("Found %d products in the repo", productList.size()));
             Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
+            logger.info(String.format("Converted all %d products to Algolia products", algoliaProductList.size()));
             SearchIndex<AlgoliaProductDto> searchClient;
             searchClient = indexSearchClientService.getSearchClient();
+            logger.info("Retrieved the search client, saving the index now...");
             searchClient.saveObjects(algoliaProductList); // saveObjectsAsync
+            logger.info("All done!");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            throw new ConversionException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void indexProduct(Product product) {
+        try {
+            AlgoliaProductDto algoliaProduct = algoliaProductConverter.convert(product);
+            SearchIndex<AlgoliaProductDto> searchClient = indexSearchClientService.getSearchClient();
+            searchClient.saveObject(algoliaProduct); // saveObjectAsync
         } catch (IOException e) {
             throw new ConversionException(e.getMessage());
         }

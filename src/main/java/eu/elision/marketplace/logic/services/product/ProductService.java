@@ -122,25 +122,23 @@ public class ProductService
      * Edit a product. Same as the save method but checks if the product you want to edit exists. If the product does't exist it will thorw a NotFoundException.
      *
      * @param product the product you want to save
+     * @return The saved product
      */
-    public void editProduct(Product product)
-    {
+    public Product editProduct(Product product) {
         checkCharacteristics(product);
 
         final Product fromRepo = productRepository.findById(product.getId()).orElse(null);
-        if (fromRepo == null)
-        {
+        if (fromRepo == null) {
             throw new NotFoundException(String.format("Product with id %s not found", product.getId()));
         }
-        if (fromRepo.getVendor() != product.getVendor())
-        {
+        if (fromRepo.getVendor() != product.getVendor()) {
             throw new UnauthorisedException("This vendor does not own this product");
         }
 
 
         product.setAttributes(new ArrayList<>(product.getAttributes()));
         dynamicAttributeValueService.deleteNonCategoryAttributes(product);
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     /**
