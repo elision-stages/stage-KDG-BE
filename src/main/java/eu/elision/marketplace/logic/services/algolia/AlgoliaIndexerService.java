@@ -43,7 +43,7 @@ public class AlgoliaIndexerService implements IndexerService {
             Collection<AlgoliaProductDto> algoliaProductList = algoliaProductConverter.convertAll(productList);
             SearchIndex<AlgoliaProductDto> searchClient;
             searchClient = indexSearchClientService.getSearchClient();
-            searchClient.saveObjectsAsync(algoliaProductList);
+            searchClient.saveObjects(algoliaProductList); // saveObjectsAsync
         } catch (IOException e) {
             throw new ConversionException(e.getMessage());
         }
