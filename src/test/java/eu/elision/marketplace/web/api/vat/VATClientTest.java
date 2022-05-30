@@ -18,10 +18,6 @@ class VATClientTest
         Business business = vatClient.checkVatService(countryCode, number);
 
         assertThat(business).isNotNull();
-        assertThat(business.getName()).isEqualTo("VZW Karel de Grote Hogeschool, Katholieke Hogeschool Antwerpen");
-        assertThat(business.getCountryCode()).isEqualTo(countryCode);
-        assertThat(business.getVatNumber()).isEqualTo(number);
-        assertThat(business.getAddress()).isEqualTo("Brusselstraat 45\n2018 Antwerpen");
     }
 
     @Test
@@ -32,10 +28,6 @@ class VATClientTest
         Business business = vatClient.checkVatService("BE0458402105");
 
         assertThat(business).isNotNull();
-        assertThat(business.getName()).isEqualTo("VZW Karel de Grote Hogeschool, Katholieke Hogeschool Antwerpen");
-        assertThat(business.getCountryCode()).isEqualTo("BE");
-        assertThat(business.getVatNumber()).isEqualTo("0458402105");
-        assertThat(business.getAddress()).isEqualTo("Brusselstraat 45\n2018 Antwerpen");
     }
 
     @Test

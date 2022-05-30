@@ -13,6 +13,10 @@ public class AlgoliaProductDescriptionPopulator implements Populator<Product, Al
 
     @Override
     public void populate(Product source, AlgoliaProductDto target) {
-        target.setDescription(Jsoup.parse(source.getDescription()).text());
+        String description = source.getDescription();
+        if(description != null) {
+            description = Jsoup.parse(source.getDescription()).text();
+        }
+        target.setDescription(description);
     }
 }
