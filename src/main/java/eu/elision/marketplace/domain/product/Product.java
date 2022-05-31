@@ -9,6 +9,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,17 +20,20 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @Entity
-public class Product
-{
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double price;
+    @Column(length = 250)
+    @Size(max = 250, min = 2, message = "Product title must contain between 2 and 50.000 characters")
     private String title;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
+    @Column(length = 50000)
+    @Size(max = 50000, min = 2, message = "Product description must contain between 2 and 50.000 characters")
     private String description;
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)

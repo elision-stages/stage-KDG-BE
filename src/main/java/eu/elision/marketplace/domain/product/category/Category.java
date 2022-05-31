@@ -8,6 +8,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,8 @@ public class Category {
     @Setter
     private Long id;
     @Setter
+    @Column(length = 100)
+    @Size(max = 100, min = 2, message = "Category name must contain between 2 and 50.000 characters")
     private String name;
     // columnDefinition BIGINT works for MySQL but H2 requires INT
     @JoinColumn(name = "parent_id", referencedColumnName = "id", columnDefinition = "BIGINT")
