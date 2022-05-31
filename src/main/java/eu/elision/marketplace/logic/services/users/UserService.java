@@ -86,12 +86,12 @@ public class UserService implements UserDetailsService
     public User save(User user)
     {
         if (user == null) return null;
-        if (findUserByEmail(user.getEmail()) != null) throw new InvalidDataException("Email is not valid");
+        if (findUserByEmail(user.getEmail()) != null)
+            throw new InvalidDataException("An account with this e-mail exists already");
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 
-        if (!violations.isEmpty())
-        {
+        if (!violations.isEmpty()) {
             StringBuilder stringBuilder = new StringBuilder();
             for (ConstraintViolation<User> constraintViolation : violations)
                 stringBuilder.append(constraintViolation.getMessage());
@@ -153,9 +153,9 @@ public class UserService implements UserDetailsService
      * @param vendorDto the vendor dto object with the data of the vendor
      * @return the saved vendor with id
      */
-    public Vendor save(VendorDto vendorDto)
-    {
-        if (findUserByEmail(vendorDto.email()) != null) throw new InvalidDataException("Email is not valid");
+    public Vendor save(VendorDto vendorDto) {
+        if (findUserByEmail(vendorDto.email()) != null)
+            throw new InvalidDataException("An account with this e-mail exists already");
         return (Vendor) this.save(toVendor(vendorDto));
     }
 

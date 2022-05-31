@@ -43,20 +43,24 @@ public class TestController
      * Test the case when an exception is thrown. Should return "not found"
      */
     @GetMapping("/testException")
-    void testException()
-    {
+    void testException() {
         throw new NotFoundException();
     }
 
     @GetMapping("testExternal")
     String testExternalConnection() throws IOException {
-        return request(new URL("https://www.google.com"));
+        return request(new URL("https://www.google.com"), "GET");
     }
 
-    private String request(URL url) throws IOException {
+    @GetMapping("testAlgolia")
+    String testExternalAlgoliaConnection() throws IOException {
+        return request(new URL("https://EL070LM1BO.algolia.net/"), "POST");
+    }
+
+    private String request(URL url, String method) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
-        conn.setRequestMethod("GET");
+        conn.setRequestMethod(method);
 
         StringBuilder sb = new StringBuilder();
 

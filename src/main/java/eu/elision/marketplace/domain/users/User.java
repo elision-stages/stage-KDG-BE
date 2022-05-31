@@ -35,11 +35,10 @@ public abstract class User implements UserDetails {
     private String lastName;
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email format is wrong")
+    @Column(unique = true)
     private String email;
     @NotBlank(message = "Password is required")
     @JsonIgnore // Prevent accidentally sending the password in any kind of JSON message
-    // This will be bCrypt encoded
-    //@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", message = "Password must have at least 8 characters, at least one uppercase and one lowercase letter and one number")
     private String password;
     private LocalDateTime createdDate;
     private boolean validated;
