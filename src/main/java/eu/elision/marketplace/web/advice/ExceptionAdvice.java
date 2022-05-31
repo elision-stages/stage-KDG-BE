@@ -55,6 +55,6 @@ public class ExceptionAdvice
     @ExceptionHandler(UnauthorisedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     ResponseEntity<ResponseDto> unauthorisedHandler(UnauthorisedException ex) {
-        return new ResponseEntity<>(new ResponseDto(ex.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseDto(ex.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 }
