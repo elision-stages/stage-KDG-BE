@@ -43,28 +43,24 @@ class CategoryTest
         pickList.setCode(String.valueOf(RandomUtils.nextInt(1, 1000)));
         pickList.setItems(new ArrayList<>(List.of(new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)), new PickListItem(RandomUtils.nextLong(1, 100), RandomStringUtils.random(1)))));
         sub1.setName(subName);
-        DynamicAttribute characteristic1 = new DynamicAttribute(RandomUtils.nextLong(1, 100), firstName, true, Type.DECIMAL, null, sub1);
-        DynamicAttribute characteristic2 = new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, null, sub1);
-        DynamicAttribute characteristic3 = new DynamicAttribute(RandomUtils.nextLong(1, 100), thirdName, true, Type.ENUMERATION, pickList, sub1);
+        DynamicAttribute characteristic1 = new DynamicAttribute(RandomUtils.nextLong(1, 100), firstName, true, Type.DECIMAL, sub1);
+        DynamicAttribute characteristic2 = new DynamicAttribute(RandomUtils.nextLong(1, 100), secondName, false, Type.INTEGER, sub1);
+        DynamicAttribute characteristic3 = new DynamicAttribute(RandomUtils.nextLong(1, 100), thirdName, true, Type.STRING, sub1);
 
         sub1.setParent(category);
-        final Category actual = sub1;
 
-        assertThat(actual.getName()).isEqualTo(subName);
+        assertThat(sub1.getName()).isEqualTo(subName);
         assertThat(characteristic1.getName()).isEqualTo(firstName);
         assertThat(characteristic1.isRequired()).isTrue();
         assertThat(characteristic1.getType()).isEqualTo(Type.DECIMAL);
-        assertThat(characteristic1.getEnumList()).isNull();
 
         assertThat(characteristic2.getName()).isEqualTo(secondName);
         assertThat(characteristic2.isRequired()).isFalse();
         assertThat(characteristic2.getType()).isEqualTo(Type.INTEGER);
-        assertThat(characteristic2.getEnumList()).isNull();
 
         assertThat(characteristic3.getName()).isEqualTo(thirdName);
         assertThat(characteristic3.isRequired()).isTrue();
-        assertThat(characteristic3.getType()).isEqualTo(Type.ENUMERATION);
-        assertThat(characteristic3.getEnumList().getItems()).hasSize(3);
+        assertThat(characteristic3.getType()).isEqualTo(Type.STRING);
     }
 
     @Test

@@ -2,7 +2,6 @@ package eu.elision.marketplace.logic.services.product;
 
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.repositories.CategoryRepository;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
@@ -137,8 +136,7 @@ public class CategoryService {
             characteristics.add(
                     new DynamicAttributeDto(characteristic.getName(),
                             characteristic.isRequired(),
-                            characteristic.getType(),
-                            (characteristic.getEnumList() != null ? characteristic.getEnumList().getItems().stream().map(PickListItem::getValue).toList() : null)));
+                            characteristic.getType()));
         }
 
         return new CategoryDto(

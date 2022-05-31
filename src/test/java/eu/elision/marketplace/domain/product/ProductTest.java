@@ -3,8 +3,8 @@ package eu.elision.marketplace.domain.product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeBoolValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeDoubleValue;
-import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeEnumValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeIntValue;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeStringValue;
 import eu.elision.marketplace.domain.users.Vendor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -69,7 +69,7 @@ class ProductTest
         product.getAttributes().add(new DynamicAttributeBoolValue(RandomUtils.nextLong(1, 100), "bool", bool));
         product.getAttributes().add(new DynamicAttributeIntValue(RandomUtils.nextLong(1, 100), "int", intValue));
         product.getAttributes().add(new DynamicAttributeDoubleValue(RandomUtils.nextLong(1, 100), "double", doubleValue));
-        product.getAttributes().add(new DynamicAttributeEnumValue(RandomUtils.nextLong(1, 100), "enum", enumValue));
+        product.getAttributes().add(new DynamicAttributeStringValue(RandomUtils.nextLong(1, 100), "enum", enumValue));
 
 
         assertThat(product.getAttributes().get(0).getAttributeName()).isEqualTo("bool");

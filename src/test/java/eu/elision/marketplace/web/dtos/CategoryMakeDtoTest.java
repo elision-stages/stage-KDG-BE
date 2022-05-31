@@ -17,7 +17,7 @@ class CategoryMakeDtoTest {
     @Test
     void testGetterSetter() {
         Collection<DynamicAttributeDto> characteristics = new ArrayList<>();
-        characteristics.add(new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), Type.DECIMAL, new ArrayList<>()));
+        characteristics.add(new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), Type.DECIMAL));
         final String name = RandomStringUtils.randomAlphabetic(5);
         final long parentId = RandomUtils.nextLong();
         CategoryMakeDto categoryMakeDto = new CategoryMakeDto(name, parentId, characteristics);

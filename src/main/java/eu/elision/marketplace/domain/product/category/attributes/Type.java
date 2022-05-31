@@ -7,13 +7,13 @@ import javax.persistence.Id;
 /**
  * This enum is used to define the type of value of an attribute
  */
-public enum Type
-{
+public enum Type {
     INTEGER,
     DECIMAL,
-    ENUMERATION,
+    STRING,
     BOOL;
 
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 }

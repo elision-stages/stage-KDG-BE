@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Cookie;
-
 /**
  * Service for authentication
  */
@@ -36,6 +34,7 @@ public class AuthService {
                 .path("/")
                 .maxAge((int) (jwtTokenValidity * 60))
                 .sameSite("None")
+                .secure(true)
                 .build();
         return responseCookie;
     }

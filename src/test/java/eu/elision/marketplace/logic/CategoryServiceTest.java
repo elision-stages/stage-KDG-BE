@@ -105,12 +105,11 @@ class CategoryServiceTest {
 
         final DynamicAttribute dynamicAttribute2 = new DynamicAttribute();
         dynamicAttribute2.setRequired(RandomUtils.nextBoolean());
-        dynamicAttribute2.setType(Type.ENUMERATION);
+        dynamicAttribute2.setType(Type.STRING);
         dynamicAttribute2.setName(RandomStringUtils.randomAlphabetic(4));
 
         final PickList pickList = new PickList();
         pickList.setItems(new ArrayList<>(List.of(new PickListItem())));
-        dynamicAttribute2.setEnumList(pickList);
         cat1.getCharacteristics().add(dynamicAttribute2);
 
         CategoryDto categoryDto = categoryService.toCategoryDto(cat1);

@@ -53,7 +53,7 @@ class ProductControllerTest
     {
         final String name = RandomStringUtils.randomAlphabetic(4);
         Category category = categoryService.save(new CategoryMakeDto("Test", 0, new ArrayList<>()));
-        controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER, new ArrayList<>()), category);
+        controller.saveDynamicAttribute(new DynamicAttributeDto(name, true, Type.INTEGER), category);
         final String vendorName = RandomStringUtils.randomAlphabetic(4);
         final long vendorId = controller.saveVendor(new VendorDto(
                 vendorName,
