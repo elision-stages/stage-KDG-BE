@@ -30,6 +30,6 @@ public class Vendor extends User {
     @Pattern(regexp = "^\\d*$", message = "Phone number can only include numbers")
     private String phoneNumber;
     @NotBlank(message = "Business name is required")
-    @Size(max = 20, min = 2, message = "Name can not be longer than 15 characters")
+    @Size(max = 250, min = 2, message = "Business name must contain between 2 and 250 characters")
     private String businessName;
 }
