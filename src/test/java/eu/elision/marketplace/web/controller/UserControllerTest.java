@@ -79,7 +79,7 @@ class UserControllerTest {
         final boolean validated = RandomUtils.nextBoolean();
         final String logo = RandomStringUtils.randomAlphabetic(4);
         final String theme = RandomStringUtils.randomAlphabetic(4);
-        final String introduction = RandomStringUtils.randomAlphabetic(4);
+        final String introduction = RandomStringUtils.randomAlphabetic(50);
         final String vatNumber = "BE0458402105";
         final String phoneNumber = RandomStringUtils.random(10, false, true);
         final String businessName = RandomStringUtils.randomAlphabetic(10);

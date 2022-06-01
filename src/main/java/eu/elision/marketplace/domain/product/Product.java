@@ -32,7 +32,7 @@ public class Product {
     private Category category;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Vendor vendor;
-    @Column(length = 50000)
+    @Column(length = 50000, columnDefinition = "text")
     @Size(max = 50000, min = 2, message = "Product description must contain between 2 and 50.000 characters")
     private String description;
     @ElementCollection(fetch = FetchType.EAGER)

@@ -63,7 +63,7 @@ class ProductControllerTest
                 RandomUtils.nextBoolean(),
                 RandomStringUtils.randomAlphabetic(4),
                 RandomStringUtils.randomAlphabetic(4),
-                RandomStringUtils.randomAlphabetic(4),
+                RandomStringUtils.randomAlphabetic(50),
                 "BE0458402105",
                 RandomStringUtils.random(10, false, true),
                 RandomStringUtils.randomAlphabetic(4))).getId();
@@ -73,7 +73,7 @@ class ProductControllerTest
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 String.format("%s/addProduct", base),
-                new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), new Category(), attributes, vendorId, vendorName),
+                new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(50), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), new Category(), attributes, vendorId, vendorName),
                 String.class
         );
 
@@ -85,7 +85,7 @@ class ProductControllerTest
     void testGetProductById()
     {
         final Product product = new Product();
-        final String description = RandomStringUtils.randomAlphabetic(5);
+        final String description = RandomStringUtils.randomAlphabetic(50);
         final int price = RandomUtils.nextInt();
         final String name = RandomStringUtils.randomAlphabetic(5);
 
