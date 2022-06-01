@@ -28,10 +28,10 @@ public abstract class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotBlank(message = "Firstname is mandatory")
-    @Size(max = 15, min = 2, message = "Name can not be longer than 15 characters")
+    @Size(max = 250, min = 2, message = "Firstname can not be longer than 250 characters")
     private String firstName;
     @NotBlank(message = "Lastname is mandatory")
-    @Size(max = 20, min = 2, message = "Name can not be longer than 15 characters")
+    @Size(max = 250, min = 2, message = "Lastname can not be longer than 250 characters")
     private String lastName;
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email format is wrong")
