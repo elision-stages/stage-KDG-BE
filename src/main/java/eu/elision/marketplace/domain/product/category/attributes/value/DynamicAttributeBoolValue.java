@@ -3,6 +3,7 @@ package eu.elision.marketplace.domain.product.category.attributes.value;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 
 /**
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
 @Entity
 public class DynamicAttributeBoolValue extends DynamicAttributeValue<Boolean>
 {
+    @Convert(converter = BooleanConverter.class)
     private boolean value;
 
     public DynamicAttributeBoolValue(Long id, String attributeName, Boolean value)
