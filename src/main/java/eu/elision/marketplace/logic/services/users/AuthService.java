@@ -28,7 +28,7 @@ public class AuthService {
                 .path("/")
                 .maxAge((int) (jwtTokenValidity * 60))
                 .sameSite("None")
-                .secure(true)
+                .secure(ssl)
                 .build();
     }
 }
