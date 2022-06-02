@@ -20,7 +20,8 @@ import java.util.Collection;
  * Service for dynamic attributes
  */
 @Service
-public class DynamicAttributeService {
+public class DynamicAttributeService
+{
 
     private final DynamicAttributeRepository dynamicAttributeRepository;
     Logger logger = LoggerFactory.getLogger(DynamicAttributeService.class);
@@ -30,7 +31,8 @@ public class DynamicAttributeService {
      *
      * @param dynamicAttributeRepository DynamicAttributeRepository
      */
-    public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository) {
+    public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository)
+    {
         this.dynamicAttributeRepository = dynamicAttributeRepository;
     }
 
@@ -38,17 +40,21 @@ public class DynamicAttributeService {
      * Get the values of specific attributes
      *
      * @param attributes Collection of AttributeValue you want to retrieve the values of
+     * @param categoryId the id of the category
      * @return List of DynamicAttributeValue
      */
-    public Collection<DynamicAttributeValue<?>> getSavedAttributes(Collection<AttributeValue<String, String>> attributes) {
+    public Collection<DynamicAttributeValue<?>> getSavedAttributes(Collection<AttributeValue<String, String>> attributes, long categoryId)
+    {
         Collection<DynamicAttributeValue<?>> dynamicAttributeValues = new ArrayList<>();
 
-        for (AttributeValue<String, String> attribute : attributes) {
-            DynamicAttribute dynamicAttribute = dynamicAttributeRepository.findDynamicAttributeByName(attribute.getAttributeName());
+        for (AttributeValue<String, String> attribute : attributes)
+        {
+            DynamicAttribute dynamicAttribute = dynamicAttributeRepository.findDynamicAttributeByNameAndCategory(attribute.getAttributeName(), categoryId);
             if (dynamicAttribute == null)
                 throw new NotFoundException(String.format("Attribute with name %s not found", attribute.getAttributeName()));
 
-            switch (dynamicAttribute.getType()) {
+            switch (dynamicAttribute.getType())
+            {
                 case BOOL ->
                         dynamicAttributeValues.add(new DynamicAttributeBoolValue(attribute.getAttributeName(), Boolean.valueOf(attribute.getValue())));
                 case DECIMAL ->
@@ -57,8 +63,6 @@ public class DynamicAttributeService {
                         dynamicAttributeValues.add(new DynamicAttributeIntValue(attribute.getAttributeName(), Integer.parseInt(attribute.getValue())));
                 case STRING ->
                         dynamicAttributeValues.add(new DynamicAttributeStringValue(attribute.getAttributeName(), attribute.getValue()));
-
-
             }
         }
         return dynamicAttributeValues;
@@ -70,8 +74,10 @@ public class DynamicAttributeService {
      * @param dynamicAttribute DynamicAttribute to save
      * @return Saved DynamicAttribute
      */
-    public DynamicAttribute save(DynamicAttribute dynamicAttribute) {
-        if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName())) {
+    public DynamicAttribute save(DynamicAttribute dynamicAttribute)
+    {
+        if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName()))
+        {
             logger.warn("Dynamic attribute with name {} already exists, not saving instance", dynamicAttribute.getName());
         }
         return dynamicAttributeRepository.save(dynamicAttribute);
@@ -84,7 +90,8 @@ public class DynamicAttributeService {
      * @param category            the category that needs to be set to the attribute
      * @return The DynamicAttribute
      */
-    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category) {
+    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
+    {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         dynamicAttribute.setName(dynamicAttributeDto.name());
         dynamicAttribute.setRequired(dynamicAttributeDto.required());
@@ -101,7 +108,8 @@ public class DynamicAttributeService {
      * @param category             the category that needs to be set to the attributes
      * @return Collection of DynamicAttribute
      */
-    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos, Category category) {
+    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos, Category category)
+    {
         return dynamicAttributeDtos.stream().map(dynamicAttributeDto -> toDynamicAttribute(dynamicAttributeDto, category)).toList();
     }
 
@@ -112,7 +120,8 @@ public class DynamicAttributeService {
      * @param category        the category that needs the attributes to be reset
      * @return a collection of the new saved attributes
      */
-    public Collection<DynamicAttribute> renewAttributes(CategoryDto editCategoryDto, Category category) {
+    public Collection<DynamicAttribute> renewAttributes(CategoryDto editCategoryDto, Category category)
+    {
         checkDoubles(editCategoryDto.characteristics());
 
         final Collection<DynamicAttribute> allByCategoryId = dynamicAttributeRepository.findAllByCategory(category);
@@ -122,8 +131,10 @@ public class DynamicAttributeService {
         return dynamicAttributeRepository.saveAll(entities);
     }
 
-    private void checkDoubles(Collection<DynamicAttributeDto> characteristics) {
-        for (DynamicAttributeDto characteristic : characteristics) {
+    private void checkDoubles(Collection<DynamicAttributeDto> characteristics)
+    {
+        for (DynamicAttributeDto characteristic : characteristics)
+        {
             if (characteristics.stream().filter(dynamicAttributeDto -> dynamicAttributeDto.name().equals(characteristic.name())).count() > 1L)
                 throw new InvalidDataException(String.format("Characteristics have duplicate name %s", characteristic.name()));
         }

@@ -22,20 +22,13 @@ public class AuthService {
      * @return The Cookie object
      */
     public ResponseCookie generateTokenCookie(String token) {
-        /*Cookie cookie = new Cookie("jwt", token);
-        cookie.setMaxAge((int) (jwtTokenValidity * 60));
-        cookie.setHttpOnly(true);
-        cookie.setSecure(ssl);
-        cookie.setPath("/");*/
-        final ResponseCookie responseCookie = ResponseCookie
+        return ResponseCookie
                 .from("jwt", token)
-                .secure(ssl)
                 .httpOnly(true)
                 .path("/")
                 .maxAge((int) (jwtTokenValidity * 60))
                 .sameSite("None")
-                .secure(true)
+                .secure(ssl)
                 .build();
-        return responseCookie;
     }
 }
