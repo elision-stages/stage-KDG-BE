@@ -2,29 +2,36 @@ package eu.elision.marketplace.logic;
 
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
+import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.repositories.UserRepository;
 import eu.elision.marketplace.web.webexceptions.InvalidDataException;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
 class UserServiceTest
 {
 
-    @Autowired
+    @InjectMocks
     private UserService userService;
+    @Mock
+    UserRepository userRepository;
 
     @Test
     void testSaveUser()
@@ -134,5 +141,61 @@ class UserServiceTest
         customer.setId(RandomUtils.nextLong());
 
         assertThrows(NotFoundException.class, () -> userService.editUser(customer));
+    }
+
+    @Test
+    void testFindVendorById()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong(1, 100));
+        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPhoneNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setVatNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPassword(RandomStringUtils.randomAlphabetic(50));
+        vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
+
+        when(userRepository.findById(vendor.getId())).thenReturn(Optional.of(vendor));
+
+        Vendor fromRepo = userService.findVendorById(vendor.getId());
+        assertThat(fromRepo).isEqualTo(vendor);
+    }
+
+    @Test
+    void testFindVendorByIdNotFound()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong(1, 100));
+        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPhoneNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setVatNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPassword(RandomStringUtils.randomAlphabetic(50));
+        vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
+
+        when(userRepository.findById(vendor.getId())).thenReturn(null);
+
+        final Long vendorId = vendor.getId();
+        Exception exception = assertThrows(NotFoundException.class, () -> userService.findVendorById(vendorId));
+        assertThat(exception.getMessage()).isEqualTo(String.format("User with id %s not found", vendorId));
+    }
+
+    @Test
+    void testFindVendorByIdNotVendor()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong(1, 100));
+        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPhoneNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setVatNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPassword(RandomStringUtils.randomAlphabetic(50));
+        vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
+
+        when(userRepository.findById(vendor.getId())).thenReturn(Optional.of(new Customer()));
+
+        final Long vendorId = vendor.getId();
+        Exception exception = assertThrows(NotFoundException.class, () -> userService.findVendorById(vendorId));
+        assertThat(exception.getMessage()).isEqualTo(String.format("User with id %s is not a vendor", vendorId));
     }
 }

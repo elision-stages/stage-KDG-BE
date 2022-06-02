@@ -209,22 +209,6 @@ public class UserService implements UserDetailsService
     }
 
     /**
-     * Find a vendor by email. Will check if the email belongs to a vendor.
-     *
-     * @param vendorEmail the email of the vendor
-     * @return the vendor from the repository
-     */
-    public Vendor findVendorByEmail(String vendorEmail)
-    {
-        User user = findUserByEmail(vendorEmail);
-        if (user == null) throw new NotFoundException(String.format("User with email %s not found", vendorEmail));
-        if (!(user instanceof Vendor vendor))
-            throw new NotFoundException(String.format("Vendor with email %s not found", vendorEmail));
-
-        return vendor;
-    }
-
-    /**
      * Create an admin account
      */
     public void createAdmin()
