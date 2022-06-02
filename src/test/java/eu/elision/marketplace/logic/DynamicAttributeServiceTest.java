@@ -58,55 +58,62 @@ class DynamicAttributeServiceTest {
         attributeValue.setAttributeName(attributeName);
 
         final List<AttributeValue<String, String>> attributeValue1 = List.of(attributeValue);
-        Exception exception = assertThrows(NotFoundException.class, () -> dynamicAttributeService.getSavedAttributes(attributeValue1));
+        final long categoryId = RandomUtils.nextLong();
+        Exception exception = assertThrows(NotFoundException.class, () -> dynamicAttributeService.getSavedAttributes(attributeValue1, categoryId));
 
         assertThat(exception.getMessage()).isEqualTo(String.format("Attribute with name %s not found", attributeName));
     }
 
     @Test
-    void testSavedAttributesBool() {
+    void testSavedAttributesBool()
+    {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
         dynamicAttribute.setType(Type.BOOL);
-        when(dynamicAttributeRepository.findDynamicAttributeByName(name)).thenReturn(dynamicAttribute);
+        final long id = RandomUtils.nextLong();
+        when(dynamicAttributeRepository.findDynamicAttributeByNameAndCategory(name, id)).thenReturn(dynamicAttribute);
 
         AttributeValue<String, String> attributeValue = new AttributeValue<>();
         attributeValue.setAttributeName(name);
         attributeValue.setValue(String.valueOf(RandomUtils.nextBoolean()));
 
-        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue))).hasSize(1);
+        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue), id)).hasSize(1);
     }
 
     @Test
-    void testSavedAttributesDecimal() {
+    void testSavedAttributesDecimal()
+    {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
         dynamicAttribute.setType(DECIMAL);
-        when(dynamicAttributeRepository.findDynamicAttributeByName(name)).thenReturn(dynamicAttribute);
+        final long catId = RandomUtils.nextLong();
+        when(dynamicAttributeRepository.findDynamicAttributeByNameAndCategory(name, catId)).thenReturn(dynamicAttribute);
 
         AttributeValue<String, String> attributeValue = new AttributeValue<>();
         attributeValue.setAttributeName(name);
         attributeValue.setValue(String.valueOf(RandomUtils.nextInt()));
 
-        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue))).hasSize(1);
+        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue), catId)).hasSize(1);
     }
 
     @Test
-    void testSavedAttributesEnum() {
+    void testSavedAttributesEnum()
+    {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
         final String name = RandomStringUtils.randomAlphabetic(5);
         dynamicAttribute.setName(name);
         dynamicAttribute.setType(Type.STRING);
         final String value = RandomStringUtils.randomAlphabetic(5);
-        when(dynamicAttributeRepository.findDynamicAttributeByName(name)).thenReturn(dynamicAttribute);
+        final long id = RandomUtils.nextLong();
+        when(dynamicAttributeRepository.findDynamicAttributeByNameAndCategory(name, id)).thenReturn(dynamicAttribute);
 
         AttributeValue<String, String> attributeValue = new AttributeValue<>();
         attributeValue.setAttributeName(name);
         attributeValue.setValue(value);
 
-        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue))).hasSize(1);
+        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue), id)).hasSize(1);
     }
 
     @Test
