@@ -34,6 +34,7 @@ import java.util.Set;
 public class UserService implements UserDetailsService
 {
     private UserRepository userRepository;
+    @Autowired
     private Validator validator;
     private VATClient vatClient;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -214,22 +215,6 @@ public class UserService implements UserDetailsService
     }
 
     /**
-     * Find a vendor by email. Will check if the email belongs to a vendor.
-     *
-     * @param vendorEmail the email of the vendor
-     * @return the vendor from the repository
-     */
-    public Vendor findVendorByEmail(String vendorEmail)
-    {
-        User user = findUserByEmail(vendorEmail);
-        if (user == null) throw new NotFoundException(String.format("User with email %s not found", vendorEmail));
-        if (!(user instanceof Vendor vendor))
-            throw new NotFoundException(String.format("Vendor with email %s not found", vendorEmail));
-
-        return vendor;
-    }
-
-    /**
      * Create an admin account
      */
     public void createAdmin() {
@@ -248,12 +233,26 @@ public class UserService implements UserDetailsService
      * @param vendor The vendor
      * @return The new API token (32 char hex)
      */
-    public String updateToken(Vendor vendor) {
+    public String updateToken(Vendor vendor)
+    {
         SecureRandom random = new SecureRandom();
         String token = new BigInteger(130, random).toString(16).substring(0, 32);
         String encToken = bCryptPasswordEncoder.encode(token);
         vendor.setToken(encToken);
         userRepository.save(vendor);
         return token;
+    }
+
+    /**
+     * Find a vendor from an email. Throws a not found exception when no user is found and a invalid data exception when given email doesn't belong to a vendor
+     *
+     * @param vendorEmail the email of the vendor
+     * @return the vendor with given email
+     */
+    public Vendor findVendorByEmail(String vendorEmail)
+    {
+        User user = findUserByEmail(vendorEmail);
+        if (!(user instanceof Vendor vendor)) throw new InvalidDataException("User with given email is not a vendor");
+        return vendor;
     }
 }

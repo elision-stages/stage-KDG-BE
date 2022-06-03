@@ -166,4 +166,15 @@ public class ProductService
     {
         productRepository.deleteById(productId);
     }
+
+    /**
+     * Find all products of given vendor
+     *
+     * @param id the id of the vendor
+     * @return the products of given vendor
+     */
+    public Collection<Product> getProductsByVendorId(long id)
+    {
+        return productRepository.findAllByVendorId(id);
+    }
 }

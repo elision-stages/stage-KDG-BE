@@ -13,6 +13,9 @@ public interface IndexerService {
 
     /**
      * Indexes a single product
+     *
+     * @param product the product that needs to be indexed
+     * @return the indexed product
      */
-    void indexProduct(Product product);
+    Product indexProduct(Product product);
 }

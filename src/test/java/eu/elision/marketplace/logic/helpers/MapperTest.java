@@ -9,6 +9,7 @@ import eu.elision.marketplace.web.dtos.UserDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.product.SmallProductDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -104,5 +105,33 @@ class MapperTest {
         assertThat(smallProductDto.category()).isEqualTo(category.getName());
         assertThat(smallProductDto.description()).isEqualTo(description);
         assertThat(smallProductDto.price()).isEqualTo(price);
+    }
+
+    @Test
+    void testToVendorDto()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
+        vendor.setTheme(RandomStringUtils.randomAlphabetic(50));
+        vendor.setIntroduction(RandomStringUtils.randomAlphabetic(50));
+        vendor.setVatNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setPhoneNumber(RandomStringUtils.randomAlphabetic(50));
+        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setLastName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
+        vendor.setValidated(RandomUtils.nextBoolean());
+
+        final VendorDto vendorDto = Mapper.toVendorDto(vendor);
+        assertThat(vendorDto.logo()).isEqualTo(vendor.getLogo());
+        assertThat(vendorDto.theme()).isEqualTo(vendor.getTheme());
+        assertThat(vendorDto.introduction()).isEqualTo(vendor.getIntroduction());
+        assertThat(vendorDto.vatNumber()).isEqualTo(vendor.getVatNumber());
+        assertThat(vendorDto.phoneNumber()).isEqualTo(vendor.getPhoneNumber());
+        assertThat(vendorDto.businessName()).isEqualTo(vendor.getBusinessName());
+        assertThat(vendorDto.firstName()).isEqualTo(vendor.getFirstName());
+        assertThat(vendorDto.lastName()).isEqualTo(vendor.getLastName());
+        assertThat(vendorDto.email()).isEqualTo(vendor.getEmail());
+        assertThat(vendorDto.validated()).isEqualTo(vendor.isValidated());
     }
 }
