@@ -304,7 +304,7 @@ class UserServiceTest
         admin.setValidated(RandomUtils.nextBoolean());
 
         when(userRepository.findByEmail(admin.getEmail())).thenReturn(admin);
-        when(userRepository.findById(admin.getId())).thenReturn(null);
+        when(userRepository.findById(admin.getId())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(InvalidDataException.class, () -> userService.editUser(admin));
 
@@ -338,6 +338,7 @@ class UserServiceTest
         vendor.setLastName(RandomStringUtils.randomAlphabetic(50));
         vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
         vendor.setValidated(RandomUtils.nextBoolean());
+        vendor.setVatNumber(RandomStringUtils.randomAlphabetic(10));
 
         when(userRepository.findByEmail(vendor.getEmail())).thenReturn(null);
         when(validator.validate(vendor)).thenReturn(new HashSet<>());
@@ -356,6 +357,8 @@ class UserServiceTest
         admin.setEmail("admintest@elision.eu");
         admin.setPassword("$2a$12$l65u2sm3M8b1Wumi0Rht1.IOmnKpby9oKvXUIznJjBVE4D26RQtBa");
 
+        when(userRepository.save(admin)).thenReturn(admin);
+
         assertThat(userService.createAdmin()).isEqualTo(admin);
     }
 
@@ -367,13 +370,11 @@ class UserServiceTest
         vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
         vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
 
-        String newToken = RandomStringUtils.random(50);
+        String newToken = RandomStringUtils.randomAlphabetic(50);
 
         when(bCryptPasswordEncoder.encode(any())).thenReturn(newToken);
 
         assertThat(userService.updateToken(vendor)).isEqualTo(newToken);
-        assertThat(vendor.getToken()).isEqualTo(newToken);
-
     }
 
     @Test
