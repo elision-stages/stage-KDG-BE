@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -167,7 +168,8 @@ public class Controller {
      * @param productDto the object that needs to be saved
      * @return the created product
      */
-    public Product saveProduct(Vendor vendor, ProductDto productDto) {
+    public Product saveProduct(Vendor vendor, @Valid ProductDto productDto) {
+        if (productDto.category() == null) throw new RuntimeException("Category missing");
         final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes(), productDto.category().getId());
         dynamicAttributeValueService.save(productAttributes);
         return productService.save(productDto, productAttributes, vendor);

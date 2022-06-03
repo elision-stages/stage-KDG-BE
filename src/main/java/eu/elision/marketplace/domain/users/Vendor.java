@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
@@ -32,4 +33,7 @@ public class Vendor extends User {
     @NotBlank(message = "Business name is required")
     @Size(max = 250, min = 2, message = "Business name must contain between 2 and 250 characters")
     private String businessName;
+    @JsonIgnore // Prevent accidentally sending the password in any kind of JSON message
+    @Column(length = 72)
+    private String token;
 }

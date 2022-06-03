@@ -78,7 +78,6 @@ class ProductControllerTest
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        assertThat(response.getBody()).isNotNull();
     }
 
     @Test
