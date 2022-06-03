@@ -31,6 +31,7 @@ import java.util.Set;
 public class UserService implements UserDetailsService
 {
     private UserRepository userRepository;
+    @Autowired
     private Validator validator;
     private VATClient vatClient;
 
