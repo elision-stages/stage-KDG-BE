@@ -13,12 +13,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Path;
+import javax.validation.Validator;
+import javax.validation.metadata.ConstraintDescriptor;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
@@ -28,17 +33,16 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class UserServiceTest
 {
-
     @InjectMocks
-    @Autowired
     private UserService userService;
     @Mock
     UserRepository userRepository;
+    @Mock
+    Validator validator;
 
     @Test
     void testSaveUser()
     {
-        final int initRepoSize = userService.findAllUsers().size();
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -51,11 +55,13 @@ class UserServiceTest
         customer.setEmail(email);
         customer.setPassword(password);
 
-        final long id = userService.save(customer).getId();
+        Customer toReturn = new Customer();
+        toReturn.setId(RandomUtils.nextLong());
+        when(userRepository.save(customer)).thenReturn(toReturn);
+        customer.setId(userService.save(customer).getId());
 
-        assertThat(userService.findAllUsers()).hasSize(1 + initRepoSize);
-
-        final User userWithId = userService.findUserById(id);
+        when(userRepository.findById(customer.getId())).thenReturn(Optional.of(customer));
+        final User userWithId = userService.findUserById(customer.getId());
         assertThat(userWithId).isNotNull();
 
         assertThat(userWithId.getEmail()).hasToString(email);
@@ -68,6 +74,78 @@ class UserServiceTest
     void saveUserWithVoilations()
     {
         final Customer customer = new Customer();
+
+        Set<ConstraintViolation<Customer>> violations =
+                Set.of(new ConstraintViolation<>()
+                {
+                    @Override
+                    public String getMessage()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public String getMessageTemplate()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public Customer getRootBean()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public Class<Customer> getRootBeanClass()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public Object getLeafBean()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public Object[] getExecutableParameters()
+                    {
+                        return new Object[0];
+                    }
+
+                    @Override
+                    public Object getExecutableReturnValue()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public Path getPropertyPath()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public Object getInvalidValue()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public ConstraintDescriptor<?> getConstraintDescriptor()
+                    {
+                        return null;
+                    }
+
+                    @Override
+                    public <U> U unwrap(Class<U> type)
+                    {
+                        return null;
+                    }
+                });
+        when(validator.validate(customer)).thenReturn(violations);
+
         Assertions.assertThrows(ConstraintViolationException.class, () -> userService.save(customer));
     }
 
@@ -86,12 +164,20 @@ class UserServiceTest
         customer.setEmail(email);
         customer.setPassword(password);
 
+        when(validator.validate(customer)).thenReturn(new HashSet<>());
+
+        Customer toReturn = new Customer();
+        toReturn.setId(RandomUtils.nextLong());
+        when(userRepository.save(customer)).thenReturn(toReturn);
+
         customer.setId(userService.save(customer).getId());
 
         customer.setFirstName(RandomStringUtils.randomAlphabetic(6));
         customer.setLastName(RandomStringUtils.randomAlphabetic(6));
         customer.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
 
+        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
+        when(userRepository.findById(customer.getId())).thenReturn(Optional.of(customer));
         userService.editUser(customer);
         Customer fromRepo = (Customer) userService.findUserByEmail(customer.getEmail());
 
@@ -142,6 +228,7 @@ class UserServiceTest
         userService.save(customer);
         customer.setId(RandomUtils.nextLong());
 
+        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
         assertThrows(NotFoundException.class, () -> userService.editUser(customer));
     }
 
@@ -175,7 +262,7 @@ class UserServiceTest
         vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
         vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
 
-        when(userRepository.findById(vendor.getId())).thenReturn(null);
+        when(userRepository.findById(vendor.getId())).thenReturn(Optional.empty());
 
         final Long vendorId = vendor.getId();
         Exception exception = assertThrows(NotFoundException.class, () -> userService.findVendorById(vendorId));
