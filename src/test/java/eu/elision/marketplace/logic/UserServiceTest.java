@@ -373,7 +373,10 @@ class UserServiceTest
 
         String newToken = RandomStringUtils.randomAlphabetic(50);
 
-        assertThat(userService.updateToken(vendor)).isEqualTo(vendor.getToken());
+        when(bCryptPasswordEncoder.encode(any())).thenReturn(newToken);
+        userService.updateToken(vendor);
+
+        assertThat(vendor.getToken()).isEqualTo(newToken);
     }
 
     @Test
