@@ -220,7 +220,8 @@ class ControllerMockingTest
                 images,
                 attributes
         );
-        when(userService.findVendorByEmail(vendor.getEmail())).thenReturn(vendor);
+
+        when(userService.findUserByEmail(vendor.getEmail())).thenReturn(vendor);
         when(dynamicAttributeService.getSavedAttributes(editProductDto.attributes(), category.getId())).thenReturn(convertedAttribtues);
         when(productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, convertedAttribtues))).thenReturn(product);
 

@@ -48,4 +48,5 @@ class VendorControllerTest
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
+
 }
