@@ -35,8 +35,9 @@ public class ProductController {
     /**
      * Public constructor
      *
-     * @param controller  the controller that the rest controller needs to use
-     * @param userService the user service that needs to be used
+     * @param controller            the controller that the rest controller needs to use
+     * @param userService           the user service that needs to be used
+     * @param bCryptPasswordEncoder An BCryptPasswordEncoder instance
      */
     public ProductController(Controller controller, UserService userService, AlgoliaIndexerService algoliaIndexerService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.controller = controller;
@@ -45,6 +46,15 @@ public class ProductController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    /**
+     * Adds a product to the vendor's product list by principal OR API data
+     *
+     * @param principal  Principal of the vendor
+     * @param apiName    Mail of the vendor (when inserting via API)
+     * @param apiToken   API token of the vondor (when inserting via API)
+     * @param productDto Product DTO to insert
+     * @return Success DTO or unauthorized if authorization fails
+     */
     @PostMapping("/addProduct")
     ResponseEntity<?> addProduct(Principal principal, @RequestHeader(value = "X-API-User", required = false) String apiName, @RequestHeader(value = "X-API-Key", required = false) String apiToken, @RequestBody ProductDto productDto) {
         if (principal != null) {
@@ -55,11 +65,8 @@ public class ProductController {
                 return ResponseEntity.ok(new ResponseDto(SUCCESS));
             }
         } else if (apiName != null && apiToken != null) {
-            System.out.println("Name: " + apiName);
-            System.out.println("Token: " + apiToken);
             UserDetails user = userService.loadUserByUsername(apiName);
-            if (user instanceof Vendor) {
-                Vendor vendor = (Vendor) user;
+            if (user instanceof Vendor vendor) {
                 if (bCryptPasswordEncoder.matches(apiToken, vendor.getToken())) {
                     Product newProduct = controller.saveProduct(vendor, productDto);
                     algoliaIndexerService.indexProduct(newProduct);

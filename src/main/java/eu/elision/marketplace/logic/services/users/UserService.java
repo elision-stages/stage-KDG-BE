@@ -41,8 +41,9 @@ public class UserService implements UserDetailsService
     /**
      * Public constructor
      *
-     * @param userRepository the user repository that the service needs to use
-     * @param validator      the user validator that the service needs to use
+     * @param userRepository        the user repository that the service needs to use
+     * @param validator             the user validator that the service needs to use
+     * @param bCryptPasswordEncoder An BCryptPasswordEncoder instance
      */
     @Autowired
     public UserService(UserRepository userRepository, Validator validator, BCryptPasswordEncoder bCryptPasswordEncoder) {
@@ -241,6 +242,12 @@ public class UserService implements UserDetailsService
         userRepository.save(admin);
     }
 
+    /**
+     * Update the API token of a vendor
+     *
+     * @param vendor The vendor
+     * @return The new API token (32 char hex)
+     */
     public String updateToken(Vendor vendor) {
         SecureRandom random = new SecureRandom();
         String token = new BigInteger(130, random).toString(16).substring(0, 32);

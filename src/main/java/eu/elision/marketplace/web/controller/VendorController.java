@@ -18,6 +18,11 @@ public class VendorController {
     VATClient vatClient = new VATClient();
     private final UserService userService;
 
+    /**
+     * Constructor of the Vendor Controller
+     *
+     * @param userService Autowired UserService
+     */
     public VendorController(UserService userService) {
         this.userService = userService;
     }
