@@ -76,7 +76,7 @@ class UserServiceTest
     }
 
     @Test
-    void saveUserWithVoilations()
+    void saveUserWithViolations()
     {
         final Customer customer = new Customer();
 
@@ -306,9 +306,9 @@ class UserServiceTest
         when(userRepository.findByEmail(admin.getEmail())).thenReturn(admin);
         when(userRepository.findById(admin.getId())).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(InvalidDataException.class, () -> userService.editUser(admin));
+        Exception exception = assertThrows(NotFoundException.class, () -> userService.editUser(admin));
 
-        assertThat(exception.getMessage()).isEqualTo(String.format("User with id %s does not exist", admin.getId()));
+        assertThat(exception.getMessage()).isEqualTo(String.format("User with id %s not found", admin.getId()));
     }
 
     @Test
@@ -357,7 +357,8 @@ class UserServiceTest
         admin.setEmail("admintest@elision.eu");
         admin.setPassword("$2a$12$l65u2sm3M8b1Wumi0Rht1.IOmnKpby9oKvXUIznJjBVE4D26RQtBa");
 
-        when(userRepository.save(admin)).thenReturn(admin);
+        when(userRepository.findById(1000L)).thenReturn(Optional.empty());
+        when(userRepository.save(any())).thenReturn(admin);
 
         assertThat(userService.createAdmin()).isEqualTo(admin);
     }
@@ -372,9 +373,7 @@ class UserServiceTest
 
         String newToken = RandomStringUtils.randomAlphabetic(50);
 
-        when(bCryptPasswordEncoder.encode(any())).thenReturn(newToken);
-
-        assertThat(userService.updateToken(vendor)).isEqualTo(newToken);
+        assertThat(userService.updateToken(vendor)).isEqualTo(vendor.getToken());
     }
 
     @Test

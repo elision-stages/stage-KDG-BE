@@ -66,8 +66,7 @@ public class UserService implements UserDetailsService
             throw new InvalidDataException("User can not be null");
         if (findUserByEmail(user.getEmail()) == null)
             throw new InvalidDataException(String.format("User with email %s does not exist", user.getEmail()));
-        if (findUserById(user.getId()) == null)
-            throw new InvalidDataException(String.format("User with id %s does not exist", user.getId()));
+        findUserById(user.getId());
 
         userRepository.save(user);
     }
