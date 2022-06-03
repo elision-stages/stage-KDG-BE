@@ -132,6 +132,17 @@ public class Mapper
     }
 
     /**
+     * Convert a list of products to small product dtos
+     *
+     * @param products the list of products that need to be converted
+     * @return the collection of small product dtos
+     */
+    public static Collection<SmallProductDto> toSmallProductDto(Collection<Product> products)
+    {
+        return products.stream().map(Mapper::toSmallProductDto).toList();
+    }
+
+    /**
      * Convert a to Cart to a Dynamic Small Cart Dto
      *
      * @param cart the Cart Dto that needs to be converted
@@ -208,7 +219,7 @@ public class Mapper
      */
     public static VendorPageDto toVendorPageDto(Vendor vendorById, Collection<Product> productsByVendorId)
     {
-        return new VendorPageDto(vendorById.getEmail(), vendorById.getBusinessName(), vendorById.getLogo(), vendorById.getPhoneNumber(), vendorById.getIntroduction(), vendorById.getVatNumber(), vendorById.getTheme(), productsByVendorId);
+        return new VendorPageDto(vendorById.getEmail(), vendorById.getBusinessName(), vendorById.getLogo(), vendorById.getPhoneNumber(), vendorById.getIntroduction(), vendorById.getVatNumber(), vendorById.getTheme(), Mapper.toSmallProductDto(productsByVendorId));
     }
 }
 

@@ -1,7 +1,5 @@
 package eu.elision.marketplace.web.dtos.users;
 
-import eu.elision.marketplace.domain.product.Product;
-
 import java.util.Collection;
 
 /**
@@ -18,6 +16,6 @@ import java.util.Collection;
  */
 public record VendorPageDto(String email, String businessName, String logo, String phoneNumber, String introduction,
                             String vatNumber,
-                            String theme, Collection<Product> products)
+                            String theme, Collection<eu.elision.marketplace.web.dtos.product.SmallProductDto> products)
 {
 }
