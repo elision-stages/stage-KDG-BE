@@ -216,15 +216,21 @@ public class UserService implements UserDetailsService
 
     /**
      * Create an admin account
+     *
+     * @return the created admin
      */
-    public void createAdmin() {
-        Admin admin = (Admin) userRepository.findById(1000L).orElse(new Admin());
+    public Admin createAdmin()
+    {
+        final User userById = userRepository.findById(1000L).orElse(null);
+        if (userById != null) return (Admin) userById;
+
+        Admin admin = new Admin();
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
         admin.setEmail("admintest@elision.eu");
         admin.setPassword("$2a$12$l65u2sm3M8b1Wumi0Rht1.IOmnKpby9oKvXUIznJjBVE4D26RQtBa"); // passw0rD
 
-        userRepository.save(admin);
+        return userRepository.save(admin);
     }
 
     /**
