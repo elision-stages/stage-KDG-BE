@@ -15,6 +15,7 @@ public class AlgoliaProductDefaultAttributePopulator implements Populator<Produc
         target.setObjectID(source.getId());
         target.setName(source.getTitle());
         target.setVendor(source.getVendor().getBusinessName());
+        target.setVendorId(source.getVendor().getId());
         target.setPrice(source.getPrice());
     }
 }

@@ -19,6 +19,7 @@ public class AlgoliaProductCategoryPopulator implements Populator<Product, Algol
     public void populate(Product source, AlgoliaProductDto target) {
         List<String> catStructure = new ArrayList<>();
         Category current = source.getCategory();
+        target.setCategoryId(source.getCategory().getId());
         while (current != null) {
             catStructure.add(current.getName());
             current = current.getParent();
