@@ -24,6 +24,7 @@ import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.VendorPageDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -94,7 +95,8 @@ class ControllerTest
     }
 
     @Test
-    void saveCustomerWithoutAddress() {
+    void saveCustomerWithoutAddress()
+    {
         final int initUserRepoSize = controller.findAllUsers().size();
 
         final Customer customer = new Customer();
@@ -123,12 +125,14 @@ class ControllerTest
     }
 
     @Test
-    void findAllCategoriesTest() {
+    void findAllCategoriesTest()
+    {
         assertThat(controller.findAllCategories()).isNotNull();
     }
 
     @Test
-    void findAllCustomerDtoTest() {
+    void findAllCustomerDtoTest()
+    {
         final int initSize = controller.findAllCustomerDto().size();
 
         controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
@@ -136,7 +140,8 @@ class ControllerTest
     }
 
     @Test
-    void findProductsByVendor() {
+    void findProductsByVendor()
+    {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -168,7 +173,8 @@ class ControllerTest
     }
 
     @Test
-    void addGetProductToCartTest() {
+    void addGetProductToCartTest()
+    {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -222,7 +228,8 @@ class ControllerTest
     }
 
     @Test
-    void deleteProductTest() {
+    void deleteProductTest()
+    {
         final int initSize = controller.findAllProducts().size();
 
         Product product = new Product();
@@ -234,7 +241,8 @@ class ControllerTest
     }
 
     @Test
-    void checkoutCartTest() {
+    void checkoutCartTest()
+    {
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -285,7 +293,8 @@ class ControllerTest
     }
 
     @Test
-    void getVendorOrders() {
+    void getVendorOrders()
+    {
         Vendor vendor = new Vendor();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
         final String lastName = RandomStringUtils.randomAlphabetic(4);
@@ -367,13 +376,15 @@ class ControllerTest
     }
 
     @Test
-    void getOrdersUserNotFound() {
+    void getOrdersUserNotFound()
+    {
         final String userEmail = RandomStringUtils.randomAlphabetic(4);
         assertThrows(NotFoundException.class, () -> controller.getOrders(userEmail));
     }
 
     @Test
-    void saveProductTest() {
+    void saveProductTest()
+    {
         Vendor vendor = new Vendor();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
         final String lastName = RandomStringUtils.randomAlphabetic(4);
@@ -408,7 +419,8 @@ class ControllerTest
     }
 
     @Test
-    void getCustomerOrderTest() {
+    void getCustomerOrderTest()
+    {
         Vendor vendor = new Vendor();
         Admin admin = new Admin();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
@@ -479,15 +491,15 @@ class ControllerTest
     }
 
     @Test
-    void testEditCategory() {
+    void testEditCategory()
+    {
         final int initCapRepo = controller.findAllCategories().size();
         Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
 
         Category category = new Category();
         category.setName(RandomStringUtils.randomAlphabetic(5));
         final DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], category);
-        category.setCharacteristics(List.of(
-                dynamicAttribute
+        category.setCharacteristics(List.of(dynamicAttribute
 
         ));
         category.setId(categoryService.save(category).getId());
@@ -509,7 +521,35 @@ class ControllerTest
     }
 
     @Test
-    void getFakeCategoryTest() {
+    void getFakeCategoryTest()
+    {
         assertThrows(NotFoundException.class, () -> controller.getCategory(-1));
+    }
+
+    @Test
+    void testGetVendorById()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
+        vendor.setTheme(RandomStringUtils.randomAlphabetic(50));
+        vendor.setIntroduction(RandomStringUtils.randomAlphabetic(50));
+        vendor.setVatNumber("BE0458402105");
+        vendor.setPhoneNumber(RandomStringUtils.random(50, false, true));
+        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setLastName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
+        vendor.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
+        vendor.setValidated(RandomUtils.nextBoolean());
+
+        vendor.setId(userService.save(vendor).getId());
+
+        final VendorPageDto vendorDto = controller.getVendorById(vendor.getId());
+        assertThat(vendorDto.theme()).isEqualTo(vendor.getTheme());
+        assertThat(vendorDto.introduction()).isEqualTo(vendor.getIntroduction());
+        assertThat(vendorDto.vatNumber()).isEqualTo(vendor.getVatNumber());
+        assertThat(vendorDto.phoneNumber()).isEqualTo(vendor.getPhoneNumber());
+        assertThat(vendorDto.businessName()).isEqualTo(vendor.getBusinessName());
+        assertThat(vendorDto.email()).isEqualTo(vendor.getEmail());
     }
 }

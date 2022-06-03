@@ -31,6 +31,7 @@ import java.util.Set;
 public class UserService implements UserDetailsService
 {
     private UserRepository userRepository;
+    @Autowired
     private Validator validator;
     private VATClient vatClient;
 
@@ -206,22 +207,6 @@ public class UserService implements UserDetailsService
         if (!(user instanceof Vendor))
             throw new NotFoundException(String.format("User with id %s is not a vendor", vendorId));
         return (Vendor) user;
-    }
-
-    /**
-     * Find a vendor by email. Will check if the email belongs to a vendor.
-     *
-     * @param vendorEmail the email of the vendor
-     * @return the vendor from the repository
-     */
-    public Vendor findVendorByEmail(String vendorEmail)
-    {
-        User user = findUserByEmail(vendorEmail);
-        if (user == null) throw new NotFoundException(String.format("User with email %s not found", vendorEmail));
-        if (!(user instanceof Vendor vendor))
-            throw new NotFoundException(String.format("Vendor with email %s not found", vendorEmail));
-
-        return vendor;
     }
 
     /**

@@ -29,6 +29,7 @@ import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
+import eu.elision.marketplace.web.dtos.users.VendorPageDto;
 import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -429,7 +430,19 @@ public class Controller {
      * @param id The ID to search for
      * @return The requested category
      */
-    public Category getCategory(long id) {
+    public Category getCategory(long id)
+    {
         return categoryService.getCategory(id);
+    }
+
+    /**
+     * Get vendor info by id
+     *
+     * @param id the id of the vendor
+     * @return a vendor info dto object with the values of given vendor
+     */
+    public VendorPageDto getVendorById(long id)
+    {
+        return Mapper.toVendorPageDto(userService.findVendorById(id), productService.getProductsByVendorId(id));
     }
 }
