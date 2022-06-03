@@ -11,6 +11,7 @@ class AlgoliaProductDefaultAttributePopulatorTest {
     @Test
     void Test() {
         Vendor vendor = new Vendor();
+        vendor.setId(1L);
         vendor.setBusinessName("Business");
         Product product = new Product();
         product.setTitle("name");
