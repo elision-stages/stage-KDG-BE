@@ -21,6 +21,7 @@ class ConverterTest {
     @Test
     void test() throws ConversionException {
         Vendor vendor = new Vendor();
+        vendor.setId(1L);
         vendor.setBusinessName("vendor");
         Product product = new Product();
         product.setId(123L);
@@ -36,6 +37,7 @@ class ConverterTest {
     @Test
     void testBulk() {
         Vendor vendor = new Vendor();
+        vendor.setId(1L);
         vendor.setBusinessName("vendor");
         Product product = new Product();
         product.setId(123L);
