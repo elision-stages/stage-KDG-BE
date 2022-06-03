@@ -1,5 +1,6 @@
 package eu.elision.marketplace.logic;
 
+import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -27,6 +29,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -39,6 +42,8 @@ class UserServiceTest
     UserRepository userRepository;
     @Mock
     Validator validator;
+    @Mock
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
     void testSaveUser()
@@ -71,7 +76,7 @@ class UserServiceTest
     }
 
     @Test
-    void saveUserWithVoilations()
+    void saveUserWithViolations()
     {
         final Customer customer = new Customer();
 
@@ -286,5 +291,117 @@ class UserServiceTest
         final Long vendorId = vendor.getId();
         Exception exception = assertThrows(NotFoundException.class, () -> userService.findVendorById(vendorId));
         assertThat(exception.getMessage()).isEqualTo(String.format("User with id %s is not a vendor", vendorId));
+    }
+
+    @Test
+    void testEditUserIdNotFound()
+    {
+        Admin admin = new Admin();
+        admin.setId(RandomUtils.nextLong());
+        admin.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        admin.setLastName(RandomStringUtils.randomAlphabetic(50));
+        admin.setEmail(RandomStringUtils.randomAlphabetic(50));
+        admin.setValidated(RandomUtils.nextBoolean());
+
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(admin);
+        when(userRepository.findById(admin.getId())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(NotFoundException.class, () -> userService.editUser(admin));
+
+        assertThat(exception.getMessage()).isEqualTo(String.format("User with id %s not found", admin.getId()));
+    }
+
+    @Test
+    void testSaveNullUser()
+    {
+        assertThat(userService.save((User) null)).isNull();
+    }
+
+    @Test
+    void testSaveUserEmailNotFound()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
+
+        when(userRepository.findByEmail(vendor.getEmail())).thenReturn(vendor);
+
+        Exception exception = assertThrows(InvalidDataException.class, () -> userService.save(vendor));
+        assertThat(exception.getMessage()).isEqualTo("An account with this e-mail exists already");
+    }
+
+    @Test
+    void testSaveUserInvalidVat()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong());
+        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setLastName(RandomStringUtils.randomAlphabetic(50));
+        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
+        vendor.setValidated(RandomUtils.nextBoolean());
+        vendor.setVatNumber(RandomStringUtils.randomAlphabetic(10));
+
+        when(userRepository.findByEmail(vendor.getEmail())).thenReturn(null);
+        when(validator.validate(vendor)).thenReturn(new HashSet<>());
+
+        Exception exception = assertThrows(InvalidDataException.class, () -> userService.save(vendor));
+
+        assertThat(exception.getMessage()).isEqualTo("VAT check failed");
+    }
+
+    @Test
+    void testCreateAdmin()
+    {
+        Admin admin = new Admin();
+        admin.setFirstName("Admin");
+        admin.setLastName("Admin");
+        admin.setEmail("admintest@elision.eu");
+        admin.setPassword("$2a$12$l65u2sm3M8b1Wumi0Rht1.IOmnKpby9oKvXUIznJjBVE4D26RQtBa");
+
+        when(userRepository.findById(1000L)).thenReturn(Optional.empty());
+        when(userRepository.save(any())).thenReturn(admin);
+
+        assertThat(userService.createAdmin()).isEqualTo(admin);
+    }
+
+    @Test
+    void TestUpdateToken()
+    {
+        final Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong());
+        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
+        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
+
+        String newToken = RandomStringUtils.randomAlphabetic(50);
+
+        when(bCryptPasswordEncoder.encode(any())).thenReturn(newToken);
+        userService.updateToken(vendor);
+
+        assertThat(vendor.getToken()).isEqualTo(newToken);
+    }
+
+    @Test
+    void testFindVendor()
+    {
+        Vendor vendor = new Vendor();
+        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
+
+        when(userRepository.findByEmail(vendor.getEmail())).thenReturn(vendor);
+
+        assertThat(userService.findVendorByEmail(vendor.getEmail())).isEqualTo(vendor);
+    }
+
+    @Test
+    void testFindVendorByEmailNotVendor()
+    {
+        Customer customer = new Customer();
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
+
+        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
+
+        final String customerEmail = customer.getEmail();
+        Exception exception =
+                assertThrows(InvalidDataException.class, () -> userService.findVendorByEmail(customerEmail));
+
+        assertThat(exception.getMessage()).isEqualTo("User with given email is not a vendor");
     }
 }

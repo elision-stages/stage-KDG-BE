@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.web.api.vat.Business;
+import eu.elision.marketplace.web.dtos.TokenDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +40,13 @@ class VendorControllerTest
         assertThat(response.getBody().getCountryCode()).isEqualTo("BE");
         assertThat(response.getBody().getVatNumber()).isEqualTo("0458402105");
         assertThat(response.getBody().getAddress()).isEqualTo("Brusselstraat 45\n2018 Antwerpen");
+    }
+
+    @Test
+    void testRenewToken() {
+        ResponseEntity<TokenDto> response = restTemplate.postForEntity(String.format("%s/vendor/renewToken", base), null, TokenDto.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
 }

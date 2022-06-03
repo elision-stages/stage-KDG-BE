@@ -3,10 +3,14 @@ package eu.elision.marketplace.web.controller;
 import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.api.vat.Business;
 import eu.elision.marketplace.web.api.vat.VATClient;
+import eu.elision.marketplace.web.dtos.TokenDto;
 import eu.elision.marketplace.web.dtos.users.VendorPageDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /**
  * Controller to handle calls about the vendor
@@ -49,5 +53,18 @@ public class VendorController
     public ResponseEntity<VendorPageDto> getVendorPageInfo(@PathVariable("id") long id)
     {
         return ResponseEntity.ok(controller.getVendorById(id));
+    }
+
+    /**
+     * Renew the API token of a vendor and return the new token
+     *
+     * @param principal vendor
+     * @return string of the new token
+     */
+    @PostMapping("/renewToken")
+    @Secured("ROLE_VENDOR")
+    ResponseEntity<TokenDto> refreshToken(Principal principal)
+    {
+        return ResponseEntity.ok(controller.getVendorToken(principal.getName()));
     }
 }

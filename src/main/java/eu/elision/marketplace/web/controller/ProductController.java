@@ -22,7 +22,8 @@ import java.util.Collection;
  * Rest controller to handle calls about products
  */
 @RestController
-public class ProductController {
+public class ProductController
+{
     final Controller controller;
     final UserService userService;
     private static final String SUCCESS = "success";
@@ -32,33 +33,43 @@ public class ProductController {
     /**
      * Public constructor
      *
-     * @param controller  the controller that the rest controller needs to use
-     * @param userService the user service that needs to be used
+     * @param controller            the controller that the rest controller needs to use
+     * @param userService           the user service that needs to be used
+     * @param algoliaIndexerService the algolia index service that needs to be used
      */
-    public ProductController(Controller controller, UserService userService, AlgoliaIndexerService algoliaIndexerService) {
+    public ProductController(Controller controller, UserService userService, AlgoliaIndexerService algoliaIndexerService)
+    {
         this.controller = controller;
         this.userService = userService;
         this.algoliaIndexerService = algoliaIndexerService;
     }
 
+    /**
+     * Adds a product to the vendor's product list by principal OR API data
+     *
+     * @param principal     Principal of the vendor
+     * @param apiVendorMail Mail of the vendor (when inserting via API)
+     * @param apiToken      API token of the vondor (when inserting via API)
+     * @param productDto    Product DTO to insert
+     * @return Success DTO or unauthorized if authorization fails
+     */
     @PostMapping("/addProduct")
-    @Secured("ROLE_VENDOR")
-    ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestBody ProductDto productDto) {
-        Vendor user = (Vendor) userService.loadUserByUsername(principal.getName());
-        Product newProduct = controller.saveProduct(user, productDto);
-
-        algoliaIndexerService.indexProduct(newProduct);
+    ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestHeader(value = "X-API-User", required = false) String apiVendorMail, @RequestHeader(value = "X-API-Key", required = false) String apiToken, @RequestBody ProductDto productDto)
+    {
+        controller.saveProduct(principal != null ? principal.getName() : apiVendorMail, productDto, apiToken);
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
     @GetMapping("/getAllProducts")
-    ResponseEntity<Collection<Product>> getAllProducts() {
+    ResponseEntity<Collection<Product>> getAllProducts()
+    {
         return new ResponseEntity<>(controller.findAllProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/getMyProducts")
     @Secured("ROLE_VENDOR")
-    ResponseEntity<Collection<SmallProductDto>> getMyProducts(Principal principal) {
+    ResponseEntity<Collection<SmallProductDto>> getMyProducts(Principal principal)
+    {
         Vendor vendor = (Vendor) userService.loadUserByUsername(principal.getName());
         Collection<Product> products = controller.findProductsByVendor(vendor);
 
@@ -66,7 +77,8 @@ public class ProductController {
     }
 
     @GetMapping("/product/{ids}")
-    ResponseEntity<Product> getProduct(@PathVariable String ids) {
+    ResponseEntity<Product> getProduct(@PathVariable String ids)
+    {
         long id = Long.parseLong(ids);
         Product product = controller.findProduct(id);
         if (product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -75,14 +87,16 @@ public class ProductController {
 
     @Secured("ROLE_VENDOR")
     @PostMapping("/deleteProduct/{id}")
-    ResponseEntity<ResponseDto> deleteProduct(@PathVariable String id, Principal principal) {
+    ResponseEntity<ResponseDto> deleteProduct(@PathVariable String id, Principal principal)
+    {
         controller.deleteProduct(Long.parseLong(id), principal.getName());
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 
     @Secured("ROLE_VENDOR")
     @PostMapping("/editProduct")
-    ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto, Principal principal) {
+    ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto, Principal principal)
+    {
         Product product = controller.editProduct(editProductDto, principal.getName());
 
         algoliaIndexerService.indexProduct(product);

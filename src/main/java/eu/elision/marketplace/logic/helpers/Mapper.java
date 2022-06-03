@@ -9,6 +9,7 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.users.Cart;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.web.dtos.TokenDto;
 import eu.elision.marketplace.web.dtos.UserDto;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
@@ -220,6 +221,17 @@ public class Mapper
     public static VendorPageDto toVendorPageDto(Vendor vendorById, Collection<Product> productsByVendorId)
     {
         return new VendorPageDto(vendorById.getEmail(), vendorById.getBusinessName(), vendorById.getLogo(), vendorById.getPhoneNumber(), vendorById.getIntroduction(), vendorById.getVatNumber(), vendorById.getTheme(), Mapper.toSmallProductDto(productsByVendorId));
+    }
+
+    /**
+     * Convert a string to a toke dto
+     *
+     * @param token the string that needs to be converted
+     * @return the token dto with given token
+     */
+    public static TokenDto toTokenDto(String token)
+    {
+        return new TokenDto(token);
     }
 }
 

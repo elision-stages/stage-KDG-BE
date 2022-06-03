@@ -15,11 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Set;
 
@@ -34,19 +37,21 @@ public class UserService implements UserDetailsService
     @Autowired
     private Validator validator;
     private VATClient vatClient;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * Public constructor
      *
-     * @param userRepository the user repository that the service needs to use
-     * @param validator      the user validator that the service needs to use
+     * @param userRepository        the user repository that the service needs to use
+     * @param validator             the user validator that the service needs to use
+     * @param bCryptPasswordEncoder An BCryptPasswordEncoder instance
      */
     @Autowired
-    public UserService(UserRepository userRepository, Validator validator)
-    {
+    public UserService(UserRepository userRepository, Validator validator, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.validator = validator;
         this.vatClient = new VATClient();
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
 
@@ -61,8 +66,7 @@ public class UserService implements UserDetailsService
             throw new InvalidDataException("User can not be null");
         if (findUserByEmail(user.getEmail()) == null)
             throw new InvalidDataException(String.format("User with email %s does not exist", user.getEmail()));
-        if (findUserById(user.getId()) == null)
-            throw new InvalidDataException(String.format("User with id %s does not exist", user.getId()));
+        findUserById(user.getId());
 
         userRepository.save(user);
     }
@@ -211,15 +215,49 @@ public class UserService implements UserDetailsService
 
     /**
      * Create an admin account
+     *
+     * @return the created admin
      */
-    public void createAdmin()
+    public Admin createAdmin()
     {
-        Admin admin = (Admin)userRepository.findById(1000L).orElse(new Admin());
+        final User userById = userRepository.findById(1000L).orElse(null);
+        if (userById != null) return (Admin) userById;
+
+        Admin admin = new Admin();
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
         admin.setEmail("admintest@elision.eu");
         admin.setPassword("$2a$12$l65u2sm3M8b1Wumi0Rht1.IOmnKpby9oKvXUIznJjBVE4D26RQtBa"); // passw0rD
 
-        userRepository.save(admin);
+        return userRepository.save(admin);
+    }
+
+    /**
+     * Update the API token of a vendor
+     *
+     * @param vendor The vendor
+     * @return The new API token (32 char hex)
+     */
+    public String updateToken(Vendor vendor)
+    {
+        SecureRandom random = new SecureRandom();
+        String token = new BigInteger(130, random).toString(16).substring(0, 32);
+        String encToken = bCryptPasswordEncoder.encode(token);
+        vendor.setToken(encToken);
+        userRepository.save(vendor);
+        return token;
+    }
+
+    /**
+     * Find a vendor from an email. Throws a not found exception when no user is found and a invalid data exception when given email doesn't belong to a vendor
+     *
+     * @param vendorEmail the email of the vendor
+     * @return the vendor with given email
+     */
+    public Vendor findVendorByEmail(String vendorEmail)
+    {
+        User user = findUserByEmail(vendorEmail);
+        if (!(user instanceof Vendor vendor)) throw new InvalidDataException("User with given email is not a vendor");
+        return vendor;
     }
 }
