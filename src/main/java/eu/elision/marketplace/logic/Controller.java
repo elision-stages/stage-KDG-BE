@@ -516,7 +516,7 @@ public class Controller
      */
     public TokenDto getVendorToken(String vendorEmail)
     {
-        return Mapper.toTokenDto(userService.findVendorByEmail(vendorEmail).getToken());
+        return Mapper.toTokenDto(userService.updateToken(userService.findVendorByEmail(vendorEmail)));
     }
 
 
