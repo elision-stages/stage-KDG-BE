@@ -13,6 +13,8 @@ import eu.elision.marketplace.web.dtos.product.SmallProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -26,6 +28,7 @@ public class ProductController {
     final Controller controller;
     final UserService userService;
     private static final String SUCCESS = "success";
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     AlgoliaIndexerService algoliaIndexerService;
 
@@ -35,20 +38,36 @@ public class ProductController {
      * @param controller  the controller that the rest controller needs to use
      * @param userService the user service that needs to be used
      */
-    public ProductController(Controller controller, UserService userService, AlgoliaIndexerService algoliaIndexerService) {
+    public ProductController(Controller controller, UserService userService, AlgoliaIndexerService algoliaIndexerService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.controller = controller;
         this.userService = userService;
         this.algoliaIndexerService = algoliaIndexerService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping("/addProduct")
-    @Secured("ROLE_VENDOR")
-    ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestBody ProductDto productDto) {
-        Vendor user = (Vendor) userService.loadUserByUsername(principal.getName());
-        Product newProduct = controller.saveProduct(user, productDto);
-
-        algoliaIndexerService.indexProduct(newProduct);
-        return ResponseEntity.ok(new ResponseDto(SUCCESS));
+    ResponseEntity<?> addProduct(Principal principal, @RequestHeader(value = "X-API-User", required = false) String apiName, @RequestHeader(value = "X-API-Key", required = false) String apiToken, @RequestBody ProductDto productDto) {
+        if (principal != null) {
+            UserDetails user = userService.loadUserByUsername(principal.getName());
+            if (user instanceof Vendor) {
+                Product newProduct = controller.saveProduct((Vendor) user, productDto);
+                algoliaIndexerService.indexProduct(newProduct);
+                return ResponseEntity.ok(new ResponseDto(SUCCESS));
+            }
+        } else if (apiName != null && apiToken != null) {
+            System.out.println("Name: " + apiName);
+            System.out.println("Token: " + apiToken);
+            UserDetails user = userService.loadUserByUsername(apiName);
+            if (user instanceof Vendor) {
+                Vendor vendor = (Vendor) user;
+                if (bCryptPasswordEncoder.matches(apiToken, vendor.getToken())) {
+                    Product newProduct = controller.saveProduct(vendor, productDto);
+                    algoliaIndexerService.indexProduct(newProduct);
+                    return ResponseEntity.ok(new ResponseDto(SUCCESS));
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/getAllProducts")
