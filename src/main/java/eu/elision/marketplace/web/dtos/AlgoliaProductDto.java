@@ -12,11 +12,12 @@ import java.util.Map;
  */
 @Setter
 @Getter
-public final class AlgoliaProductDto
-{
+public final class AlgoliaProductDto {
     private long objectID;
     private String name;
     private String vendor;
+    private long categoryId;
+    private long vendorId;
     private double price;
     private String description;
     private String image;
@@ -25,8 +26,7 @@ public final class AlgoliaProductDto
     /**
      * Public constructor. Instanciates parameters list.
      */
-    public AlgoliaProductDto()
-    {
+    public AlgoliaProductDto() {
         parameters = new LinkedHashMap<>();
     }
 

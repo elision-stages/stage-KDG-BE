@@ -4,6 +4,7 @@ import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.converter.exeption.ConversionException;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,9 +22,10 @@ class ConverterTest {
     @Test
     void test() throws ConversionException {
         Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong(1, 100));
         vendor.setBusinessName("vendor");
         Product product = new Product();
-        product.setId(123L);
+        product.setId(RandomUtils.nextLong(1, 100));
         product.setVendor(vendor);
         product.setImages(List.of("test"));
         product.setDescription("<h1>test</h1>");
@@ -36,9 +38,10 @@ class ConverterTest {
     @Test
     void testBulk() {
         Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong(1, 100));
         vendor.setBusinessName("vendor");
         Product product = new Product();
-        product.setId(123L);
+        product.setId(RandomUtils.nextLong(1, 100));
         product.setVendor(vendor);
         product.setImages(List.of("test"));
         Collection<AlgoliaProductDto> result = algoliaProductConverter.convertAll(List.of(product));

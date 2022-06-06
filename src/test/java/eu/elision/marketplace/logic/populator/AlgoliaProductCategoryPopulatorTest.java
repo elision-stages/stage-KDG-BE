@@ -18,6 +18,7 @@ class AlgoliaProductCategoryPopulatorTest {
         category2.setParent(category1);
 
         Category category3 = new Category();
+        category3.setId(1L);
         category3.setName("Jeans");
         category3.setParent(category2);
 
