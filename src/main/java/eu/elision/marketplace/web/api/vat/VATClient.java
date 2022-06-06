@@ -40,8 +40,9 @@ public class VATClient {
             String result = this.request(new URL(getCheckVatServiceURL), requestXml);
 
             if(result.contains("<faultstring>INVALID_INPUT</faultstring>")) return null;
+            if (result.contains("<soap:Fault>"))
+                return new Business(); // Returns a result when the API is down, so it doesn't prevent registration
             if (!result.contains("<valid>true</valid>")) return null;
-            if (result.contains("<soap:Fault>")) return new Business(); // Returns a result when the API is down, so it doesn't prevent registration
 
             Business business = new Business();
 
