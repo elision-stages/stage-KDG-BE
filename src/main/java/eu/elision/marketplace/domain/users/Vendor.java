@@ -18,6 +18,8 @@ import javax.validation.constraints.Size;
 @Setter
 @Entity
 public class Vendor extends User {
+    // This allows for 7,5MB file uploads (since we store them as base64)
+    @Column(length = 10 * 1024 * 1024)
     private String logo;
     private String theme;
     @Column(length = 5000)

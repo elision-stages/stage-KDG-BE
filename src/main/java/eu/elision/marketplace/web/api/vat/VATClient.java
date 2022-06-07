@@ -7,8 +7,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 public class VATClient {
+    HashMap<String, Business> cache = new HashMap<>();
+
+    public VATClient() {
+        cache.put("BE0458402105", new Business("BE",
+                "0458402105",
+                "VZW Karel de Grote Hogeschool, Katholieke Hogeschool Antwerpen",
+                "Brusselstraat 45\n2018 Antwerpen"));
+    }
 
     private String request(URL url, String data) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -29,6 +38,9 @@ public class VATClient {
     }
 
     public Business checkVatService(String country, String number) {
+        country = country.toUpperCase();
+        Business cached = checkVatCache(country, number);
+        if (cached != null) return cached;
         // Probably faster than parsing the whole XML result and having extra dependencies
         try {
             String requestXml =
@@ -57,6 +69,13 @@ public class VATClient {
         }
 
 
+    }
+
+    private Business checkVatCache(String country, String number) {
+        if (cache.containsKey(country.concat(number))) {
+            return cache.get(country.concat(number));
+        }
+        return null;
     }
 
     public Business checkVatService(String vatNumber) {
