@@ -56,8 +56,15 @@ public class ProductController
     @PostMapping("/addProduct")
     ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestHeader(value = "X-API-User", required = false) String apiVendorMail, @RequestHeader(value = "X-API-Key", required = false) String apiToken, @RequestBody ProductDto productDto)
     {
-        controller.saveProduct(principal != null ? principal.getName() : apiVendorMail, productDto, apiToken);
-        return ResponseEntity.ok(new ResponseDto(SUCCESS));
+        try
+        {
+            controller.saveProduct(principal != null ? principal.getName() : apiVendorMail, productDto, apiToken);
+            return ResponseEntity.ok(new ResponseDto(SUCCESS));
+        } catch (Exception ex)
+        {
+            return ResponseEntity.internalServerError().body(new ResponseDto(String.format("error adding product: principal:%s productDto:%s %n error %s", principal != null ? principal.toString() : apiVendorMail, productDto.toString(), ex)));
+        }
+
     }
 
     @GetMapping("/getAllProducts")
