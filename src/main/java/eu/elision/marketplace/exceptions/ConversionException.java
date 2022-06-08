@@ -1,4 +1,4 @@
-package eu.elision.marketplace.logic.converter.exeption;
+package eu.elision.marketplace.exceptions;
 
 /**
  * Exception that gets thrown when something goes wrong with the conversion

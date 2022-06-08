@@ -10,6 +10,7 @@ import eu.elision.marketplace.domain.users.Address;
 import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.ProductService;
@@ -23,9 +24,7 @@ import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
-import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorPageDto;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,6 @@ import static org.junit.Assert.assertThrows;
 @SpringBootTest
 class ControllerTest
 {
-
     @Autowired
     Controller controller;
     @Autowired
@@ -131,15 +129,6 @@ class ControllerTest
     }
 
     @Test
-    void findAllCustomerDtoTest()
-    {
-        final int initSize = controller.findAllCustomerDto().size();
-
-        controller.saveCustomer(new CustomerDto(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)), String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT))));
-        assertThat(controller.findAllCustomerDto()).hasSize(initSize + 1);
-    }
-
-    @Test
     void findProductsByVendor()
     {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -166,7 +155,7 @@ class ControllerTest
         product.setTitle(RandomStringUtils.randomAlphabetic(5));
         controller.saveProduct(product);
 
-        Collection<Product> products = controller.findProductsByVendor(vendor);
+        Collection<Product> products = controller.findProductsByVendor(vendor.getEmail());
 
         assertThat(products).hasSize(1);
         assertThat(products.stream().anyMatch(product1 -> Objects.equals(product1.getTitle(), product.getTitle()))).isTrue();
@@ -216,7 +205,7 @@ class ControllerTest
         final int count = RandomUtils.nextInt(1, 10);
         controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
 
-        CartDto cartDto = controller.getCustomerCart(email);
+        CartDto cartDto = controller.findCustomerCart(email);
         assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.product().description(), description))).isTrue();
         final OrderLineDto orderLineDto = cartDto.orderLines().stream().filter(old -> Objects.equals(old.product().description(), description)).findFirst().orElse(null);
 
@@ -342,7 +331,7 @@ class ControllerTest
         order.setUser(customer);
         controller.saveOrder(order);
 
-        Collection<OrderDto> orders = controller.getOrders(vendor.getEmail());
+        Collection<OrderDto> orders = controller.findUserOrders(vendor.getEmail());
 
         assertThat(orders).hasSize(1);
         OrderDto orderDto = orders.stream().findFirst().orElse(null);
@@ -352,7 +341,7 @@ class ControllerTest
         assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
         assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
 
-        orders = controller.getOrders(customer.getEmail());
+        orders = controller.findUserOrders(customer.getEmail());
         orderDto = orders.stream().findFirst().orElse(null);
         assertThat(orderDto).isNotNull();
         assertThat(orderDto.getOrderNumber()).isEqualTo(order.getOrderNumber());
@@ -367,7 +356,7 @@ class ControllerTest
         admin.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
         controller.saveUser(admin);
 
-        orders = controller.getOrders(admin.getEmail());
+        orders = controller.findUserOrders(admin.getEmail());
         assertThat(orders).isNotNull();
         assertThat(orders.stream().anyMatch(oDto -> oDto.getOrderNumber() == order.getOrderNumber())).isTrue();
         assertThat(orders.stream().anyMatch(oDto -> oDto.getTotalPrice() == order.getTotalPrice())).isTrue();
@@ -379,7 +368,7 @@ class ControllerTest
     void getOrdersUserNotFound()
     {
         final String userEmail = RandomStringUtils.randomAlphabetic(4);
-        assertThrows(NotFoundException.class, () -> controller.getOrders(userEmail));
+        assertThrows(NotFoundException.class, () -> controller.findUserOrders(userEmail));
     }
 
     @Test
@@ -405,16 +394,16 @@ class ControllerTest
 
         final CategoryMakeDto categoryMakeDto = new CategoryMakeDto(RandomStringUtils.randomAlphabetic(5), 0L, new ArrayList<>());
         Category category = controller.saveCategory(categoryMakeDto);
-        ProductDto productDto = new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), category, new ArrayList<>(), vendor.getId(), vendor.getBusinessName());
+        ProductDto productDto = new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), category.getId(), new ArrayList<>(), vendor.getId(), vendor.getBusinessName());
 
-        Product product = controller.findProduct(controller.saveProduct(vendor, productDto).getId());
+        Product product = controller.findProductById(controller.saveProduct(vendor, productDto).getId());
 
         assertThat(product.getDescription()).isEqualTo(productDto.description());
         assertThat(product.getPrice()).isEqualTo(productDto.price());
         assertThat(product.getTitle()).isEqualTo(productDto.title());
         assertThat(product.getVendor().getId()).isEqualTo(productDto.vendorId());
         assertThat(product.getAttributes()).hasSize(productDto.attributes().size());
-        assertThat(product.getCategory().getName()).isEqualTo(productDto.category().getName());
+        assertThat(product.getCategory().getId()).isEqualTo(productDto.categoryId());
 
     }
 
@@ -476,9 +465,9 @@ class ControllerTest
 
 
         final long orderNumber = controller.saveOrder(order).getOrderNumber();
-        CustomerOrderDto customerOrderDto = controller.getOrder(customer.getEmail(), orderNumber);
-        CustomerOrderDto vendorOrderDto = controller.getOrder(vendor.getEmail(), orderNumber);
-        CustomerOrderDto adminOrderDto = controller.getOrder(admin.getEmail(), orderNumber);
+        CustomerOrderDto customerOrderDto = controller.findOrder(customer.getEmail(), orderNumber);
+        CustomerOrderDto vendorOrderDto = controller.findOrder(vendor.getEmail(), orderNumber);
+        CustomerOrderDto adminOrderDto = controller.findOrder(admin.getEmail(), orderNumber);
 
         assertThat(customerOrderDto.getId()).isEqualTo(orderNumber);
         assertThat(customerOrderDto.getCustomerMail()).isEqualTo(customer.getEmail());
@@ -523,7 +512,7 @@ class ControllerTest
     @Test
     void getFakeCategoryTest()
     {
-        assertThrows(NotFoundException.class, () -> controller.getCategory(-1));
+        assertThrows(NotFoundException.class, () -> controller.findCategoryById(-1));
     }
 
     @Test
@@ -544,7 +533,7 @@ class ControllerTest
 
         vendor.setId(userService.save(vendor).getId());
 
-        final VendorPageDto vendorDto = controller.getVendorById(vendor.getId());
+        final VendorPageDto vendorDto = controller.findVendorById(vendor.getId());
         assertThat(vendorDto.theme()).isEqualTo(vendor.getTheme());
         assertThat(vendorDto.introduction()).isEqualTo(vendor.getIntroduction());
         assertThat(vendorDto.vatNumber()).isEqualTo(vendor.getVatNumber());

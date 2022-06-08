@@ -48,7 +48,7 @@ public class CartController {
     @GetMapping
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<CartDto> getCart(Principal principal) {
-        return ResponseEntity.ok(controller.getCustomerCart(principal.getName()));
+        return ResponseEntity.ok(controller.findCustomerCart(principal.getName()));
     }
 
     /**

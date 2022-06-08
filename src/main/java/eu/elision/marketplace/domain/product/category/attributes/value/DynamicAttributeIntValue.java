@@ -15,12 +15,25 @@ public class DynamicAttributeIntValue extends DynamicAttributeValue<Integer>
 {
     private int value;
 
+    /**
+     * Public constructor to set all the fields
+     *
+     * @param id            the id of the attribute value
+     * @param attributeName the name of the attribute value
+     * @param value         the value of the attribute value
+     */
     public DynamicAttributeIntValue(Long id, String attributeName, int value)
     {
         super(id, attributeName);
         this.value = value;
     }
 
+    /**
+     * Public constructor
+     *
+     * @param attributeName the name of the attribute value
+     * @param value         the value of the attribute value
+     */
     public DynamicAttributeIntValue(String attributeName, Integer value)
     {
         super(attributeName);

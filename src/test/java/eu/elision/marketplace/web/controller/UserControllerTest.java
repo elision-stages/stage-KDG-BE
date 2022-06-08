@@ -118,11 +118,4 @@ class UserControllerTest {
         assertThat(((Vendor) vendor).getPhoneNumber()).isEqualTo(phoneNumber);
         assertThat(((Vendor) vendor).getBusinessName()).isEqualTo(businessName);
     }
-
-    @Test
-    void testUserNotValidated() {
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                String.format("%s/register/vendor", base), new Vendor(), String.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
 }

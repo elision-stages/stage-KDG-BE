@@ -54,21 +54,14 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-    }
-
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-
     /**
      * Geberate a JWT token for a specific user
+     *
      * @param user User to generate a token for
      * @return The JWT token for the specified user as a string
      */
-    public String generateToken(User user) {
+    public String generateToken(User user)
+    {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("firstname", user.getFirstName());
@@ -76,7 +69,32 @@ public class JwtService {
         return generateToken(claims, user.getEmail());
     }
 
-    private String generateToken(Map<String, Object> claims, String subject) {
+    /**
+     * Check if a specifik token is valid and matches specified UserDetails
+     *
+     * @param token       The token to validate
+     * @param userDetails The UserDetails object to validate against
+     * @return A boolean if the validation has succeeded
+     */
+    public Boolean validateToken(String token, UserDetails userDetails)
+    {
+        final String username = getUsernameFromToken(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    private Boolean isTokenExpired(String token)
+    {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+
+    private Claims getAllClaimsFromToken(String token)
+    {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    }
+
+    private String generateToken(Map<String, Object> claims, String subject)
+    {
         Date expirationDate = new Date(System.currentTimeMillis() + jwtTokenValidity * 1000 * 60);
         return Jwts.builder()
                 .setClaims(claims)
@@ -85,16 +103,5 @@ public class JwtService {
                 .setIssuer("Marketplace")
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
-    }
-
-    /**
-     * Check if a specifik token is valid and matches specified UserDetails
-     * @param token         The token to validate
-     * @param userDetails   The UserDetails object to validate against
-     * @return A boolean if the validation has succeeded
-     */
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

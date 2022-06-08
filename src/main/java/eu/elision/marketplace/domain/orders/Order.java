@@ -1,7 +1,8 @@
 package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.users.Customer;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -13,8 +14,9 @@ import java.util.List;
 /**
  * The order class contains the orderNumber, orderLines and shipping address of an order. When the user is a vendor the orderLines should only be of products from the vendor.
  */
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "orders")
 public class Order {
     @Id

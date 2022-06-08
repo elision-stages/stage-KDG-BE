@@ -1,4 +1,4 @@
-package eu.elision.marketplace.domain.product.category.attributes;
+package eu.elision.marketplace.domain.product.category.attributes.picklist;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

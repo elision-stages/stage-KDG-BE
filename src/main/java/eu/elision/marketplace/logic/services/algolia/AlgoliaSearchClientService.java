@@ -32,7 +32,7 @@ public class AlgoliaSearchClientService implements SearchClientService<SearchInd
                 .setWriteTimeOut(30000)
                 .setReadTimeOut(1000)
                 .build();
-        logger.info(String.format("Retrieving search client %s", String.format("%s_%s", indexPrefix, "kdg_stage_marketplace")));
+        logger.info("Retrieving search client {}_{}", indexPrefix, "kdg_stage_marketplace");
         try (SearchClient client = DefaultSearchClient.create(config)) {
             return client.initIndex(String.format("%s_%s", indexPrefix, "kdg_stage_marketplace"), AlgoliaProductDto.class);
         }

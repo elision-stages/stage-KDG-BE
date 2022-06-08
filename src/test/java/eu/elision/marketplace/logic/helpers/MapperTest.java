@@ -2,6 +2,10 @@ package eu.elision.marketplace.logic.helpers;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.domain.product.category.attributes.Type;
+import eu.elision.marketplace.domain.product.category.attributes.picklist.PickList;
+import eu.elision.marketplace.domain.product.category.attributes.picklist.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
@@ -223,7 +227,7 @@ class MapperTest
 
         EditProductDto editProductDto = new EditProductDto(
                 RandomUtils.nextLong(),
-                category,
+                category.getId(),
                 RandomStringUtils.randomAlphabetic(50),
                 RandomUtils.nextInt(),
                 RandomStringUtils.randomAlphabetic(50),
@@ -234,11 +238,40 @@ class MapperTest
         Product product = Mapper.toProduct(editProductDto, category, vendor, attributeValues);
 
         assertThat(product.getId()).isEqualTo(editProductDto.id());
-        assertThat(product.getCategory()).isEqualTo(editProductDto.category());
+        assertThat(product.getCategory()).isEqualTo(category);
         assertThat(product.getDescription()).isEqualTo(editProductDto.description());
         assertThat(product.getPrice()).isEqualTo(editProductDto.price());
         assertThat(product.getTitle()).isEqualTo(editProductDto.title());
         assertThat(product.getImages()).isEqualTo(editProductDto.images());
         assertThat(product.getAttributes()).isEqualTo(attributeValues);
+    }
+
+
+    @Test
+    void toCategoryDto()
+    {
+        final Category cat1 = new Category();
+        final String name = RandomStringUtils.randomAlphabetic(4);
+        cat1.setName(name);
+
+        final DynamicAttribute dynamicAttribute = new DynamicAttribute();
+        dynamicAttribute.setRequired(RandomUtils.nextBoolean());
+        dynamicAttribute.setType(Type.DECIMAL);
+        dynamicAttribute.setName(RandomStringUtils.randomAlphabetic(4));
+        cat1.getCharacteristics().add(dynamicAttribute);
+
+        final DynamicAttribute dynamicAttribute2 = new DynamicAttribute();
+        dynamicAttribute2.setRequired(RandomUtils.nextBoolean());
+        dynamicAttribute2.setType(Type.STRING);
+        dynamicAttribute2.setName(RandomStringUtils.randomAlphabetic(4));
+
+        final PickList pickList = new PickList();
+        pickList.setItems(new ArrayList<>(List.of(new PickListItem())));
+        cat1.getCharacteristics().add(dynamicAttribute2);
+
+        CategoryDto categoryDto = Mapper.toCategoryDto(cat1);
+
+        assertThat(categoryDto.name()).isEqualTo(name);
+        assertThat(categoryDto.characteristics()).hasSize(2);
     }
 }

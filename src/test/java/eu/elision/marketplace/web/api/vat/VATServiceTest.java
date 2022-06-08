@@ -1,21 +1,23 @@
 package eu.elision.marketplace.web.api.vat;
 
+import eu.elision.marketplace.logic.services.vat.Business;
+import eu.elision.marketplace.logic.services.vat.VATService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class VATClientTest
+class VATServiceTest
 {
 
     @Test
     void checkVatService()
     {
-        VATClient vatClient = new VATClient();
+        VATService vatService = new VATService();
 
         final String countryCode = "be";
         final String number = "0458402105";
-        Business business = vatClient.checkVatService(countryCode, number);
+        Business business = vatService.checkVatService(countryCode, number);
 
         assertThat(business).isNotNull();
     }
@@ -23,9 +25,9 @@ class VATClientTest
     @Test
     void checkVatServiceFullNumber()
     {
-        VATClient vatClient = new VATClient();
+        VATService vatService = new VATService();
 
-        Business business = vatClient.checkVatService("BE0458402105");
+        Business business = vatService.checkVatService("BE0458402105");
 
         assertThat(business).isNotNull();
     }
@@ -33,8 +35,8 @@ class VATClientTest
     @Test
     void checkVatServiceFail()
     {
-        VATClient vatClient = new VATClient();
-        assertThat(vatClient.checkVatService(
+        VATService vatService = new VATService();
+        assertThat(vatService.checkVatService(
                 RandomStringUtils.randomAlphabetic(2), RandomStringUtils.randomAlphabetic(10)))
                 .isNull();
     }

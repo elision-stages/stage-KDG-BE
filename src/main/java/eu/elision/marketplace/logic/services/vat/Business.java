@@ -1,4 +1,4 @@
-package eu.elision.marketplace.web.api.vat;
+package eu.elision.marketplace.logic.services.vat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

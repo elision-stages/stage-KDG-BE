@@ -9,14 +9,14 @@ import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAt
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeIntValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.exceptions.InvalidDataException;
+import eu.elision.marketplace.exceptions.NotFoundException;
+import eu.elision.marketplace.exceptions.UnauthorisedException;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.logic.services.product.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
-import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

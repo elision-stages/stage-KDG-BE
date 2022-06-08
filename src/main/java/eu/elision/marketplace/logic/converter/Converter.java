@@ -1,6 +1,6 @@
 package eu.elision.marketplace.logic.converter;
 
-import eu.elision.marketplace.logic.converter.exeption.ConversionException;
+import eu.elision.marketplace.exceptions.ConversionException;
 import eu.elision.marketplace.logic.populator.Populator;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public abstract class Converter<S, T> {
     private final List<Populator<S, T>> populatorList;
-    private Class<T> targetClass;
+    private final Class<T> targetClass;
 
     protected Converter(List<Populator<S, T>> populatorList, Class<T> targetClass) {
         this.populatorList = populatorList;

@@ -2,7 +2,7 @@ package eu.elision.marketplace.logic.converter;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.users.Vendor;
-import eu.elision.marketplace.logic.converter.exeption.ConversionException;
+import eu.elision.marketplace.exceptions.ConversionException;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

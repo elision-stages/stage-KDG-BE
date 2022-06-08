@@ -1,6 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.web.api.vat.Business;
+import eu.elision.marketplace.logic.services.vat.Business;
 import eu.elision.marketplace.web.dtos.TokenDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

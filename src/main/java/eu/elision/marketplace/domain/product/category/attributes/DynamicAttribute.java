@@ -9,16 +9,18 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
- * This class is used to dynamicly assign attributes to a category
+ * This class is used to dynamically assign attributes to a category
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class DynamicAttribute {
+public class DynamicAttribute implements Serializable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

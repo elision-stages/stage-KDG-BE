@@ -3,13 +3,14 @@ package eu.elision.marketplace.logic;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
+import eu.elision.marketplace.exceptions.InvalidDataException;
+import eu.elision.marketplace.exceptions.NotFoundException;
+import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.repositories.DynamicAttributeRepository;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,8 @@ class DynamicAttributeServiceTest {
     private DynamicAttributeRepository dynamicAttributeRepository;
 
     @Test
-    void toDynamicAttributeTest() {
+    void toDynamicAttributeTest()
+    {
         final String name1 = RandomStringUtils.randomAlphabetic(5);
         DynamicAttributeDto dynamicAttributeDto = new DynamicAttributeDto(name1, RandomUtils.nextBoolean(), DECIMAL);
         final String name2 = RandomStringUtils.randomAlphabetic(5);
@@ -46,9 +48,9 @@ class DynamicAttributeServiceTest {
 
         Category category = new Category();
 
-        assertThat(dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto, category).getName()).isEqualTo(name1);
-        assertThat(dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto2, category).getName()).isEqualTo(name2);
-        assertThat(dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto3, category).getName()).isEqualTo(name3);
+        assertThat(Mapper.toDynamicAttribute(dynamicAttributeDto, category).getName()).isEqualTo(name1);
+        assertThat(Mapper.toDynamicAttribute(dynamicAttributeDto2, category).getName()).isEqualTo(name2);
+        assertThat(Mapper.toDynamicAttribute(dynamicAttributeDto3, category).getName()).isEqualTo(name3);
     }
 
     @Test

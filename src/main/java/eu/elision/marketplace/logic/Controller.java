@@ -4,12 +4,11 @@ import eu.elision.marketplace.domain.orders.Order;
 import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
-import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.exceptions.InvalidDataException;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
 import eu.elision.marketplace.logic.services.orders.OrderLineService;
@@ -19,6 +18,8 @@ import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.logic.services.product.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.logic.services.vat.Business;
+import eu.elision.marketplace.logic.services.vat.VATService;
 import eu.elision.marketplace.web.dtos.TokenDto;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
@@ -32,9 +33,6 @@ import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
 import eu.elision.marketplace.web.dtos.users.VendorPageDto;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
-import eu.elision.marketplace.web.webexceptions.UnauthorisedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,10 +40,9 @@ import org.springframework.stereotype.Service;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 /**
- * The controller that relays all of the methods of the services. It connects all of the services together
+ * The controller that relays all the methods of the services. It connects all the services together
  */
 @Service
 public class Controller
@@ -59,7 +56,7 @@ public class Controller
     private final OrderService orderService;
     private final OrderLineService orderLineService;
     private final AlgoliaIndexerService algoliaIndexerService;
-    private static final String USER_NOT_FOUND = "User with email %s not found";
+    private final VATService vatService;
 
     /**
      * Public constructor with all services
@@ -73,9 +70,10 @@ public class Controller
      * @param orderService                 order service
      * @param orderLineService             order line service
      * @param algoliaIndexerService        algolia indexer service
+     * @param vatService vat checking service
      */
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, OrderService orderService, OrderLineService orderLineService, AlgoliaIndexerService algoliaIndexerService)
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, OrderService orderService, OrderLineService orderLineService, AlgoliaIndexerService algoliaIndexerService, VATService vatService)
     {
         this.userService = userService;
         this.categoryService = categoryService;
@@ -86,9 +84,10 @@ public class Controller
         this.orderService = orderService;
         this.orderLineService = orderLineService;
         this.algoliaIndexerService = algoliaIndexerService;
+        this.vatService = vatService;
     }
 
-    //---------------------------------- Find all - only for testing
+    //---------------------------------- Find all
 
     /**
      * get all users from the repository
@@ -98,27 +97,6 @@ public class Controller
     public List<User> findAllUsers()
     {
         return userService.findAllUsers();
-    }
-
-    /**
-     * get all customers from the repository in dto format
-     *
-     * @return a list with customer dto
-     */
-    public List<CustomerDto> findAllCustomerDto()
-    {
-        return findAllUsers().stream().filter(Customer.class::isInstance).map(user -> userService.toCustomerDto((Customer) user)).toList();
-    }
-
-    /**
-     * Find all products of a given vendor
-     *
-     * @param vendor the vendor
-     * @return a list of products of a given vendor
-     */
-    public Collection<Product> findProductsByVendor(Vendor vendor)
-    {
-        return productService.findProductsByVendor(vendor);
     }
 
     /**
@@ -132,27 +110,158 @@ public class Controller
     }
 
     /**
+     * Get all categories
+     *
+     * @return a list of categories
+     */
+    public List<Category> findAllCategories()
+    {
+        return categoryService.findAll();
+    }
+
+    //--------------------------------------------------- Find By
+    //---------------------------- Products
+
+    /**
+     * Find all products of a given vendor
+     *
+     * @param vendorEmail the email of the vendor
+     * @return a list of products of a given vendor
+     */
+    public Collection<Product> findProductsByVendor(String vendorEmail)
+    {
+        return productService.findProductsByVendorEmail(vendorEmail);
+    }
+
+    /**
      * Get a product from an id
      *
      * @param id the id of the product
      * @return the product with given id
      */
-    public Product findProduct(long id)
+    public Product findProductById(long id)
     {
         return productService.findProductById(id);
     }
 
-    //---------------------------------- Find all
+    //---------------------------- Users
 
     /**
-     * Get all categories in dto form
+     * Find a user by id
      *
-     * @return a list of category dtos
+     * @param id the id of the user
+     * @return the user with given id
      */
-    public Collection<CategoryDto> findAllCategoriesDto()
+    public User findUserById(long id)
     {
-        return categoryService.findAllDto();
+        return userService.findUserById(id);
     }
+
+    /**
+     * Find a user by email
+     *
+     * @param email the email of the user
+     * @return user with given email
+     */
+    public User findUserByEmail(String email)
+    {
+        return userService.findUserByEmail(email);
+    }
+
+    /**
+     * Get the cart in dto form of a customer
+     *
+     * @param userMail the email of the user
+     * @return the cart dto of the user
+     */
+    public CartDto findCustomerCart(String userMail)
+    {
+        return Mapper.toCartDto(userService.getUserCart(userMail));
+    }
+
+    /**
+     * Get vendor info by id
+     *
+     * @param id the id of the vendor
+     * @return a vendor info dto object with the values of given vendor
+     */
+    public VendorPageDto findVendorById(long id)
+    {
+        return Mapper.toVendorPageDto(userService.findVendorById(id), productService.findProductsByVendorId(id));
+    }
+
+    /**
+     * Get the token of a vendor
+     *
+     * @param vendorEmail the email of the vendor
+     * @return a dto object of the vendor token
+     */
+    public TokenDto getVendorToken(String vendorEmail)
+    {
+        return Mapper.toTokenDto(userService.updateToken(userService.findVendorByEmail(vendorEmail)));
+    }
+
+    //---------------------------- Category
+
+    /**
+     * Find a category based on the name
+     *
+     * @param name the name of the category
+     * @return the category with given name
+     */
+    public Category findCategoryByName(String name)
+    {
+        return categoryService.findByName(name);
+    }
+
+    /**
+     * Retrieves a specific category by ID
+     *
+     * @param id The ID to search for
+     * @return The requested category
+     */
+    public Category findCategoryById(long id)
+    {
+        return categoryService.findById(id);
+    }
+
+    //--------------------------------- Order
+
+    /**
+     * Find an order by id
+     *
+     * @param orderId the id of an order
+     * @return the order with the given id
+     */
+    public Order findOrderById(long orderId)
+    {
+        return orderService.findOrderById(orderId);
+    }
+
+    /**
+     * Get all the orders of a given vendor
+     *
+     * @param userEmail the email of the vendor
+     * @return all the vendor orders
+     */
+    public Collection<OrderDto> findUserOrders(String userEmail)
+    {
+        return orderService.findUserOrders(userService.findUserByEmail(userEmail));
+    }
+
+    /**
+     * Get the order details with the order lines
+     *
+     * @param mail The email of the user asking for the order details
+     * @param id   The ID of the order you need info of
+     * @return CustomerOrderDto
+     */
+    public CustomerOrderDto findOrder(String mail, long id)
+    {
+        return orderService.getOrder(userService.findUserByEmail(mail), id);
+    }
+
+    //----------------------------------------------------------- save
 
     /**
      * Save a user
@@ -166,6 +275,53 @@ public class Controller
     }
 
     /**
+     * Save an order
+     *
+     * @param order the order you want to save
+     * @return the saved order with id
+     */
+    public Order saveOrder(Order order)
+    {
+        return orderService.save(order);
+    }
+
+    /**
+     * Save an order line
+     *
+     * @param orderLine the order line you want to save
+     */
+    public void saveOrderLine(OrderLine orderLine)
+    {
+        orderLineService.save(orderLine);
+    }
+
+    /**
+     * Save a vendor from dto object
+     *
+     * @param vendorDto the dto object that needs to be saved
+     * @return the saved object
+     */
+    public Vendor saveVendor(VendorDto vendorDto)
+    {
+        String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
+        VendorDto newVendorDto = new VendorDto(vendorDto.firstName(), vendorDto.lastName(), vendorDto.email(), password, false, vendorDto.logo(), vendorDto.theme(), vendorDto.introduction(), vendorDto.vatNumber(), vendorDto.phoneNumber(), vendorDto.businessName());
+        return (Vendor) userService.save(Mapper.toVendor(newVendorDto));
+    }
+
+    /**
+     * Save a category from dto object
+     *
+     * @param categoryMakeDto the dto object that needs to be saved
+     * @return the created category
+     */
+    public Category saveCategory(CategoryMakeDto categoryMakeDto)
+    {
+        final Category category = categoryService.save(categoryMakeDto);
+        category.setCharacteristics(Mapper.toDynamicAttributes(categoryMakeDto.characteristics(), category));
+        return categoryService.save(category);
+    }
+
+    /**
      * Save a customer from a customer dto
      *
      * @param customerDto the customer dto that needs to be saved
@@ -174,7 +330,7 @@ public class Controller
     {
         String password = bCryptPasswordEncoder.encode(customerDto.password());
         CustomerDto newCustomerDto = new CustomerDto(customerDto.firstName(), customerDto.lastName(), customerDto.email(), password);
-        Customer customer = userService.toCustomer(newCustomerDto);
+        Customer customer = Mapper.toCustomer(newCustomerDto);
         saveUser(customer);
     }
 
@@ -187,10 +343,11 @@ public class Controller
      */
     public Product saveProduct(Vendor vendor, @Valid ProductDto productDto)
     {
-        if (productDto.category() == null) throw new InvalidDataException("Product must have a category");
-        final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes(), productDto.category().getId());
+        final Category category = categoryService.findById(productDto.categoryId());
+
+        final Collection<DynamicAttributeValue<?>> productAttributes = dynamicAttributeService.getSavedAttributes(productDto.attributes(), productDto.categoryId());
         dynamicAttributeValueService.save(productAttributes);
-        return productService.save(productDto, productAttributes, vendor);
+        return productService.save(productDto, productAttributes, vendor, category);
     }
 
     /**
@@ -233,80 +390,10 @@ public class Controller
      */
     public void saveDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
     {
-        DynamicAttribute dynamicAttribute = dynamicAttributeService.toDynamicAttribute(dynamicAttributeDto, category);
-        dynamicAttribute.setCategory(category);
-        dynamicAttributeService.save(dynamicAttribute);
+        dynamicAttributeService.save(Mapper.toDynamicAttribute(dynamicAttributeDto, category));
     }
 
-    //--------------------------------- findById
-
-    /**
-     * Find an user by id
-     *
-     * @param id the id of the user
-     * @return the user with given id
-     */
-    public User findUserById(long id)
-    {
-        return userService.findUserById(id);
-    }
-
-    /**
-     * Save a vendor from dto object
-     *
-     * @param vendorDto the dto object that needs to be saved
-     * @return the saved object
-     */
-    public Vendor saveVendor(VendorDto vendorDto)
-    {
-        String password = vendorDto.password() == null ? null : bCryptPasswordEncoder.encode(vendorDto.password());
-        VendorDto newVendorDto = new VendorDto(vendorDto.firstName(), vendorDto.lastName(), vendorDto.email(), password, false, vendorDto.logo(), vendorDto.theme(), vendorDto.introduction(), vendorDto.vatNumber(), vendorDto.phoneNumber(), vendorDto.businessName());
-        return userService.save(newVendorDto);
-    }
-
-    /**
-     * Find an user by email
-     *
-     * @param email the email of the user
-     * @return user with given email
-     */
-    public User findUserByEmail(String email)
-    {
-        return userService.findUserByEmail(email);
-    }
-
-    /**
-     * Save a category from dto object
-     *
-     * @param categoryMakeDto the dto object that needs to be saved
-     * @return the created category
-     */
-    public Category saveCategory(CategoryMakeDto categoryMakeDto)
-    {
-        final Category category = categoryService.save(categoryMakeDto);
-        return categoryService.save(category, dynamicAttributeService.toDynamicAttributes(categoryMakeDto.characteristics(), category));
-    }
-
-    /**
-     * Find a category based on the name
-     *
-     * @param name the name of the category
-     * @return the category with given name
-     */
-    public Category findCategoryByName(String name)
-    {
-        return categoryService.findByName(name);
-    }
-
-    /**
-     * Get all categories
-     *
-     * @return a list of categories
-     */
-    public List<Category> findAllCategories()
-    {
-        return categoryService.findAll();
-    }
+    //----------------------------------------------------------- Edit
 
     /**
      * Edit a product. Throws an exception when the user email is not found, the email is not of a vendor
@@ -317,17 +404,11 @@ public class Controller
      */
     public Product editProduct(EditProductDto editProductDto, String userEmail)
     {
-        User user = userService.findUserByEmail(userEmail);
-        if (user == null)
-        {
-            throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
-        }
-        if (!(user instanceof Vendor vendor))
-            throw new NotFoundException(String.format("User with email %s is not a vendor", userEmail));
-
-        final List<DynamicAttributeValue<?>> attributeValues = dynamicAttributeService.getSavedAttributes(editProductDto.attributes(), editProductDto.category().getId()).stream().toList();
+        final List<DynamicAttributeValue<?>> attributeValues = dynamicAttributeService.getSavedAttributes(editProductDto.attributes(), editProductDto.categoryId()).stream().toList();
         dynamicAttributeValueService.save(attributeValues);
-        return productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, attributeValues));
+        return algoliaIndexerService.indexProduct(
+                productService.editProduct(
+                        Mapper.toProduct(editProductDto, categoryService.findById(editProductDto.categoryId()), userService.findVendorByEmail(userEmail), attributeValues)));
     }
 
     /**
@@ -342,10 +423,37 @@ public class Controller
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count(), addProductDto.add());
         userService.editUser(customer);
-        customer = (Customer) userService.findUserByEmail(customerEmail);
 
         return Mapper.toCartDto(customer.getCart());
     }
+
+    /**
+     * Checkout the cart of a user
+     *
+     * @param userEmail the email of the user
+     * @return the id of the order. 0 if no order was created
+     */
+    public long checkoutCart(String userEmail)
+    {
+        Customer customer = userService.findCustomerByEmail(userEmail);
+
+        final Order checkout = customer.getCart().checkout(customer);
+        if (checkout == null) return 0L;
+
+        return orderService.save(checkout).getOrderNumber();
+    }
+
+    /**
+     * Edit a category
+     *
+     * @param editCategoryDto the dto with the data to edit the category
+     */
+    public void editCategory(CategoryDto editCategoryDto)
+    {
+        categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
+    }
+
+    //----------------------------------------------------------- Delete
 
     /**
      * Delete a product - <strong>Only for testing</strong>
@@ -365,159 +473,17 @@ public class Controller
      */
     public void deleteProduct(long productId, String userEmail)
     {
-        User user = userService.findUserByEmail(userEmail);
-        if (user == null) throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
-        if (!(user instanceof Vendor vendor))
-            throw new NotFoundException(String.format("User with id %s is not a vendor", user.getId()));
-
-        Product product = productService.findProductById(productId);
-        if (!(Objects.equals(product.getVendor().getId(), vendor.getId())))
-            throw new UnauthorisedException(String.format("Vendor with id %s is not allowed to delete product with id %s", vendor.getId(), product.getId()));
-
-        productService.delete(productId);
+        productService.deleteProduct(productId, userEmail);
     }
 
     /**
-     * Get the cart in dto form of a customer
+     * Chech a vat number
      *
-     * @param customerName the email of the user
-     * @return the cart dto of the user
+     * @param vat the vat number that needs to be checked
+     * @return the business information when everything is ok, invalid data exception otherwise
      */
-    public CartDto getCustomerCart(String customerName)
+    public Business checkVat(String vat)
     {
-        final User user = userService.findUserByEmail(customerName);
-
-        if (user == null) throw new NotFoundException("User not found");
-        if (!(user instanceof Customer)) throw new UnauthorisedException("Only customers have a shopping cart");
-        return Mapper.toCartDto(((Customer) user).getCart());
+        return vatService.checkVatService(vat);
     }
-
-    /**
-     * Checkout the cart of a user
-     *
-     * @param userEmail the email of the user
-     * @return the id of the order. 0 if no order was created
-     */
-    public long checkoutCart(String userEmail)
-    {
-        User user = userService.findUserByEmail(userEmail);
-
-        if (!(user instanceof Customer customer))
-            throw new NotFoundException(String.format("User with email %s is not a customer", userEmail));
-
-        final Order checkout = customer.getCart().checkout(customer);
-        if (checkout == null) return 0L;
-
-        return orderService.save(checkout).getOrderNumber();
-    }
-
-    /**
-     * Find an order by id
-     *
-     * @param orderId the id of an order
-     * @return the order with the given id
-     */
-    public Order findOrderById(long orderId)
-    {
-        return orderService.findOrderById(orderId);
-    }
-
-    /**
-     * Get all the orders of a given vendor
-     *
-     * @param userEmail the email of the venodor
-     * @return all the vendor orders
-     */
-    public Collection<OrderDto> getOrders(String userEmail)
-    {
-        User user = userService.findUserByEmail(userEmail);
-        if (user == null)
-        {
-            throw new NotFoundException(String.format(USER_NOT_FOUND, userEmail));
-        }
-
-        if (user instanceof Vendor vendor) return orderService.findVendorOrders(vendor);
-        if (user instanceof Customer customer) return orderService.findCustomerOrders(customer);
-        if (user instanceof Admin) return orderService.findAdminOrders();
-        throw new UnauthorisedException(String.format("User with email %s is not a vendor, customer or admin", userEmail));
-    }
-
-    /**
-     * Save an order
-     *
-     * @param order the order you want to save
-     * @return the saved order with id
-     */
-    public Order saveOrder(Order order)
-    {
-        return orderService.save(order);
-    }
-
-    /**
-     * Save an order line
-     *
-     * @param orderLine the order line you want to save
-     */
-    public void saveOrderLine(OrderLine orderLine)
-    {
-        orderLineService.save(orderLine);
-    }
-
-    /**
-     * Get the order details with the orderlines
-     *
-     * @param mail The mailaddress of the user asking for the order details
-     * @param id   THe ID of the order you need info of
-     * @return CustomerOrderDto
-     */
-    public CustomerOrderDto getOrder(String mail, long id)
-    {
-        User user = userService.findUserByEmail(mail);
-        return orderService.getOrder(user, id);
-    }
-
-    /**
-     * Edit a category
-     *
-     * @param editCategoryDto the dto with the data to edit the category
-     */
-    public void editCategory(CategoryDto editCategoryDto)
-    {
-        categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
-    }
-
-    /**
-     * Retrieves a specific category by ID
-     *
-     * @param id The ID to search for
-     * @return The requested category
-     */
-    public Category getCategory(long id)
-    {
-        return categoryService.getCategory(id);
-    }
-
-    /**
-     * Get vendor info by id
-     *
-     * @param id the id of the vendor
-     * @return a vendor info dto object with the values of given vendor
-     */
-    public VendorPageDto getVendorById(long id)
-    {
-        return Mapper.toVendorPageDto(userService.findVendorById(id), productService.getProductsByVendorId(id));
-    }
-
-    /**
-     * Get the token of a vendor
-     *
-     * @param vendorEmail the email of the vendor
-     * @return a dto object of the vendor token
-     */
-    public TokenDto getVendorToken(String vendorEmail)
-    {
-        return Mapper.toTokenDto(userService.updateToken(userService.findVendorByEmail(vendorEmail)));
-    }
-
-
 }

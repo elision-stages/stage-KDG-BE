@@ -33,8 +33,7 @@ public class CategoriesController {
 
     @GetMapping
     ResponseEntity<List<CategoryDto>> getCategories() {
-        final List<Category> allCategories = controller.findAllCategories();
-        return ResponseEntity.ok(Mapper.toCategoryDtoList(allCategories));
+        return ResponseEntity.ok(Mapper.toCategoryDtoList(controller.findAllCategories()));
     }
 
     /**
@@ -46,7 +45,7 @@ public class CategoriesController {
     @Secured("ROLE_ADMIN")
     @GetMapping("{id}")
     ResponseEntity<Category> getCategory(@PathVariable long id) {
-        return ResponseEntity.ok(controller.getCategory(id));
+        return ResponseEntity.ok(controller.findCategoryById(id));
     }
 
     @Secured("ROLE_ADMIN")

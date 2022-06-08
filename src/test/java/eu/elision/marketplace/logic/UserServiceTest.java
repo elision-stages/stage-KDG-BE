@@ -4,10 +4,10 @@ import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.exceptions.InvalidDataException;
+import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.repositories.UserRepository;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
@@ -314,7 +314,7 @@ class UserServiceTest
     @Test
     void testSaveNullUser()
     {
-        assertThat(userService.save((User) null)).isNull();
+        assertThat(userService.save(null)).isNull();
     }
 
     @Test

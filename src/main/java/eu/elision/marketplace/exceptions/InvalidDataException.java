@@ -1,4 +1,4 @@
-package eu.elision.marketplace.web.webexceptions;
+package eu.elision.marketplace.exceptions;
 
 /**
  * An exception used when invalid data is used to create an object

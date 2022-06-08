@@ -9,9 +9,10 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,7 +20,8 @@ import java.util.Set;
  */
 @Getter
 @Entity
-public class Category {
+public class Category implements Serializable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Setter
@@ -39,7 +41,7 @@ public class Category {
     @OneToMany(mappedBy = "category")
     @Setter
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<DynamicAttribute> characteristics;
+    private Collection<DynamicAttribute> characteristics;
 
     /**
      * No args constructor. Initialises the sub categories and characteristics array.

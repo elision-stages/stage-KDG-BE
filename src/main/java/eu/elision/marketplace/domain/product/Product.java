@@ -4,12 +4,14 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Vendor;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,16 +19,18 @@ import java.util.Objects;
 /**
  * This product contains the info of a product
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @Entity
-public class Product {
+public class Product implements Serializable
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private double price;
     @Column(length = 250)
-    @Size(max = 250, min = 2, message = "Product title must contain between 2 and 50.000 characters")
+    @Size(max = 250, min = 2, message = "Product title must contain between 2 and 250 characters")
     private String title;
     @ManyToOne(cascade = CascadeType.MERGE)
     private Category category;

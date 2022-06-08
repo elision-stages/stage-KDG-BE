@@ -13,7 +13,6 @@ import javax.persistence.Entity;
 @Entity
 public class DynamicAttributeBoolValue extends DynamicAttributeValue<Boolean>
 {
-    //@Convert(converter = BooleanConverter.class)
     private boolean value;
 
     /**

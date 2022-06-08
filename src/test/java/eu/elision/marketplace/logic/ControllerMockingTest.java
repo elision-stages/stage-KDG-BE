@@ -5,8 +5,11 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.exceptions.InvalidDataException;
+import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
+import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.logic.services.product.ProductService;
@@ -14,13 +17,13 @@ import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -47,6 +50,8 @@ class ControllerMockingTest
     @Mock
     DynamicAttributeValueService dynamicAttributeValueService;
     @Mock
+    CategoryService categoryService;
+    @Mock
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
@@ -59,7 +64,7 @@ class ControllerMockingTest
 
         final ArrayList<String> images = new ArrayList<>();
         final ArrayList<AttributeValue<String, String>> attributes = new ArrayList<>();
-        final ArrayList<DynamicAttributeValue<?>> convertedAttribtues = new ArrayList<>();
+        final ArrayList<DynamicAttributeValue<?>> convertedAttributes = new ArrayList<>();
 
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
@@ -72,7 +77,7 @@ class ControllerMockingTest
                 vendor,
                 RandomStringUtils.randomAlphabetic(50),
                 images,
-                convertedAttribtues
+                convertedAttributes
         );
 
         ProductDto productDto = new ProductDto(
@@ -81,7 +86,7 @@ class ControllerMockingTest
                 product.getDescription(),
                 product.getTitle(),
                 images,
-                category,
+                category.getId(),
                 attributes,
                 vendor.getId(),
                 vendor.getBusinessName()
@@ -89,8 +94,9 @@ class ControllerMockingTest
 
         when(userService.findVendorByEmail(vendor.getEmail())).thenReturn(vendor);
         when(algoliaIndexerService.indexProduct(product)).thenReturn(product);
-        when(dynamicAttributeService.getSavedAttributes(attributes, category.getId())).thenReturn(convertedAttribtues);
-        when(productService.save(productDto, convertedAttribtues, vendor)).thenReturn(product);
+        when(dynamicAttributeService.getSavedAttributes(attributes, category.getId())).thenReturn(convertedAttributes);
+        when(productService.save(productDto, convertedAttributes, vendor, category)).thenReturn(product);
+        when(categoryService.findById(category.getId())).thenReturn(category);
 
         Product savedProduct = controller.saveProduct(vendor.getEmail(), productDto, null);
 
@@ -115,7 +121,7 @@ class ControllerMockingTest
 
         final ArrayList<String> images = new ArrayList<>();
         final ArrayList<AttributeValue<String, String>> attributes = new ArrayList<>();
-        final ArrayList<DynamicAttributeValue<?>> convertedAttribtues = new ArrayList<>();
+        final ArrayList<DynamicAttributeValue<?>> convertedAttributes = new ArrayList<>();
 
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
@@ -128,7 +134,7 @@ class ControllerMockingTest
                 vendor,
                 RandomStringUtils.randomAlphabetic(50),
                 images,
-                convertedAttribtues
+                convertedAttributes
         );
 
         ProductDto productDto = new ProductDto(
@@ -137,7 +143,7 @@ class ControllerMockingTest
                 product.getDescription(),
                 product.getTitle(),
                 images,
-                category,
+                category.getId(),
                 attributes,
                 vendor.getId(),
                 vendor.getBusinessName()
@@ -145,9 +151,10 @@ class ControllerMockingTest
 
         when(userService.findVendorByEmail(vendor.getEmail())).thenReturn(vendor);
         when(algoliaIndexerService.indexProduct(product)).thenReturn(product);
-        when(dynamicAttributeService.getSavedAttributes(attributes, category.getId())).thenReturn(convertedAttribtues);
-        when(productService.save(productDto, convertedAttribtues, vendor)).thenReturn(product);
+        when(dynamicAttributeService.getSavedAttributes(attributes, category.getId())).thenReturn(convertedAttributes);
+        when(productService.save(productDto, convertedAttributes, vendor, category)).thenReturn(product);
         when(bCryptPasswordEncoder.matches(vendor.getToken(), vendor.getToken())).thenReturn(true);
+        when(categoryService.findById(category.getId())).thenReturn(category);
 
         Product savedProduct = controller.saveProduct(vendor.getEmail(), productDto, vendor.getToken());
 
@@ -168,7 +175,7 @@ class ControllerMockingTest
                 RandomStringUtils.randomAlphabetic(50),
                 RandomStringUtils.randomAlphabetic(50),
                 new ArrayList<>(),
-                new Category(),
+                RandomUtils.nextInt(),
                 new ArrayList<>(),
                 vendor.getId(),
                 vendor.getBusinessName()
@@ -195,7 +202,7 @@ class ControllerMockingTest
 
         final ArrayList<String> images = new ArrayList<>();
         final ArrayList<AttributeValue<String, String>> attributes = new ArrayList<>();
-        final ArrayList<DynamicAttributeValue<?>> convertedAttribtues = new ArrayList<>();
+        final ArrayList<DynamicAttributeValue<?>> convertedAttributes = new ArrayList<>();
 
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
@@ -208,12 +215,12 @@ class ControllerMockingTest
                 vendor,
                 RandomStringUtils.randomAlphabetic(50),
                 images,
-                convertedAttribtues
+                convertedAttributes
         );
 
         EditProductDto editProductDto = new EditProductDto(
                 0L,
-                category,
+                category.getId(),
                 product.getTitle(),
                 product.getPrice(),
                 product.getDescription(),
@@ -221,11 +228,20 @@ class ControllerMockingTest
                 attributes
         );
 
-        when(userService.findUserByEmail(vendor.getEmail())).thenReturn(vendor);
-        when(dynamicAttributeService.getSavedAttributes(editProductDto.attributes(), category.getId())).thenReturn(convertedAttribtues);
-        when(productService.editProduct(Mapper.toProduct(editProductDto, editProductDto.category(), vendor, convertedAttribtues))).thenReturn(product);
+        when(userService.findVendorByEmail(vendor.getEmail())).thenReturn(vendor);
+        when(categoryService.findById(editProductDto.categoryId())).thenReturn(category);
+        when(dynamicAttributeService.getSavedAttributes(editProductDto.attributes(), category.getId())).thenReturn(convertedAttributes);
+        when(productService.editProduct(product)).thenReturn(product);
+        when(algoliaIndexerService.indexProduct(product)).thenReturn(product);
 
-        assertThat(controller.editProduct(editProductDto, vendor.getEmail())).isEqualTo(product);
+        try (MockedStatic<Mapper> utilities = Mockito.mockStatic(Mapper.class))
+        {
+            utilities.when(() -> Mapper.toProduct(editProductDto, category, vendor, convertedAttributes))
+                    .thenReturn(product);
+
+            assertThat(controller.editProduct(editProductDto, vendor.getEmail())).isEqualTo(product);
+        }
+
     }
 
     @Test
@@ -238,7 +254,7 @@ class ControllerMockingTest
 
         final ArrayList<String> images = new ArrayList<>();
         final ArrayList<AttributeValue<String, String>> attributes = new ArrayList<>();
-        final ArrayList<DynamicAttributeValue<?>> convertedAttribtues = new ArrayList<>();
+        final ArrayList<DynamicAttributeValue<?>> convertedAttributes = new ArrayList<>();
 
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
@@ -251,11 +267,11 @@ class ControllerMockingTest
                 vendor,
                 RandomStringUtils.randomAlphabetic(50),
                 images,
-                convertedAttribtues
+                convertedAttributes
         );
         EditProductDto editProductDto = new EditProductDto(
                 0L,
-                category,
+                category.getId(),
                 product.getTitle(),
                 product.getPrice(),
                 product.getDescription(),
@@ -263,56 +279,32 @@ class ControllerMockingTest
                 attributes
         );
 
-        when(userService.findUserByEmail(vendor.getEmail())).thenReturn(null);
+        when(userService.findVendorByEmail(vendor.getEmail())).thenThrow(NotFoundException.class);
 
         final String vendorEmail = vendor.getEmail();
-        Exception exception = assertThrows(NotFoundException.class, () -> controller.editProduct(editProductDto, vendorEmail));
-
-        assertThat(exception.getMessage()).isEqualTo(String.format("User with email %s not found", vendor.getEmail()));
+        assertThrows(NotFoundException.class, () -> controller.editProduct(editProductDto, vendorEmail));
     }
 
     @Test
     void testEditProductUserNotVendor()
     {
-        final Vendor vendor = new Vendor();
-        vendor.setId(RandomUtils.nextLong());
-        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
-        vendor.setBusinessName(RandomStringUtils.randomAlphabetic(50));
-
-        final ArrayList<String> images = new ArrayList<>();
-        final ArrayList<AttributeValue<String, String>> attributes = new ArrayList<>();
-        final ArrayList<DynamicAttributeValue<?>> convertedAttribtues = new ArrayList<>();
-
-        final Category category = new Category();
-        category.setId(RandomUtils.nextLong());
-
-        Product product = new Product(
-                RandomUtils.nextLong(),
-                RandomUtils.nextInt(),
-                RandomStringUtils.randomAlphabetic(50),
-                category,
-                vendor,
-                RandomStringUtils.randomAlphabetic(50),
-                images,
-                convertedAttribtues
-        );
         EditProductDto editProductDto = new EditProductDto(
                 0L,
-                category,
-                product.getTitle(),
-                product.getPrice(),
-                product.getDescription(),
-                images,
-                attributes
+                RandomUtils.nextInt(),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomUtils.nextInt(),
+                RandomStringUtils.randomAlphabetic(50),
+                new ArrayList<>(),
+                new ArrayList<>()
         );
 
-        when(userService.findUserByEmail(vendor.getEmail())).thenReturn(new Customer());
+        Customer customer = new Customer();
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
 
-        final String vendorEmail = vendor.getEmail();
-        Exception exception = assertThrows(NotFoundException.class, () -> controller.editProduct(editProductDto, vendorEmail));
+        when(userService.findVendorByEmail(customer.getEmail())).thenThrow(NotFoundException.class);
 
-        assertThat(exception.getMessage()).isEqualTo(String.format("User with email %s is not a vendor", vendor.getEmail()));
-
+        final String customerEmail = customer.getEmail();
+        assertThrows(NotFoundException.class, () -> controller.editProduct(editProductDto, customerEmail));
     }
 
 }
