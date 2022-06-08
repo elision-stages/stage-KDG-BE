@@ -18,10 +18,12 @@ public class AlgoliaProductCategoryPopulator implements Populator<Product, Algol
     @Override
     public void populate(Product source, AlgoliaProductDto target) {
         List<String> catStructure = new ArrayList<>();
+        List<Long> ids = new ArrayList<>();
         Category current = source.getCategory();
         if (current != null) target.setCategoryId(source.getCategory().getId());
         while (current != null) {
             catStructure.add(current.getName());
+            ids.add(current.getId());
             current = current.getParent();
         }
         Collections.reverse(catStructure);
@@ -32,5 +34,6 @@ public class AlgoliaProductCategoryPopulator implements Populator<Product, Algol
             target.getParameters().put(paramName, paramValue);
             catStructure.remove(catStructure.size() - 1);
         }
+        target.setCategoryIds(ids);
     }
 }
