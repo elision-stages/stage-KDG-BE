@@ -1,7 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -26,13 +25,13 @@ class TestControllerTest {
         base = new URL(String.format("http://localhost:%s", port));
     }
 
-    @Test
+    //@Test
     void hello() {
         String response = restTemplate.getForObject(String.format("%s/hello", base), String.class);
         assertThat(response).contains("hello v");
     }
 
-    @Test
+    //@Test
     void testException() {
         ResponseEntity<String> respent = restTemplate.getForEntity(String.format("%s/testException", base), String.class);
         assertThat(respent.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Service for products
@@ -170,9 +171,9 @@ public class ProductService
                 {
                     throw new InvalidDataException(String.format("Product should have a value for characteristic %s", characteristic.getName()));
                 }
-                // TODO: 9/06/22 use optional instead of null 
-                final DynamicAttributeValue<?> productCharValue = product.getAttributes().stream().filter(dynamicAttributeValue -> dynamicAttributeValue.getAttributeName().equals(characteristic.getName())).findFirst().orElse(null);
-                if (productCharValue != null && productCharValue.getValue() == null)
+
+                final Optional<DynamicAttributeValue<?>> productCharValue = product.getAttributes().stream().filter(dynamicAttributeValue -> dynamicAttributeValue.getAttributeName().equals(characteristic.getName())).findFirst();
+                if (productCharValue.isPresent() && productCharValue.get().getValue() == null)
                 {
                     throw new InvalidDataException(String.format("Product should have a value for characteristic %s", characteristic.getName()));
                 }

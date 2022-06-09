@@ -55,7 +55,7 @@ public class JwtService {
     }
 
     /**
-     * Geberate a JWT token for a specific user
+     * Generate a JWT token for a specific user
      *
      * @param user User to generate a token for
      * @return The JWT token for the specified user as a string
@@ -69,9 +69,8 @@ public class JwtService {
         return generateToken(claims, user.getEmail());
     }
 
-    // TODO: 9/06/22 spelling 
     /**
-     * Check if a specifik token is valid and matches specified UserDetails
+     * Check if a specific token is valid and matches specified UserDetails
      *
      * @param token       The token to validate
      * @param userDetails The UserDetails object to validate against

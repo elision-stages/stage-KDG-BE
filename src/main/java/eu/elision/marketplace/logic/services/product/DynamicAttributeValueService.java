@@ -6,7 +6,6 @@ import eu.elision.marketplace.repositories.DynamicAttributeValueRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Objects;
 
 /**
  * Service for dynamic attribute values
@@ -55,11 +54,11 @@ public class DynamicAttributeValueService
      */
     public void deleteNonCategoryAttributes(Product product)
     {
-        // TODO: 9/06/22 use {} in if 
         for (DynamicAttributeValue<?> attribute : product.getAttributes())
-            // TODO: 9/06/22 use string equality instead of object equality 
-            if (product.getCategory().getCharacteristics().stream().noneMatch(dynamicAttribute -> Objects.equals(dynamicAttribute.getName(), attribute.getAttributeName())))
+        {
+            if (product.getCategory().getCharacteristics().stream().noneMatch(dynamicAttribute -> dynamicAttribute.getName().equals(attribute.getAttributeName())))
                 dynamicAttributeValueRepository.delete(attribute);
+        }
 
         product.removeNonCategoryAttributes();
     }

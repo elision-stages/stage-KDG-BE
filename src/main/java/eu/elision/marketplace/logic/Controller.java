@@ -444,4 +444,12 @@ public class Controller
     {
         return vatService.checkVatService(vat);
     }
+
+    /**
+     * Index all products to algolia
+     */
+    public void indexAllProducts()
+    {
+        algoliaIndexerService.indexAllProducts();
+    }
 }

@@ -3,6 +3,7 @@ package eu.elision.marketplace.logic.services.vat;
 import eu.elision.marketplace.exceptions.InvalidDataException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import springfox.documentation.annotations.Cacheable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 @Service
 public class VATService
 {
-    // TODO: 9/06/22 use @Cacheable annotation 
     HashMap<String, Business> cache = new HashMap<>();
 
     /**
@@ -31,6 +31,7 @@ public class VATService
                 "Brusselstraat 45\n2018 Antwerpen"));
     }
 
+    @Cacheable("business")
     private String request(URL url, String data) throws IOException
     {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

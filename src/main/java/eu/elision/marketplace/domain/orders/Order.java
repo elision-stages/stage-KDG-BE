@@ -18,7 +18,8 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "orders")
-public class Order {
+public class Order
+{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long orderNumber;
@@ -30,9 +31,10 @@ public class Order {
     private final LocalDate createdDate;
 
     /**
-     * Public no args constructor. Initialises the orderlines array
+     * Public no args constructor. Initialises the orderlines array and created date
      */
-    public Order() {
+    public Order()
+    {
         lines = new ArrayList<>();
         createdDate = LocalDate.now();
     }
@@ -42,12 +44,13 @@ public class Order {
      *
      * @return the total price of an order
      */
-    public double getTotalPrice() {
+    public double getTotalPrice()
+    {
         return lines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 
-    public int getProductCount() {
-        // TODO: 9/06/22 use map to int aand sum
-        return lines.stream().map(OrderLine::getQuantity).reduce(0, Integer::sum);
+    public int getProductCount()
+    {
+        return lines.stream().mapToInt(OrderLine::getQuantity).sum();
     }
 }

@@ -109,7 +109,7 @@ public class CategoryService
      */
     public Category findById(long id)
     {
-        // TODO: 9/06/22 is this nescecairy? 
+        // When categories don't have a parent, the web controller will pass on 0L as value. Without this check, an exception woul be thrown
         if (id == 0L)
         {
             logger.debug("Not looking for category with id 0");
@@ -136,12 +136,9 @@ public class CategoryService
     {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
+
         if (categoryMakeDto.parentId() > 0)
-        {
-            // TODO: 9/06/22 a category being its own parent??? 
-            final Category parent = findById(categoryMakeDto.parentId());
-            parent.setParent(parent);
-        }
+            category.setParent(findById(categoryMakeDto.parentId()));
 
         return category;
     }
