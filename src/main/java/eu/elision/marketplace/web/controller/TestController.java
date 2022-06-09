@@ -13,6 +13,7 @@ import java.net.URL;
 /**
  * Controller to handle test calls
  */
+// TODO: 9/06/22 remove this from final codebase 
 @RestController
 public class TestController
 {

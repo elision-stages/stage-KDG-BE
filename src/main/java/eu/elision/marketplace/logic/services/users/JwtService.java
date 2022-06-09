@@ -69,6 +69,7 @@ public class JwtService {
         return generateToken(claims, user.getEmail());
     }
 
+    // TODO: 9/06/22 spelling 
     /**
      * Check if a specifik token is valid and matches specified UserDetails
      *

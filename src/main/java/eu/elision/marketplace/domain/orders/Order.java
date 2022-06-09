@@ -47,6 +47,7 @@ public class Order {
     }
 
     public int getProductCount() {
+        // TODO: 9/06/22 use map to int aand sum
         return lines.stream().map(OrderLine::getQuantity).reduce(0, Integer::sum);
     }
 }

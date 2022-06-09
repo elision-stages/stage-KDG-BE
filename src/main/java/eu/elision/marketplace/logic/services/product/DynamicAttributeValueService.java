@@ -55,7 +55,9 @@ public class DynamicAttributeValueService
      */
     public void deleteNonCategoryAttributes(Product product)
     {
+        // TODO: 9/06/22 use {} in if 
         for (DynamicAttributeValue<?> attribute : product.getAttributes())
+            // TODO: 9/06/22 use string equality instead of object equality 
             if (product.getCategory().getCharacteristics().stream().noneMatch(dynamicAttribute -> Objects.equals(dynamicAttribute.getName(), attribute.getAttributeName())))
                 dynamicAttributeValueRepository.delete(attribute);
 

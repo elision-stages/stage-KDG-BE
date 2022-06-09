@@ -109,6 +109,7 @@ public class CategoryService
      */
     public Category findById(long id)
     {
+        // TODO: 9/06/22 is this nescecairy? 
         if (id == 0L)
         {
             logger.debug("Not looking for category with id 0");
@@ -137,6 +138,7 @@ public class CategoryService
         category.setName(categoryMakeDto.name());
         if (categoryMakeDto.parentId() > 0)
         {
+            // TODO: 9/06/22 a category being its own parent??? 
             final Category parent = findById(categoryMakeDto.parentId());
             parent.setParent(parent);
         }

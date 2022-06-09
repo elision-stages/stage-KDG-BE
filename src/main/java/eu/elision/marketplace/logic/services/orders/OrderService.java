@@ -84,6 +84,8 @@ public record OrderService(OrderRepository repository)
         {
             for (OrderLine orderLine : order.getLines())
             {
+                // TODO: 9/06/22 use string equality instead of object equality 
+                // TODO: 9/06/22 keep working with an optional instead of returning null 
                 final OrderDto vendorOrder = vendorOrders.stream().filter(vendorOrderDto -> Objects.equals(String.valueOf(vendorOrderDto.getOrderNumber()), orderLine.getOrderNumber())).findAny().orElse(null);
 
                 if (vendorOrder == null)
@@ -133,6 +135,8 @@ public record OrderService(OrderRepository repository)
         Order order = repository.findById(id).orElse(null);
         if (order == null) throw new NotFoundException("Order not found");
 
+        // TODO: 9/06/22 formatting
+        // TODO: 9/06/22 create seperate private methods for the conditions 
         if (
                 !(user instanceof Admin) &&
                         !(Objects.equals(order.getUser().getEmail(), user.getEmail())) &&

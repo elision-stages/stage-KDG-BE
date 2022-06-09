@@ -17,6 +17,7 @@ import java.util.HashMap;
 @Service
 public class VATService
 {
+    // TODO: 9/06/22 use @Cacheable annotation 
     HashMap<String, Business> cache = new HashMap<>();
 
     /**
