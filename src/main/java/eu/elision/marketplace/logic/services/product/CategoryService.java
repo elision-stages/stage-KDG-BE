@@ -69,10 +69,10 @@ public class CategoryService
      */
     public Category editCategory(CategoryDto editCategoryDto, Collection<DynamicAttribute> dynamicAttributes)
     {
-        Category category = findById(editCategoryDto.id());
+        Category category = findById(editCategoryDto.getId());
 
-        category.setParent(findById(editCategoryDto.parentId()));
-        category.setName(editCategoryDto.name());
+        category.setParent(findById(editCategoryDto.getParentId()));
+        category.setName(editCategoryDto.getName());
         category.setCharacteristics(new ArrayList<>(dynamicAttributes.stream().toList()));
 
         return categoryRepository.save(category);

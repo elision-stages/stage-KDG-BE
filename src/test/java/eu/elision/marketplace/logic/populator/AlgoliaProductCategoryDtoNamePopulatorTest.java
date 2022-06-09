@@ -2,14 +2,17 @@ package eu.elision.marketplace.logic.populator;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.logic.populator.algolia.AlgoliaProductCategoryPopulator;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AlgoliaProductCategoryPopulatorTest {
+class AlgoliaProductCategoryDtoNamePopulatorTest
+{
     @Test
-    void Test() {
+    void Test()
+    {
         Category category1 = new Category();
         category1.setName("Kleding");
 

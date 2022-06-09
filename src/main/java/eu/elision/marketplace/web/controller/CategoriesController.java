@@ -3,6 +3,8 @@ package eu.elision.marketplace.web.controller;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.logic.helpers.Mapper;
+import eu.elision.marketplace.logic.populator.Converter;
+import eu.elision.marketplace.logic.populator.categorydto.CategoryDtoConverter;
 import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
@@ -11,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Controller to handle calls about categories
@@ -20,20 +22,25 @@ import java.util.List;
 @RequestMapping("category")
 public class CategoriesController {
     private final Controller controller;
+    private final Converter<Category, CategoryDto> categoryDtoConverter;
 
     /**
      * Public constructor
      *
-     * @param controller the controller that the category controller has to use
+     * @param controller           the controller that the category controller has to use
+     * @param categoryDtoConverter the category dto converter that needs to be used
      */
     @Autowired
-    public CategoriesController(Controller controller) {
+    public CategoriesController(Controller controller, CategoryDtoConverter categoryDtoConverter)
+    {
         this.controller = controller;
+        this.categoryDtoConverter = categoryDtoConverter;
     }
 
     @GetMapping
-    ResponseEntity<List<CategoryDto>> getCategories() {
-        return ResponseEntity.ok(Mapper.toCategoryDtoList(controller.findAllCategories()));
+    ResponseEntity<Collection<CategoryDto>> getCategories()
+    {
+        return ResponseEntity.ok(Mapper.toCategoryDto(controller.findAllCategories()));
     }
 
     /**

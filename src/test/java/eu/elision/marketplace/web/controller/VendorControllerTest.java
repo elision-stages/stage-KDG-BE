@@ -35,7 +35,7 @@ class VendorControllerTest
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        /*assertThat(response.getBody().getName()).isEqualTo("VZW Karel de Grote Hogeschool, Katholieke Hogeschool Antwerpen");
+        /*assertThat(response.getBody().getGetName()).isEqualTo("VZW Karel de Grote Hogeschool, Katholieke Hogeschool Antwerpen");
         assertThat(response.getBody().getCountryCode()).isEqualTo("BE");
         assertThat(response.getBody().getVatNumber()).isEqualTo("0458402105");
         assertThat(response.getBody().getAddress()).isEqualTo("Brusselstraat 45\n2018 Antwerpen");*/

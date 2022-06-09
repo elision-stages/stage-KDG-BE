@@ -147,4 +147,11 @@ class TestCart {
         assertThat(cart.getOrderLines()).hasSize(1);
         assertThat(cart.getTotalPrice()).isEqualTo(quantity1 * price);
     }
+
+    @Test
+    void testCheckoutWithoutOrderLines()
+    {
+        Cart cart = new Cart();
+        assertThat(cart.checkout(new Customer())).isNull();
+    }
 }

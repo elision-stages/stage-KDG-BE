@@ -1,9 +1,9 @@
-package eu.elision.marketplace.logic.converter;
+package eu.elision.marketplace.logic.populator;
 
 import eu.elision.marketplace.exceptions.ConversionException;
-import eu.elision.marketplace.logic.populator.Populator;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,19 +23,24 @@ public abstract class Converter<S, T> {
 
     /**
      * Convert function that takes an input and returns a converted output
+     *
      * @param source The input object
      * @return Converted object
      */
-    public T convert(S source) {
-        try {
+    public T convert(S source)
+    {
+        try
+        {
             T targetInstance = targetClass.getDeclaredConstructor().newInstance();
-            for (Populator<S, T> populator : populatorList) {
+            for (Populator<S, T> populator : populatorList)
+            {
                 populator.populate(source, targetInstance);
             }
             return targetInstance;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
-            throw new ConversionException(String.format("Problem converting %s to %s: %s", source.getClass(), targetClass, e.getMessage()));
+                 NoSuchMethodException e)
+        {
+            throw new ConversionException(String.format("Problem converting %s to %s: %s %n%s", source.getClass(), targetClass, e.getMessage(), Arrays.toString(e.getStackTrace())));
         }
     }
 

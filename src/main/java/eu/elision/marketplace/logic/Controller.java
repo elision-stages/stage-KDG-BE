@@ -417,7 +417,7 @@ public class Controller
      */
     public Category editCategory(CategoryDto editCategoryDto)
     {
-        return categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
+        return categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.getId())));
     }
 
     //----------------------------------------------------------- Delete

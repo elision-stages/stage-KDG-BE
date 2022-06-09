@@ -90,12 +90,12 @@ public class DynamicAttributeService
      */
     public Collection<DynamicAttribute> renewAttributes(CategoryDto editCategoryDto, Category category)
     {
-        checkDoubles(editCategoryDto.characteristics());
+        checkDoubles(editCategoryDto.getCharacteristics());
 
         final Collection<DynamicAttribute> allByCategoryId = dynamicAttributeRepository.findAllByCategory(category);
         dynamicAttributeRepository.deleteAll(allByCategoryId);
 
-        final Collection<DynamicAttribute> entities = Mapper.toDynamicAttributes(editCategoryDto.characteristics(), category);
+        final Collection<DynamicAttribute> entities = Mapper.toDynamicAttributes(editCategoryDto.getCharacteristics(), category);
         return dynamicAttributeRepository.saveAll(entities);
     }
 
@@ -103,8 +103,8 @@ public class DynamicAttributeService
     {
         for (DynamicAttributeDto characteristic : characteristics)
         {
-            if (characteristics.stream().filter(dynamicAttributeDto -> dynamicAttributeDto.name().equals(characteristic.name())).count() > 1L)
-                throw new InvalidDataException(String.format("Characteristics have duplicate name %s", characteristic.name()));
+            if (characteristics.stream().filter(dynamicAttributeDto -> dynamicAttributeDto.getName().equals(characteristic.getName())).count() > 1L)
+                throw new InvalidDataException(String.format("Characteristics have duplicate name %s", characteristic.getName()));
         }
     }
 }

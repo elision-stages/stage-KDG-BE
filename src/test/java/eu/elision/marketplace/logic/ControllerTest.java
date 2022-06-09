@@ -494,12 +494,12 @@ class ControllerTest
 
         CategoryDto editCategoryDto = new CategoryDto(category.getId(), RandomStringUtils.randomAlphabetic(10), 0L, hashSet);
 
-        final DynamicAttribute dynamicAttribute1 = new DynamicAttribute(RandomUtils.nextLong(), newDA.name(), newDA.required(), newDA.type(), category);
+        final DynamicAttribute dynamicAttribute1 = new DynamicAttribute(RandomUtils.nextLong(), newDA.getName(), newDA.isRequired(), newDA.getType(), category);
         List<DynamicAttribute> convertedDA = new ArrayList<>(List.of(dynamicAttribute1));
 
         Category editedCategory = new Category();
-        editedCategory.setId(editCategoryDto.id());
-        editedCategory.setName(editCategoryDto.name());
+        editedCategory.setId(editCategoryDto.getId());
+        editedCategory.setName(editCategoryDto.getName());
         editedCategory.setCharacteristics(convertedDA);
 
 

@@ -14,11 +14,11 @@ import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,7 +29,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class DynamicAttributeServiceTest {
+class DynamicAttributeServiceTest
+{
 
     @InjectMocks
     private DynamicAttributeService dynamicAttributeService;
@@ -54,7 +55,8 @@ class DynamicAttributeServiceTest {
     }
 
     @Test
-    void testNotFoundSavedAttributes() {
+    void testNotFoundSavedAttributes()
+    {
         AttributeValue<String, String> attributeValue = new AttributeValue<>();
         final String attributeName = RandomStringUtils.randomAlphabetic(5);
         attributeValue.setAttributeName(attributeName);
@@ -119,7 +121,26 @@ class DynamicAttributeServiceTest {
     }
 
     @Test
-    void testRenewAttributesDoubleAttribute() {
+    void testSavedAttributesInt()
+    {
+        DynamicAttribute dynamicAttribute = new DynamicAttribute();
+        final String name = RandomStringUtils.randomAlphabetic(5);
+        dynamicAttribute.setName(name);
+        dynamicAttribute.setType(Type.INTEGER);
+        final int value = RandomUtils.nextInt();
+        final long id = RandomUtils.nextLong();
+        when(dynamicAttributeRepository.findDynamicAttributeByNameAndCategory(name, id)).thenReturn(dynamicAttribute);
+
+        AttributeValue<String, String> attributeValue = new AttributeValue<>();
+        attributeValue.setAttributeName(name);
+        attributeValue.setValue(String.valueOf(value));
+
+        assertThat(dynamicAttributeService.getSavedAttributes(List.of(attributeValue), id)).hasSize(1);
+    }
+
+    @Test
+    void testRenewAttributesDoubleAttribute()
+    {
         Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
@@ -127,7 +148,8 @@ class DynamicAttributeServiceTest {
 
         when(dynamicAttributeRepository.findDynamicAttributeByName(dynamicAttribute.getName())).thenReturn(dynamicAttribute);
 
-        CategoryDto editCategoryDto = new CategoryDto(category.getId(), dynamicAttribute.getName(), 0L, new HashSet<>(List.of(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType()), new DynamicAttributeDto(dynamicAttribute.getName(), !dynamicAttribute.isRequired(), dynamicAttribute.getType()))) {
+        CategoryDto editCategoryDto = new CategoryDto(category.getId(), dynamicAttribute.getName(), 0L, new HashSet<>(List.of(new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType()), new DynamicAttributeDto(dynamicAttribute.getName(), !dynamicAttribute.isRequired(), dynamicAttribute.getType())))
+        {
         });
         Exception exception = assertThrows(InvalidDataException.class, () -> dynamicAttributeService.renewAttributes(editCategoryDto, category));
 
@@ -135,7 +157,8 @@ class DynamicAttributeServiceTest {
     }
 
     @Test
-    void testRenewAttributes2IdenticalCharacteristics() {
+    void testRenewAttributes2IdenticalCharacteristics()
+    {
         Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
@@ -150,8 +173,19 @@ class DynamicAttributeServiceTest {
 
         CategoryDto editCategoryDto = new CategoryDto(category.getId(), dynamicAttribute.getName(), 0L, hashSet);
 
-        final Collection<DynamicAttribute> renewed = dynamicAttributeService.renewAttributes(editCategoryDto, category);
-        assertThat(renewed).hasSize(1);
+        assertThrows(InvalidDataException.class, () -> dynamicAttributeService.renewAttributes(editCategoryDto, category));
+    }
+
+    @Test
+    void testSave()
+    {
+        DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(50), RandomUtils.nextBoolean(), Type.INTEGER, new Category());
+
+        when(dynamicAttributeRepository.existsByName(dynamicAttribute.getName())).thenReturn(true);
+        when(dynamicAttributeRepository.findDynamicAttributeByName(dynamicAttribute.getName())).thenReturn(dynamicAttribute);
+        when(dynamicAttributeRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+
+        assertThat(dynamicAttributeService.save(dynamicAttribute)).isEqualTo(dynamicAttribute);
     }
 
 }

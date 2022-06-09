@@ -16,7 +16,6 @@ import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
-import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
 import eu.elision.marketplace.web.dtos.product.ProductDto;
@@ -40,19 +39,6 @@ public class Mapper
     }
 
     /**
-     * Convert a CategoryMakeDto to a Category
-     *
-     * @param categoryMakeDto the categoryMakeDto that needs to be converted
-     * @return a category object with the values of the given categoryMakeDto
-     */
-    public static Category toCategory(CategoryMakeDto categoryMakeDto)
-    {
-        final Category category = new Category();
-        category.setName(categoryMakeDto.name());
-        return category;
-    }
-
-    /**
      * Convert a category to a categoryDto
      *
      * @param category the category that needs to be converted
@@ -64,16 +50,15 @@ public class Mapper
     }
 
     /**
-     * Convert a list of categories to a list of category Dtos
+     * Convert a list of categories to a list of categoryDtos
      *
      * @param categories the list of categories that needs to be converted
      * @return a list of categoryDtos object with the values of the given list of categories
      */
-    public static List<CategoryDto> toCategoryDtoList(List<Category> categories)
+    public static Collection<CategoryDto> toCategoryDto(Collection<Category> categories)
     {
         return categories.stream().map(Mapper::toCategoryDto).toList();
     }
-
 
     /**
      * Convert a Dynamic Attribute to a Dynamic Attribute Dto
@@ -85,7 +70,6 @@ public class Mapper
     {
         return new DynamicAttributeDto(dynamicAttribute.getName(), dynamicAttribute.isRequired(), dynamicAttribute.getType());
     }
-
 
     /**
      * Create a Product of all their separate attributes
@@ -241,17 +225,6 @@ public class Mapper
     }
 
     /**
-     * Convert a vendor to dto object
-     *
-     * @param vendor the vendor that needs to be converted
-     * @return the vendor dto object with the values of given vendor
-     */
-    public static VendorDto toVendorDto(Vendor vendor)
-    {
-        return new VendorDto(vendor.getFirstName(), vendor.getLastName(), vendor.getEmail(), vendor.getPassword(), vendor.isValidated(), vendor.getLogo(), vendor.getTheme(), vendor.getIntroduction(), vendor.getVatNumber(), vendor.getPhoneNumber(), vendor.getBusinessName());
-    }
-
-    /**
      * Create a vendor dto object for vendor page
      *
      * @param vendorById         the vendor with the information about the vendor
@@ -308,9 +281,9 @@ public class Mapper
     public static DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
     {
         DynamicAttribute dynamicAttribute = new DynamicAttribute();
-        dynamicAttribute.setName(dynamicAttributeDto.name());
-        dynamicAttribute.setRequired(dynamicAttributeDto.required());
-        dynamicAttribute.setType(dynamicAttributeDto.type());
+        dynamicAttribute.setName(dynamicAttributeDto.getName());
+        dynamicAttribute.setRequired(dynamicAttributeDto.isRequired());
+        dynamicAttribute.setType(dynamicAttributeDto.getType());
         dynamicAttribute.setCategory(category);
 
         return dynamicAttribute;
