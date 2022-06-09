@@ -11,8 +11,10 @@ import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.exceptions.NotFoundException;
+import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.CategoryService;
+import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
@@ -20,43 +22,43 @@ import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
-import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
-import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.users.VendorPageDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
 class ControllerTest
 {
-    @Autowired
+    @InjectMocks
     Controller controller;
-    @Autowired
+    @Mock
     UserService userService;
-    @Autowired
+    @Mock
     OrderService orderService;
-    @Autowired
+    @Mock
     CategoryService categoryService;
-    @Autowired
+    @Mock
     ProductService productService;
+    @Mock
+    DynamicAttributeService dynamicAttributeService;
 
     @Test
     void saveCostumerWithAddress()
     {
-        final int initUserRepoSize = controller.findAllUsers().size();
-
         final Customer customer = new Customer();
         final Address address = new Address();
 
@@ -75,14 +77,16 @@ class ControllerTest
         address.setNumber(number);
         address.setCity(city);
 
+        customer.setId(RandomUtils.nextLong());
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(email);
         customer.setPassword(password);
 
-        long customerId = controller.saveUser(customer).getId();
+        when(userService.save(customer)).thenReturn(customer);
+        when(userService.findUserById(customer.getId())).thenReturn(customer);
 
-        assertThat(controller.findAllUsers()).hasSize(1 + initUserRepoSize);
+        long customerId = controller.saveUser(customer).getId();
 
         Customer customerFromRepo = (Customer) controller.findUserById(customerId);
         assertThat(customerFromRepo).isNotNull();
@@ -95,8 +99,6 @@ class ControllerTest
     @Test
     void saveCustomerWithoutAddress()
     {
-        final int initUserRepoSize = controller.findAllUsers().size();
-
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -104,15 +106,16 @@ class ControllerTest
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
 
-
+        customer.setId(RandomUtils.nextLong());
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(email);
         customer.setPassword(password);
 
-        long customerId = controller.saveUser(customer).getId();
+        when(userService.save(customer)).thenReturn(customer);
+        when(userService.findUserById(customer.getId())).thenReturn(customer);
 
-        assertThat(controller.findAllUsers()).hasSize(1 + initUserRepoSize);
+        long customerId = controller.saveUser(customer).getId();
 
         Customer customerFromRepo = (Customer) controller.findUserById(customerId);
         assertThat(customerFromRepo).isNotNull();
@@ -125,7 +128,10 @@ class ControllerTest
     @Test
     void findAllCategoriesTest()
     {
-        assertThat(controller.findAllCategories()).isNotNull();
+        List<Category> categories = List.of(new Category());
+        when(categoryService.findAll()).thenReturn(categories);
+
+        assertThat(controller.findAllCategories()).isEqualTo(categories);
     }
 
     @Test
@@ -148,12 +154,12 @@ class ControllerTest
         vendor.setEmail(email);
         vendor.setPassword(password);
         vendor.setPhoneNumber(phone);
-        controller.saveUser(vendor);
 
         Product product = new Product();
         product.setVendor(vendor);
         product.setTitle(RandomStringUtils.randomAlphabetic(5));
-        controller.saveProduct(product);
+
+        when(productService.findProductsByVendorEmail(vendor.getEmail())).thenReturn(List.of(product));
 
         Collection<Product> products = controller.findProductsByVendor(vendor.getEmail());
 
@@ -176,15 +182,16 @@ class ControllerTest
         customer.setPassword(password);
 
         assertThat(customer.getCart().getOrderLines()).isEmpty();
-        long customerId = controller.saveUser(customer).getId();
 
         Product product = new Product();
         final int price = RandomUtils.nextInt(1, 100);
         product.setPrice(price);
+        product.setId(RandomUtils.nextLong());
         final Vendor vendor = new Vendor();
         final String businessName = RandomStringUtils.randomAlphabetic(6);
         final String vatNumber = "BE0458402105";
 
+        vendor.setId(RandomUtils.nextLong());
         vendor.setVatNumber(vatNumber);
         vendor.setBusinessName(businessName);
         vendor.setLastName(RandomStringUtils.randomAlphabetic(4));
@@ -193,17 +200,21 @@ class ControllerTest
         vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
 
-        controller.saveUser(vendor);
-
-
         product.setVendor(vendor);
+
+        when(productService.save(product)).thenReturn(product);
 
         final String description = RandomStringUtils.randomAlphabetic(5);
         product.setDescription(description);
         long productId = controller.saveProduct(product).getId();
 
+        when(userService.findUserByEmail(customer.getEmail())).thenReturn(customer);
+        when(productService.findProductById(productId)).thenReturn(product);
+
         final int count = RandomUtils.nextInt(1, 10);
         controller.addProductToCart(email, new AddProductToCartDto(productId, count, false));
+
+        when(userService.getUserCart(customer.getEmail())).thenReturn(customer.getCart());
 
         CartDto cartDto = controller.findCustomerCart(email);
         assertThat(cartDto.orderLines().stream().anyMatch(orderLineDto -> Objects.equals(orderLineDto.product().description(), description))).isTrue();
@@ -217,19 +228,6 @@ class ControllerTest
     }
 
     @Test
-    void deleteProductTest()
-    {
-        final int initSize = controller.findAllProducts().size();
-
-        Product product = new Product();
-        final long id = controller.saveProduct(product).getId();
-        assertThat(controller.findAllProducts()).hasSize(initSize + 1);
-
-        controller.deleteProduct(id);
-        assertThat(controller.findAllProducts()).hasSize(initSize);
-    }
-
-    @Test
     void checkoutCartTest()
     {
         final Customer customer = new Customer();
@@ -239,6 +237,7 @@ class ControllerTest
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
         final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
 
+        customer.setId(RandomUtils.nextLong());
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(email);
@@ -248,6 +247,7 @@ class ControllerTest
         final String businessName = RandomStringUtils.randomAlphabetic(6);
         final String vatNumber = "BE0458402105";
 
+        vendor.setId(RandomUtils.nextLong());
         vendor.setVatNumber(vatNumber);
         vendor.setBusinessName(businessName);
         vendor.setLastName(RandomStringUtils.randomAlphabetic(4));
@@ -255,20 +255,30 @@ class ControllerTest
         vendor.setPassword(password);
         vendor.setEmail(String.format("%s%s", email, RandomStringUtils.randomAlphabetic(3)));
         vendor.setPhoneNumber(RandomStringUtils.random(10, false, true));
-        controller.saveUser(vendor);
 
         Product product = new Product();
         final int price = RandomUtils.nextInt(1, 100);
+        product.setId(RandomUtils.nextLong());
         product.setPrice(price);
         product.setVendor(vendor);
-        userService.editUser(vendor);
-        controller.saveUser(customer);
+
+        when(productService.save(product)).thenReturn(product);
+        when(userService.findUserByEmail(customer.getEmail())).thenReturn(customer);
+        when(userService.findCustomerByEmail(customer.getEmail())).thenReturn(customer);
+        when(productService.findProductById(product.getId())).thenReturn(product);
+
 
         final int count = RandomUtils.nextInt(1, 100);
-        controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count, false));
+        customer.setCart(controller.addProductToCart(customer.getEmail(), new AddProductToCartDto(controller.saveProduct(product).getId(), count, false)));
 
+        Order toReturn = new Order();
+        toReturn.setUser(customer);
+        toReturn.setLines(customer.getCart().getOrderLines());
+        toReturn.setOrderNumber(RandomUtils.nextInt());
 
-        userService.editUser(customer);
+        when(orderService.save(any())).thenReturn(toReturn);
+        when(orderService.findOrderById(toReturn.getOrderNumber())).thenReturn(toReturn);
+
         final long orderId = controller.checkoutCart(email);
         Order order = controller.findOrderById(orderId);
         assertThat(order).isNotNull();
@@ -294,6 +304,7 @@ class ControllerTest
         final String businessName = RandomStringUtils.randomAlphabetic(6);
         final String vatNumber = "BE0458402105";
 
+        vendor.setId(RandomUtils.nextLong());
         vendor.setVatNumber(vatNumber);
         vendor.setBusinessName(businessName);
         vendor.setFirstName(firstName);
@@ -301,35 +312,40 @@ class ControllerTest
         vendor.setEmail(email);
         vendor.setPassword(password);
         vendor.setPhoneNumber(phoneNumber);
-        controller.saveUser(vendor);
 
         Customer customer = new Customer();
+        customer.setId(RandomUtils.nextLong());
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(emailCustomer);
         customer.setPassword(password);
-        controller.saveUser(customer);
 
         Product product = new Product();
+        product.setId(RandomUtils.nextLong());
         product.setPrice(RandomUtils.nextDouble(1, 100.1));
         product.setVendor(vendor);
-        controller.saveProduct(product);
 
         Product product2 = new Product();
+        product2.setId(RandomUtils.nextLong());
         product2.setPrice(RandomUtils.nextDouble(1, 100.1));
         product2.setVendor(vendor);
-        controller.saveProduct(product);
 
         Order order = new Order();
+        order.setOrderNumber(RandomUtils.nextInt());
+
         OrderLine orderLine = new OrderLine();
+        orderLine.setOrderLineNumber(RandomUtils.nextInt());
         orderLine.setProduct(product);
-        controller.saveOrderLine(orderLine);
+
         OrderLine orderLine2 = new OrderLine();
+        orderLine2.setOrderLineNumber(RandomUtils.nextInt());
         orderLine2.setProduct(product);
-        controller.saveOrderLine(orderLine2);
-        order.getLines().add(orderLine2);
+
+        order.getLines().addAll(List.of(orderLine, orderLine2));
         order.setUser(customer);
-        controller.saveOrder(order);
+
+        when(userService.findUserByEmail(vendor.getEmail())).thenReturn(vendor);
+        when(orderService.findUserOrders(vendor)).thenReturn(List.of(Mapper.toOrderDto(order)));
 
         Collection<OrderDto> orders = controller.findUserOrders(vendor.getEmail());
 
@@ -341,6 +357,9 @@ class ControllerTest
         assertThat(orderDto.getCustomerName()).isEqualTo(order.getUser().getFullName());
         assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
 
+        when(userService.findUserByEmail(customer.getEmail())).thenReturn(customer);
+        when(orderService.findUserOrders(customer)).thenReturn(List.of(Mapper.toOrderDto(order)));
+
         orders = controller.findUserOrders(customer.getEmail());
         orderDto = orders.stream().findFirst().orElse(null);
         assertThat(orderDto).isNotNull();
@@ -350,11 +369,14 @@ class ControllerTest
         assertThat(orderDto.getTotalPrice()).isEqualTo(orderLine.getTotalPrice());
 
         Admin admin = new Admin();
+        admin.setId(RandomUtils.nextLong());
         admin.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
         admin.setFirstName(firstName);
         admin.setLastName(lastName);
         admin.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
-        controller.saveUser(admin);
+
+        when(userService.findUserByEmail(admin.getEmail())).thenReturn(admin);
+        when(orderService.findUserOrders(admin)).thenReturn(List.of(Mapper.toOrderDto(order)));
 
         orders = controller.findUserOrders(admin.getEmail());
         assertThat(orders).isNotNull();
@@ -368,43 +390,9 @@ class ControllerTest
     void getOrdersUserNotFound()
     {
         final String userEmail = RandomStringUtils.randomAlphabetic(4);
+
+        when(userService.findUserByEmail(userEmail)).thenThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, () -> controller.findUserOrders(userEmail));
-    }
-
-    @Test
-    void saveProductTest()
-    {
-        Vendor vendor = new Vendor();
-        final String firstName = RandomStringUtils.randomAlphabetic(4);
-        final String lastName = RandomStringUtils.randomAlphabetic(4);
-        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-        final String phoneNumber = RandomStringUtils.random(10, false, true);
-        final String businessName = RandomStringUtils.randomAlphabetic(6);
-        final String vatNumber = "BE0458402105";
-
-        vendor.setVatNumber(vatNumber);
-        vendor.setBusinessName(businessName);
-        vendor.setFirstName(firstName);
-        vendor.setLastName(lastName);
-        vendor.setEmail(email);
-        vendor.setPassword(password);
-        vendor.setPhoneNumber(phoneNumber);
-        controller.saveUser(vendor);
-
-        final CategoryMakeDto categoryMakeDto = new CategoryMakeDto(RandomStringUtils.randomAlphabetic(5), 0L, new ArrayList<>());
-        Category category = controller.saveCategory(categoryMakeDto);
-        ProductDto productDto = new ProductDto(RandomUtils.nextInt(), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), new ArrayList<>(), category.getId(), new ArrayList<>(), vendor.getId(), vendor.getBusinessName());
-
-        Product product = controller.findProductById(controller.saveProduct(vendor, productDto).getId());
-
-        assertThat(product.getDescription()).isEqualTo(productDto.description());
-        assertThat(product.getPrice()).isEqualTo(productDto.price());
-        assertThat(product.getTitle()).isEqualTo(productDto.title());
-        assertThat(product.getVendor().getId()).isEqualTo(productDto.vendorId());
-        assertThat(product.getAttributes()).hasSize(productDto.attributes().size());
-        assertThat(product.getCategory().getId()).isEqualTo(productDto.categoryId());
-
     }
 
     @Test
@@ -421,6 +409,7 @@ class ControllerTest
         final String businessName = RandomStringUtils.randomAlphabetic(6);
         final String vatNumber = "BE0458402105";
 
+        vendor.setId(RandomUtils.nextLong());
         vendor.setVatNumber(vatNumber);
         vendor.setBusinessName(businessName);
         vendor.setFirstName(firstName);
@@ -428,41 +417,48 @@ class ControllerTest
         vendor.setEmail(email);
         vendor.setPassword(password);
         vendor.setPhoneNumber(phoneNumber);
-        controller.saveUser(vendor);
 
+        admin.setId(RandomUtils.nextLong());
         admin.setFirstName(firstName);
         admin.setLastName(lastName);
         admin.setEmail(String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2)));
         admin.setPassword(password);
-        controller.saveUser(admin);
 
         Customer customer = new Customer();
+        customer.setId(RandomUtils.nextLong());
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setEmail(emailCustomer);
         customer.setPassword(password);
-        controller.saveUser(customer);
 
         Product product = new Product();
+        product.setId(RandomUtils.nextLong());
         product.setPrice(RandomUtils.nextDouble(1, 100.1));
         product.setVendor(vendor);
-        controller.saveProduct(product);
 
         Product product2 = new Product();
+        product2.setId(RandomUtils.nextLong());
         product2.setPrice(RandomUtils.nextDouble(1, 100.1));
         product2.setVendor(vendor);
-        controller.saveProduct(product);
 
         Order order = new Order();
+
         OrderLine orderLine = new OrderLine();
+        orderLine.setOrderLineNumber(RandomUtils.nextInt());
         orderLine.setProduct(product);
-        controller.saveOrderLine(orderLine);
+
         OrderLine orderLine2 = new OrderLine();
+        orderLine2.setOrderLineNumber(RandomUtils.nextInt());
         orderLine2.setProduct(product);
-        controller.saveOrderLine(orderLine2);
-        order.getLines().add(orderLine2);
+
+
+        order.getLines().addAll(List.of(orderLine, orderLine2));
         order.setUser(customer);
 
+        CustomerOrderDto toReturn = new CustomerOrderDto(order.getOrderNumber(), order.getUser().getEmail(), order.getUser().getFullName(), order.getLines().stream().map(Mapper::toOrderLineDto).toList(), order.getTotalPrice(), order.getCreatedDate());
+
+        when(orderService.getOrder(any(), eq(order.getOrderNumber()))).thenReturn(toReturn);
+        when(orderService.save(order)).thenReturn(order);
 
         final long orderNumber = controller.saveOrder(order).getOrderNumber();
         CustomerOrderDto customerOrderDto = controller.findOrder(customer.getEmail(), orderNumber);
@@ -482,25 +478,36 @@ class ControllerTest
     @Test
     void testEditCategory()
     {
-        final int initCapRepo = controller.findAllCategories().size();
         Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
 
         Category category = new Category();
+        category.setId(RandomUtils.nextLong());
         category.setName(RandomStringUtils.randomAlphabetic(5));
         final DynamicAttribute dynamicAttribute = new DynamicAttribute(RandomUtils.nextLong(), RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)], category);
         category.setCharacteristics(List.of(dynamicAttribute
 
         ));
-        category.setId(categoryService.save(category).getId());
-        assertThat(controller.findAllCategories()).hasSize(initCapRepo + 1);
 
         HashSet<DynamicAttributeDto> hashSet = new HashSet<>();
-        hashSet.add(new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)]));
+        final DynamicAttributeDto newDA = new DynamicAttributeDto(RandomStringUtils.randomAlphabetic(5), RandomUtils.nextBoolean(), types[RandomUtils.nextInt(0, 4)]);
+        hashSet.add(newDA);
 
         CategoryDto editCategoryDto = new CategoryDto(category.getId(), RandomStringUtils.randomAlphabetic(10), 0L, hashSet);
-        controller.editCategory(editCategoryDto);
 
-        Category fromRepo = categoryService.findById(category.getId());
+        final DynamicAttribute dynamicAttribute1 = new DynamicAttribute(RandomUtils.nextLong(), newDA.name(), newDA.required(), newDA.type(), category);
+        List<DynamicAttribute> convertedDA = new ArrayList<>(List.of(dynamicAttribute1));
+
+        Category editedCategory = new Category();
+        editedCategory.setId(editCategoryDto.id());
+        editedCategory.setName(editCategoryDto.name());
+        editedCategory.setCharacteristics(convertedDA);
+
+
+        when(dynamicAttributeService.renewAttributes(editCategoryDto, category)).thenReturn(convertedDA);
+        when(categoryService.findById(category.getId())).thenReturn(category);
+        when(categoryService.editCategory(editCategoryDto, convertedDA)).thenReturn(editedCategory);
+
+        Category fromRepo = controller.editCategory(editCategoryDto);
 
         assertThat(fromRepo).isNotEqualTo(category);
         assertThat(fromRepo.getName()).isNotEqualTo(category.getName());
@@ -512,13 +519,17 @@ class ControllerTest
     @Test
     void getFakeCategoryTest()
     {
-        assertThrows(NotFoundException.class, () -> controller.findCategoryById(-1));
+        long wrongId = RandomUtils.nextInt();
+        when(categoryService.findById(wrongId)).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> controller.findCategoryById(wrongId));
     }
 
     @Test
     void testGetVendorById()
     {
         Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong());
         vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
         vendor.setTheme(RandomStringUtils.randomAlphabetic(50));
         vendor.setIntroduction(RandomStringUtils.randomAlphabetic(50));
@@ -531,7 +542,8 @@ class ControllerTest
         vendor.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
         vendor.setValidated(RandomUtils.nextBoolean());
 
-        vendor.setId(userService.save(vendor).getId());
+        when(userService.findVendorById(vendor.getId())).thenReturn(vendor);
+        when(productService.findProductsByVendorId(vendor.getId())).thenReturn(new ArrayList<>());
 
         final VendorPageDto vendorDto = controller.findVendorById(vendor.getId());
         assertThat(vendorDto.theme()).isEqualTo(vendor.getTheme());

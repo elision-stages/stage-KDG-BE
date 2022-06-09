@@ -12,62 +12,61 @@ import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.exceptions.InvalidDataException;
 import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.exceptions.UnauthorisedException;
-import eu.elision.marketplace.logic.services.product.CategoryService;
-import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeValueService;
 import eu.elision.marketplace.logic.services.product.ProductService;
-import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.repositories.ProductRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.AdditionalAnswers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class ProductServiceTest
 {
 
-    @Autowired
+    @InjectMocks
     ProductService productService;
-    @Autowired
-    CategoryService categoryService;
-    @Autowired
-    UserService userService;
-    @Autowired
-    DynamicAttributeService dynamicAttributeService;
-    @Autowired
+    @Mock
+    ProductRepository productRepository;
+    @Mock
     DynamicAttributeValueService dynamicAttributeValueService;
 
     @Test
     void editProduct()
     {
-        final int initSize = productService.findAllProducts().size();
-
         Product product = new Product();
-        product.setCategory(categoryService.save(new Category()));
-        final String title = RandomStringUtils.randomAlphabetic(5);
-        product.setTitle(title);
-        final String description = RandomStringUtils.randomAlphabetic(5);
-        product.setDescription(description);
+        Category category = new Category();
 
-        long productId = productService.save(product).getId();
-        assertThat(productService.findAllProducts()).hasSize(initSize + 1);
-
+        product.setId(RandomUtils.nextLong());
+        product.setCategory(category);
         product.setTitle(RandomStringUtils.randomAlphabetic(5));
         product.setDescription(RandomStringUtils.randomAlphabetic(5));
 
-        productService.editProduct(product);
-        assertThat(productService.findAllProducts()).hasSize(initSize + 1);
-        Product fromRepo = productService.findProductById(productId);
-        assertThat(fromRepo.getTitle()).isNotEqualTo(title);
-        assertThat(fromRepo.getDescription()).isNotEqualTo(description);
+        when(productRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+
+        Product edit = new Product();
+        edit.setId(product.getId());
+        edit.setTitle(RandomStringUtils.randomAlphabetic(5));
+        edit.setDescription(RandomStringUtils.randomAlphabetic(5));
+        edit.setCategory(product.getCategory());
+
+        Product fromRepo = productService.editProduct(edit);
+        assertThat(fromRepo.getTitle()).isNotEqualTo(product.getTitle());
+        assertThat(fromRepo.getDescription()).isNotEqualTo(product.getDescription());
 
     }
 
@@ -87,18 +86,27 @@ class ProductServiceTest
     @Test
     void editProductFail2()
     {
-        Product newProduct = new Product();
-        newProduct.setCategory(new Category());
-        newProduct.setId(productService.save(new Product()).getId());
-        newProduct.setVendor(new Vendor());
-        assertThrows(UnauthorisedException.class, () -> productService.editProduct(newProduct));
+        Product product = new Product();
+        product.setId(RandomUtils.nextLong());
+        final Category category = new Category();
+        product.setCategory(category);
+        product.setVendor(new Vendor());
+
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+
+        Product editProduct = new Product();
+        editProduct.setId(product.getId());
+        editProduct.setVendor(new Vendor());
+        editProduct.setCategory(category);
+
+        assertThrows(UnauthorisedException.class, () -> productService.editProduct(editProduct));
     }
 
     @Test
     void editProductWrongCharacteristics()
     {
         Category category = new Category();
-        category.setId(categoryService.save(category).getId());
+        category.setId(RandomUtils.nextLong());
 
         final DynamicAttribute daInt = new DynamicAttribute();
         daInt.setType(Type.INTEGER);
@@ -118,8 +126,7 @@ class ProductServiceTest
         daBool.setCategory(category);
         daBool.setRequired(true);
 
-        category.setCharacteristics(List.of(dynamicAttributeService.save(daInt), dynamicAttributeService.save(daDouble), dynamicAttributeService.save(daBool)));
-        categoryService.save(category);
+        category.setCharacteristics(List.of(daInt, daDouble, daBool));
         // category setup done
 
         final Vendor vendor = new Vendor();
@@ -133,33 +140,24 @@ class ProductServiceTest
 
 
         Product product = new Product();
+        product.setId(RandomUtils.nextLong());
         product.setPrice(RandomUtils.nextDouble(1, 100));
-        product.setVendor((Vendor) userService.save(vendor));
+        product.setVendor(vendor);
         product.setDescription(RandomStringUtils.randomAlphabetic(100));
         product.setTitle(RandomStringUtils.randomAlphabetic(10));
         product.setCategory(category);
         product.setAttributes(List.of(
-                dynamicAttributeValueService.save(new DynamicAttributeIntValue(daInt.getName(), RandomUtils.nextInt())),
-                dynamicAttributeValueService.save(new DynamicAttributeDoubleValue(daDouble.getName(), RandomUtils.nextDouble())),
-                dynamicAttributeValueService.save(new DynamicAttributeBoolValue(daBool.getName(), RandomUtils.nextBoolean()))
+                new DynamicAttributeIntValue(daInt.getName(), RandomUtils.nextInt()),
+                new DynamicAttributeDoubleValue(daDouble.getName(), RandomUtils.nextDouble()),
+                new DynamicAttributeBoolValue(daBool.getName(), RandomUtils.nextBoolean())
         ));
-        product.setId(productService.save(product).getId());
         // base product done
 
-        //verify product repo save
-        Product fromRepo = productService.findProductById(product.getId());
-        assertThat(fromRepo.getId()).isEqualTo(product.getId());
-        assertThat(fromRepo.getTitle()).isEqualTo(product.getTitle());
-        assertThat(fromRepo.getPrice()).isEqualTo(product.getPrice());
-        assertThat(fromRepo.getCategory().getId()).isEqualTo(product.getCategory().getId());
-        assertThat(fromRepo.getVendor().getId()).isEqualTo(product.getVendor().getId());
-        assertThat(fromRepo.getDescription()).isEqualTo(product.getDescription());
-        assertThat(fromRepo.getImages()).hasSize(product.getImages().size());
-        assertThat(fromRepo.getAttributes()).hasSize(product.getAttributes().size());
-
         ArrayList<DynamicAttributeValue<?>> attributes = new ArrayList<>(product.getAttributes());
-        var deletedAttribute = attributes.remove(RandomUtils.nextInt(0, attributes.size()));
+        DynamicAttributeValue<?> deletedAttribute = attributes.remove(RandomUtils.nextInt(0, attributes.size()));
         product.setAttributes(attributes);
+
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
         Exception exception = assertThrows(InvalidDataException.class, () -> productService.editProduct(product));
 

@@ -65,8 +65,9 @@ public class CategoryService
      *
      * @param editCategoryDto   the global info of the category that needs to be edited
      * @param dynamicAttributes a collection of saved dynamic attributes
+     * @return The edited category
      */
-    public void editCategory(CategoryDto editCategoryDto, Collection<DynamicAttribute> dynamicAttributes)
+    public Category editCategory(CategoryDto editCategoryDto, Collection<DynamicAttribute> dynamicAttributes)
     {
         Category category = findById(editCategoryDto.id());
 
@@ -74,7 +75,7 @@ public class CategoryService
         category.setName(editCategoryDto.name());
         category.setCharacteristics(new ArrayList<>(dynamicAttributes.stream().toList()));
 
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     //--------------------------------------------- find categories

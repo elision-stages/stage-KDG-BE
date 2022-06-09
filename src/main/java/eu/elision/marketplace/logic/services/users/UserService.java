@@ -55,16 +55,15 @@ public class UserService implements UserDetailsService
      * Edit a user. Throws an invalid data exception when the user does not exist in the repository
      *
      * @param user the user that needs to be edited
+     * @return the edited user
      */
-    public void editUser(User user)
+    public User editUser(User user)
     {
-        if (user == null)
-            throw new InvalidDataException("User can not be null");
-        if (findUserByEmail(user.getEmail()) == null)
-            throw new InvalidDataException(String.format("User with email %s does not exist", user.getEmail()));
+        if (user == null) throw new InvalidDataException("User can not be null");
         findUserById(user.getId());
+        findUserByEmail(user.getEmail());
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     /**
@@ -76,8 +75,10 @@ public class UserService implements UserDetailsService
     public User save(User user)
     {
         if (user == null) return null;
-        if (findUserByEmail(user.getEmail()) != null)
-            throw new InvalidDataException("An account with this e-mail exists already");
+
+        if (user.getId() != null) throw new InvalidDataException("New user can't have an id");
+        if (userRepository.findByEmail(user.getEmail()) != null)
+            throw new InvalidDataException(String.format("User with email %s already exists", user.getEmail()));
 
         Set<ConstraintViolation<User>> violations = validator.validate(user);
 

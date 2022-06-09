@@ -1,17 +1,16 @@
 package eu.elision.marketplace.logic;
 
 import eu.elision.marketplace.domain.orders.Order;
-import eu.elision.marketplace.domain.orders.OrderLine;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
+import eu.elision.marketplace.domain.users.Cart;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.exceptions.InvalidDataException;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
-import eu.elision.marketplace.logic.services.orders.OrderLineService;
 import eu.elision.marketplace.logic.services.orders.OrderService;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
@@ -54,7 +53,6 @@ public class Controller
     private final DynamicAttributeService dynamicAttributeService;
     private final DynamicAttributeValueService dynamicAttributeValueService;
     private final OrderService orderService;
-    private final OrderLineService orderLineService;
     private final AlgoliaIndexerService algoliaIndexerService;
     private final VATService vatService;
 
@@ -68,12 +66,11 @@ public class Controller
      * @param dynamicAttributeService      dynamic attribute service
      * @param dynamicAttributeValueService dynamic attribute value service
      * @param orderService                 order service
-     * @param orderLineService             order line service
      * @param algoliaIndexerService        algolia indexer service
      * @param vatService vat checking service
      */
     @Autowired
-    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, OrderService orderService, OrderLineService orderLineService, AlgoliaIndexerService algoliaIndexerService, VATService vatService)
+    public Controller(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, CategoryService categoryService, ProductService productService, DynamicAttributeService dynamicAttributeService, DynamicAttributeValueService dynamicAttributeValueService, OrderService orderService, AlgoliaIndexerService algoliaIndexerService, VATService vatService)
     {
         this.userService = userService;
         this.categoryService = categoryService;
@@ -82,32 +79,11 @@ public class Controller
         this.dynamicAttributeService = dynamicAttributeService;
         this.dynamicAttributeValueService = dynamicAttributeValueService;
         this.orderService = orderService;
-        this.orderLineService = orderLineService;
         this.algoliaIndexerService = algoliaIndexerService;
         this.vatService = vatService;
     }
 
     //---------------------------------- Find all
-
-    /**
-     * get all users from the repository
-     *
-     * @return a list with users
-     */
-    public List<User> findAllUsers()
-    {
-        return userService.findAllUsers();
-    }
-
-    /**
-     * Get all products
-     *
-     * @return a list of products
-     */
-    public Collection<Product> findAllProducts()
-    {
-        return productService.findAllProducts();
-    }
 
     /**
      * Get all categories
@@ -286,16 +262,6 @@ public class Controller
     }
 
     /**
-     * Save an order line
-     *
-     * @param orderLine the order line you want to save
-     */
-    public void saveOrderLine(OrderLine orderLine)
-    {
-        orderLineService.save(orderLine);
-    }
-
-    /**
      * Save a vendor from dto object
      *
      * @param vendorDto the dto object that needs to be saved
@@ -418,13 +384,13 @@ public class Controller
      * @param addProductDto the dto of the product that has to be added
      * @return the cart dto of the user
      */
-    public CartDto addProductToCart(String customerEmail, AddProductToCartDto addProductDto)
+    public Cart addProductToCart(String customerEmail, AddProductToCartDto addProductDto)
     {
         Customer customer = (Customer) userService.findUserByEmail(customerEmail);
         customer.getCart().addProduct(productService.findProductById(addProductDto.productId()), addProductDto.count(), addProductDto.add());
         userService.editUser(customer);
 
-        return Mapper.toCartDto(customer.getCart());
+        return customer.getCart();
     }
 
     /**
@@ -447,23 +413,15 @@ public class Controller
      * Edit a category
      *
      * @param editCategoryDto the dto with the data to edit the category
+     * @return the edited category
      */
-    public void editCategory(CategoryDto editCategoryDto)
+    public Category editCategory(CategoryDto editCategoryDto)
     {
-        categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
+        return categoryService.editCategory(editCategoryDto, dynamicAttributeService.renewAttributes(editCategoryDto, categoryService.findById(editCategoryDto.id())));
     }
 
     //----------------------------------------------------------- Delete
 
-    /**
-     * Delete a product - <strong>Only for testing</strong>
-     *
-     * @param productId the id of the product that needs to be deleted
-     */
-    public void deleteProduct(long productId)
-    {
-        productService.delete(productId);
-    }
 
     /**
      * Delete a product from a user
@@ -477,7 +435,7 @@ public class Controller
     }
 
     /**
-     * Chech a vat number
+     * Check a vat number
      *
      * @param vat the vat number that needs to be checked
      * @return the business information when everything is ok, invalid data exception otherwise

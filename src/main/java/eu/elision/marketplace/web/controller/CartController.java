@@ -1,6 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.logic.Controller;
+import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class CartController {
     @PostMapping("add")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<CartDto> addProductToCart(Principal principal, @RequestBody AddProductToCartDto addProductDto) {
-        return ResponseEntity.ok(controller.addProductToCart(principal.getName(), addProductDto));
+        return ResponseEntity.ok(Mapper.toCartDto(controller.addProductToCart(principal.getName(), addProductDto)));
     }
 
     /**

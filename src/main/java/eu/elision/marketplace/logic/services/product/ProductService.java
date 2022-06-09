@@ -94,16 +94,6 @@ public class ProductService
     }
 
     /**
-     * Delete a product based on an id
-     *
-     * @param productId the id of the product that needs to be deleted
-     */
-    public void delete(long productId)
-    {
-        productRepository.deleteById(productId);
-    }
-
-    /**
      * Delete a product
      *
      * @param productId   the id of the product that needs to be deleted

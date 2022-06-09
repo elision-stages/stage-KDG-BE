@@ -30,10 +30,11 @@ public class DynamicAttributeValueService
      * Saves a list of dynamic attribute values
      *
      * @param collectionToSave the list that needs to be saved
+     * @return the saved collection of dynamic attributes
      */
-    public void save(Collection<DynamicAttributeValue<?>> collectionToSave)
+    public Collection<DynamicAttributeValue<?>> save(Collection<DynamicAttributeValue<?>> collectionToSave)
     {
-        dynamicAttributeValueRepository.saveAll(collectionToSave);
+        return dynamicAttributeValueRepository.saveAll(collectionToSave);
     }
 
     /**
