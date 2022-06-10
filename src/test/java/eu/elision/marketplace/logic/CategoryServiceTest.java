@@ -4,10 +4,12 @@ import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.repositories.CategoryRepository;
+import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -102,8 +105,7 @@ class CategoryServiceTest
     }
 
     @Test
-    void assertParentNotFound()
-    {
+    void assertParentNotFound() {
         final long parentId = RandomUtils.nextLong();
         when(categoryRepository.findById(parentId)).thenReturn(Optional.empty());
 
@@ -111,5 +113,32 @@ class CategoryServiceTest
         Exception exception = assertThrows(NotFoundException.class, () -> categoryService.save(categoryMakeDto));
 
         assertThat(exception.getMessage()).isEqualTo(String.format("Category with id %s not found", parentId));
+    }
+
+    @Test
+    void testEditCategory() {
+        Category parent = new Category();
+        parent.setId(RandomUtils.nextLong());
+
+        Category category = new Category();
+        category.setId(RandomUtils.nextLong());
+        category.setParent(parent);
+
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(category.getId());
+        categoryDto.setName(RandomStringUtils.randomAlphabetic(50));
+        categoryDto.setParentId(parent.getId());
+        categoryDto.setCharacteristics(new ArrayList<>());
+
+        when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(parent.getId())).thenReturn(Optional.of(parent));
+        when(categoryRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
+
+        assertThat(categoryService.editCategory(categoryDto, category.getCharacteristics())).isEqualTo(category);
+    }
+
+    @Test
+    void testFindById0() {
+        assertThat(categoryService.findById(0L)).isNull();
     }
 }
