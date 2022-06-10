@@ -7,6 +7,7 @@ import eu.elision.marketplace.exceptions.UnauthorisedException;
 import eu.elision.marketplace.logic.services.vat.VATService;
 import eu.elision.marketplace.repositories.UserRepository;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,6 +41,7 @@ public class UserService implements UserDetailsService
      * @param validator             the user validator that the service needs to use
      * @param bCryptPasswordEncoder An BCryptPasswordEncoder instance
      */
+    @Autowired
     public UserService(UserRepository userRepository, Validator validator, BCryptPasswordEncoder bCryptPasswordEncoder)
     {
         this.userRepository = userRepository;
