@@ -22,10 +22,13 @@ public class DynamicAttributeDto
      * @param required if the attribute is required
      * @param type     the type of the attribute
      */
-    public DynamicAttributeDto(String name, boolean required, Type type)
-    {
+    public DynamicAttributeDto(String name, boolean required, Type type) {
         this.name = name;
         this.required = required;
         this.type = type;
+    }
+
+    public DynamicAttributeDto() {
+
     }
 }
