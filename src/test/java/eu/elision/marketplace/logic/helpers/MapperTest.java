@@ -2,6 +2,7 @@ package eu.elision.marketplace.logic.helpers;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
+import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeIntValue;
 import eu.elision.marketplace.domain.product.category.attributes.value.DynamicAttributeValue;
 import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
@@ -10,12 +11,16 @@ import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.UserDto;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.product.EditProductDto;
+import eu.elision.marketplace.web.dtos.product.ProductDto;
 import eu.elision.marketplace.web.dtos.product.SmallProductDto;
+import eu.elision.marketplace.web.dtos.users.CustomerDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,5 +153,75 @@ class MapperTest {
         assertThat(product.getTitle()).isEqualTo(editProductDto.title());
         assertThat(product.getImages()).isEqualTo(editProductDto.images());
         assertThat(product.getAttributes()).isEqualTo(attributeValues);
+    }
+
+    @Test
+    void testToCustomer() {
+        CustomerDto customerDto = new CustomerDto(RandomStringUtils.randomAlphabetic(50), RandomStringUtils.randomAlphabetic(50), RandomStringUtils.randomAlphabetic(50), RandomStringUtils.randomAlphabetic(50));
+
+        Customer customer = Mapper.toCustomer(customerDto);
+
+        assertThat(customer.getFirstName()).isEqualTo(customerDto.firstName());
+        assertThat(customer.getLastName()).isEqualTo(customerDto.lastName());
+        assertThat(customer.getEmail()).isEqualTo(customerDto.email());
+        assertThat(customer.getPassword()).isEqualTo(customerDto.password());
+    }
+
+    @Test
+    void testToProduct() {
+        ProductDto productDto = new ProductDto(RandomUtils.nextLong(),
+                RandomUtils.nextDouble(),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                new ArrayList<>(),
+                RandomUtils.nextInt(),
+                new ArrayList<>(),
+                RandomUtils.nextInt(),
+                RandomStringUtils.randomAlphabetic(50));
+
+        Collection<DynamicAttributeValue<?>> attributeValues = List.of(new DynamicAttributeIntValue(RandomStringUtils.randomAlphabetic(50), RandomUtils.nextInt()));
+        Vendor vendor = new Vendor();
+        Category category = new Category();
+        category.setId(productDto.categoryId());
+
+        Product product = Mapper.toProduct(productDto, attributeValues, vendor, category);
+
+        assertThat(product.getCategory()).isEqualTo(category);
+        assertThat(product.getTitle()).isEqualTo(productDto.title());
+        assertThat(product.getPrice()).isEqualTo(productDto.price());
+        assertThat(product.getVendor()).isEqualTo(vendor);
+        assertThat(product.getDescription()).isEqualTo(productDto.description());
+        assertThat(product.getDescription()).isEqualTo(productDto.description());
+        assertThat(product.getImages()).isEqualTo(productDto.images());
+        assertThat(product.getAttributes()).contains(attributeValues.stream().findFirst().get());
+    }
+
+    @Test
+    void testToVendor() {
+        VendorDto vendorDto = new VendorDto(
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomUtils.nextBoolean(),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50)
+        );
+        Vendor vendor = Mapper.toVendor(vendorDto);
+
+        assertThat(vendor.getFirstName()).isEqualTo(vendorDto.firstName());
+        assertThat(vendor.getLastName()).isEqualTo(vendorDto.lastName());
+        assertThat(vendor.getLogo()).isEqualTo(vendorDto.logo());
+        assertThat(vendor.getTheme()).isEqualTo(vendorDto.theme());
+        assertThat(vendor.getEmail()).isEqualTo(vendorDto.email());
+        assertThat(vendor.getPassword()).isEqualTo(vendorDto.password());
+        assertThat(vendor.isValidated()).isEqualTo(vendorDto.validated());
+        assertThat(vendor.getVatNumber()).isEqualTo(vendorDto.vatNumber());
+        assertThat(vendor.getPhoneNumber()).isEqualTo(vendorDto.phoneNumber());
+        assertThat(vendor.getBusinessName()).isEqualTo(vendorDto.businessName());
     }
 }
