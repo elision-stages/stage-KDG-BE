@@ -1,4 +1,4 @@
-package eu.elision.marketplace.logic.populator;
+package eu.elision.marketplace.logic.converter.populator;
 
 /**
  * Populator interface to convert an object

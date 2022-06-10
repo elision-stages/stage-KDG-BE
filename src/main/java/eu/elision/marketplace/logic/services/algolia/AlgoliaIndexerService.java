@@ -3,7 +3,7 @@ package eu.elision.marketplace.logic.services.algolia;
 import com.algolia.search.SearchIndex;
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.exceptions.ConversionException;
-import eu.elision.marketplace.logic.populator.Converter;
+import eu.elision.marketplace.logic.converter.Converter;
 import eu.elision.marketplace.repositories.ProductRepository;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.slf4j.Logger;

@@ -2,7 +2,7 @@ package eu.elision.marketplace.logic.populator;
 
 import eu.elision.marketplace.domain.product.Product;
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.logic.populator.algolia.AlgoliaProductCategoryPopulator;
+import eu.elision.marketplace.logic.converter.populator.algolia.AlgoliaProductCategoryPopulator;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.junit.jupiter.api.Test;
 

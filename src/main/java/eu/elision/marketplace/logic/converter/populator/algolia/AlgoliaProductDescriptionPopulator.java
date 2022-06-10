@@ -1,7 +1,7 @@
-package eu.elision.marketplace.logic.populator.algolia;
+package eu.elision.marketplace.logic.converter.populator.algolia;
 
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.logic.populator.Populator;
+import eu.elision.marketplace.logic.converter.populator.Populator;
 import eu.elision.marketplace.web.dtos.AlgoliaProductDto;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Component;

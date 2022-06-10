@@ -21,6 +21,8 @@ public class CategoryDto
     private Collection<DynamicAttributeDto> characteristics;
 
     /**
+     * Public constructor
+     *
      * @param id              the getId of the category
      * @param name            the getName of the category
      * @param parentId        the getId of the parent category

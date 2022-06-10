@@ -20,35 +20,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapperTest
-{
+class MapperTest {
     @Test
-    void toCategoryDtoList()
-    {
-        Category parent = new Category();
-        Category child = new Category();
-
-        String parentName = RandomStringUtils.randomAlphabetic(5);
-        String childName = RandomStringUtils.randomAlphabetic(5);
-
-        parent.setName(parentName);
-        parent.setId(RandomUtils.nextLong());
-        child.setName(childName);
-        child.setId(RandomUtils.nextLong());
-        parent.getSubCategories().add(child);
-
-//        List<CategoryDto> categoryDtos = Mapper.toCategoryDtoList(List.of(parent));
-//
-//        assertThat(categoryDtos).hasSize(1);
-//        final CategoryDto parentDto = categoryDtos.get(0);
-//        assertThat(parentDto).isNotNull();
-//        assertThat(parentDto.getName()).hasToString(parentName);
-    }
-
-
-    @Test
-    void toUserDtoTest()
-    {
+    void toUserDtoTest() {
         User user = new Vendor();
         Long id = RandomUtils.nextLong(1, 10);
         String firstName = RandomStringUtils.randomAlphabetic(4);
@@ -68,8 +42,7 @@ class MapperTest
     }
 
     @Test
-    void testToSmallDto()
-    {
+    void testToSmallDto() {
         final long id = RandomUtils.nextLong(1, 100);
         final String name = RandomStringUtils.randomAlphabetic(5);
         final String image1 = RandomStringUtils.randomAlphabetic(5);
@@ -94,15 +67,13 @@ class MapperTest
     }
 
     @Test
-    void testTokenDto()
-    {
+    void testTokenDto() {
         String token = RandomStringUtils.random(50);
         assertThat(Mapper.toTokenDto(token).token()).isEqualTo(token);
     }
 
     @Test
-    void testVendorToUserDtoTest()
-    {
+    void testVendorToUserDtoTest() {
         Vendor vendor = new Vendor();
         vendor.setId(RandomUtils.nextLong());
         vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
@@ -119,8 +90,7 @@ class MapperTest
     }
 
     @Test
-    void testCustomerToUserDtoTest()
-    {
+    void testCustomerToUserDtoTest() {
         Customer customer = new Customer();
         customer.setId(RandomUtils.nextLong());
         customer.setFirstName(RandomStringUtils.randomAlphabetic(50));
@@ -137,8 +107,7 @@ class MapperTest
     }
 
     @Test
-    void testAdminToUserDtoTest()
-    {
+    void testAdminToUserDtoTest() {
         Admin admin = new Admin();
         admin.setId(RandomUtils.nextLong());
         admin.setFirstName(RandomStringUtils.randomAlphabetic(50));
@@ -155,8 +124,7 @@ class MapperTest
     }
 
     @Test
-    void toProductDto()
-    {
+    void toProductDto() {
         final Vendor vendor = new Vendor();
         vendor.setId(RandomUtils.nextLong());
         vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
@@ -169,15 +137,7 @@ class MapperTest
         final Category category = new Category();
         category.setId(RandomUtils.nextLong());
 
-        EditProductDto editProductDto = new EditProductDto(
-                RandomUtils.nextLong(),
-                category.getId(),
-                RandomStringUtils.randomAlphabetic(50),
-                RandomUtils.nextInt(),
-                RandomStringUtils.randomAlphabetic(50),
-                images,
-                attributes
-        );
+        EditProductDto editProductDto = new EditProductDto(RandomUtils.nextLong(), category.getId(), RandomStringUtils.randomAlphabetic(50), RandomUtils.nextInt(), RandomStringUtils.randomAlphabetic(50), images, attributes);
 
         Product product = Mapper.toProduct(editProductDto, category, vendor, attributeValues);
 

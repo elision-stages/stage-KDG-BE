@@ -3,8 +3,6 @@ package eu.elision.marketplace.web.controller;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.logic.helpers.Mapper;
-import eu.elision.marketplace.logic.populator.Converter;
-import eu.elision.marketplace.logic.populator.categorydto.CategoryDtoConverter;
 import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
@@ -22,19 +20,15 @@ import java.util.Collection;
 @RequestMapping("category")
 public class CategoriesController {
     private final Controller controller;
-    private final Converter<Category, CategoryDto> categoryDtoConverter;
 
     /**
      * Public constructor
      *
-     * @param controller           the controller that the category controller has to use
-     * @param categoryDtoConverter the category dto converter that needs to be used
+     * @param controller the controller that the category controller has to use
      */
     @Autowired
-    public CategoriesController(Controller controller, CategoryDtoConverter categoryDtoConverter)
-    {
+    public CategoriesController(Controller controller) {
         this.controller = controller;
-        this.categoryDtoConverter = categoryDtoConverter;
     }
 
     @GetMapping

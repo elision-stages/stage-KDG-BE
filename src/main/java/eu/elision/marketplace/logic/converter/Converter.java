@@ -1,6 +1,7 @@
-package eu.elision.marketplace.logic.populator;
+package eu.elision.marketplace.logic.converter;
 
 import eu.elision.marketplace.exceptions.ConversionException;
+import eu.elision.marketplace.logic.converter.populator.Populator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

@@ -16,6 +16,8 @@ public class DynamicAttributeDto
     private Type type;
 
     /**
+     * Public constructor
+     *
      * @param name     the name of the attribute
      * @param required if the attribute is required
      * @param type     the type of the attribute
