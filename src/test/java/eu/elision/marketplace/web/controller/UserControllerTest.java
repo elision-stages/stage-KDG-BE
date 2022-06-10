@@ -1,5 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
+import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -7,11 +8,13 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,6 +29,9 @@ class UserControllerTest {
     private TestRestTemplate restTemplate;
     @LocalServerPort
     private Integer port;
+    @MockBean
+    private Controller controller;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() throws MalformedURLException {
