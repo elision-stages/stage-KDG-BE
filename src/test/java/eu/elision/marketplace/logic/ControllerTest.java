@@ -17,20 +17,25 @@ import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.logic.services.product.DynamicAttributeService;
 import eu.elision.marketplace.logic.services.product.ProductService;
 import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.web.dtos.TokenDto;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.cart.AddProductToCartDto;
 import eu.elision.marketplace.web.dtos.cart.CartDto;
 import eu.elision.marketplace.web.dtos.cart.OrderLineDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
+import eu.elision.marketplace.web.dtos.users.VendorDto;
 import eu.elision.marketplace.web.dtos.users.VendorPageDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.*;
 
@@ -41,8 +46,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class ControllerTest
-{
+class ControllerTest {
     @InjectMocks
     Controller controller;
     @Mock
@@ -55,10 +59,11 @@ class ControllerTest
     ProductService productService;
     @Mock
     DynamicAttributeService dynamicAttributeService;
+    @Mock
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
-    void saveCostumerWithAddress()
-    {
+    void saveCostumerWithAddress() {
         final Customer customer = new Customer();
         final Address address = new Address();
 
@@ -97,8 +102,7 @@ class ControllerTest
     }
 
     @Test
-    void saveCustomerWithoutAddress()
-    {
+    void saveCustomerWithoutAddress() {
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -126,8 +130,7 @@ class ControllerTest
     }
 
     @Test
-    void findAllCategoriesTest()
-    {
+    void findAllCategoriesTest() {
         List<Category> categories = List.of(new Category());
         when(categoryService.findAll()).thenReturn(categories);
 
@@ -135,8 +138,7 @@ class ControllerTest
     }
 
     @Test
-    void findProductsByVendor()
-    {
+    void findProductsByVendor() {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -168,8 +170,7 @@ class ControllerTest
     }
 
     @Test
-    void addGetProductToCartTest()
-    {
+    void addGetProductToCartTest() {
         final String firstName = RandomStringUtils.randomAlphabetic(5);
         final String lastName = RandomStringUtils.randomAlphabetic(5);
         final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
@@ -228,8 +229,7 @@ class ControllerTest
     }
 
     @Test
-    void checkoutCartTest()
-    {
+    void checkoutCartTest() {
         final Customer customer = new Customer();
 
         final String firstName = RandomStringUtils.randomAlphabetic(5);
@@ -292,8 +292,7 @@ class ControllerTest
     }
 
     @Test
-    void getVendorOrders()
-    {
+    void getVendorOrders() {
         Vendor vendor = new Vendor();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
         final String lastName = RandomStringUtils.randomAlphabetic(4);
@@ -387,8 +386,7 @@ class ControllerTest
     }
 
     @Test
-    void getOrdersUserNotFound()
-    {
+    void getOrdersUserNotFound() {
         final String userEmail = RandomStringUtils.randomAlphabetic(4);
 
         when(userService.findUserByEmail(userEmail)).thenThrow(NotFoundException.class);
@@ -396,8 +394,7 @@ class ControllerTest
     }
 
     @Test
-    void getCustomerOrderTest()
-    {
+    void getCustomerOrderTest() {
         Vendor vendor = new Vendor();
         Admin admin = new Admin();
         final String firstName = RandomStringUtils.randomAlphabetic(4);
@@ -476,8 +473,7 @@ class ControllerTest
     }
 
     @Test
-    void testEditCategory()
-    {
+    void testEditCategory() {
         Type[] types = {Type.STRING, Type.DECIMAL, Type.DECIMAL, Type.INTEGER};
 
         Category category = new Category();
@@ -517,8 +513,7 @@ class ControllerTest
     }
 
     @Test
-    void getFakeCategoryTest()
-    {
+    void getFakeCategoryTest() {
         long wrongId = RandomUtils.nextInt();
         when(categoryService.findById(wrongId)).thenThrow(NotFoundException.class);
 
@@ -526,8 +521,7 @@ class ControllerTest
     }
 
     @Test
-    void testGetVendorById()
-    {
+    void testGetVendorById() {
         Vendor vendor = new Vendor();
         vendor.setId(RandomUtils.nextLong());
         vendor.setLogo(RandomStringUtils.randomAlphabetic(50));
@@ -552,5 +546,108 @@ class ControllerTest
         assertThat(vendorDto.phoneNumber()).isEqualTo(vendor.getPhoneNumber());
         assertThat(vendorDto.businessName()).isEqualTo(vendor.getBusinessName());
         assertThat(vendorDto.email()).isEqualTo(vendor.getEmail());
+    }
+
+    @Test
+    void testFindProductById() {
+        final Product product = new Product();
+        product.setId(RandomUtils.nextLong());
+        when(productService.findProductById(product.getId())).thenReturn(product);
+
+        assertThat(controller.findProductById(product.getId())).isEqualTo(product);
+    }
+
+    @Test
+    void testFindUserByEmail() {
+        Customer customer = new Customer();
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
+        when(userService.findUserByEmail(customer.getEmail())).thenReturn(customer);
+
+        assertThat(controller.findUserByEmail(customer.getEmail())).isEqualTo(customer);
+    }
+
+    @Test
+    void testGetVendorToken() {
+        TokenDto tokenDto = new TokenDto(RandomStringUtils.randomAlphabetic(50));
+        final Vendor vendor = new Vendor();
+        vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
+
+        when(userService.findVendorByEmail(vendor.getEmail())).thenReturn(vendor);
+        when(userService.updateToken(vendor)).thenReturn(tokenDto.token());
+
+        assertThat(controller.getVendorToken(vendor.getEmail()).token()).isEqualTo(tokenDto.token());
+    }
+
+    @Test
+    void testFindCategoryByName() {
+        Category category = new Category();
+        category.setName(RandomStringUtils.randomAlphabetic(50));
+
+        when(categoryService.findByName(category.getName())).thenReturn(category);
+
+        assertThat(controller.findCategoryByName(category.getName())).isEqualTo(category);
+    }
+
+    @Test
+    void testFindCategoryById() {
+        Category category = new Category();
+        category.setId(RandomUtils.nextLong());
+
+        when(categoryService.findById(category.getId())).thenReturn(category);
+
+        assertThat(controller.findCategoryById(category.getId())).isEqualTo(category);
+    }
+
+    @Test
+    void testSaveVendor() {
+        VendorDto vendorDto = new VendorDto(
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomUtils.nextBoolean(),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50),
+                RandomStringUtils.randomAlphabetic(50)
+        );
+
+        final String encryptedPassword = RandomStringUtils.randomAlphabetic(50);
+        when(bCryptPasswordEncoder.encode(vendorDto.password())).thenReturn(encryptedPassword);
+        when(userService.save(any())).then(AdditionalAnswers.returnsFirstArg());
+
+        Vendor vendor = controller.saveVendor(vendorDto);
+
+        assertThat(vendor.getPassword()).isEqualTo(encryptedPassword);
+        assertThat(vendor.getEmail()).isEqualTo(vendorDto.email());
+        assertThat(vendor.getLastName()).isEqualTo(vendorDto.lastName());
+        assertThat(vendor.getFirstName()).isEqualTo(vendorDto.firstName());
+        assertThat(vendor.getBusinessName()).isEqualTo(vendorDto.businessName());
+        assertThat(vendor.getPhoneNumber()).isEqualTo(vendorDto.phoneNumber());
+        assertThat(vendor.getVatNumber()).isEqualTo(vendorDto.vatNumber());
+        assertThat(vendor.getTheme()).isEqualTo(vendorDto.theme());
+        assertThat(vendor.getLogo()).isEqualTo(vendorDto.logo());
+        assertThat(vendor.getIntroduction()).isEqualTo(vendorDto.introduction());
+    }
+
+    @Test
+    void testSaveCategory() {
+        CategoryMakeDto categoryMakeDto = new CategoryMakeDto(
+                RandomStringUtils.randomAlphabetic(50),
+                RandomUtils.nextLong(),
+                new ArrayList<>()
+        );
+
+        Category savedCategory = new Category();
+        savedCategory.setName(categoryMakeDto.name());
+        savedCategory.setId(RandomUtils.nextLong());
+        savedCategory.setCharacteristics(new ArrayList<>());
+
+        when(categoryService.save(categoryMakeDto)).thenReturn(savedCategory);
+        when(categoryService.save(any(Category.class))).then(AdditionalAnswers.returnsFirstArg());
+
+        assertThat(controller.saveCategory(categoryMakeDto)).isEqualTo(savedCategory);
     }
 }

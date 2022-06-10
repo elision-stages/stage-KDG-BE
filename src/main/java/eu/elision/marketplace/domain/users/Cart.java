@@ -18,8 +18,7 @@ import java.util.Objects;
  */
 @Getter
 @Entity
-public class Cart
-{
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
@@ -27,12 +26,13 @@ public class Cart
     @OneToMany(cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final List<OrderLine> orderLines;
+    @OneToOne(mappedBy = "cart", optional = false)
+    private Customer customer;
 
     /**
      * No args constructor. Initialises order lines array
      */
-    public Cart()
-    {
+    public Cart() {
         orderLines = new ArrayList<>();
     }
 
@@ -89,7 +89,4 @@ public class Cart
 
         return order;
     }
-
-    @OneToOne(mappedBy = "cart", optional = false)
-    private Customer customer;
 }
