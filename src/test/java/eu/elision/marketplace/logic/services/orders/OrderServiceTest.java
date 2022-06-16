@@ -115,14 +115,26 @@ class OrderServiceTest
     void findUserOrdersVendor()
     {
         Vendor vendor = new Vendor();
+        vendor.setId(RandomUtils.nextLong());
+
         final Customer customer = new Customer();
         customer.setFirstName(RandomStringUtils.randomAlphabetic(50));
         customer.setLastName(RandomStringUtils.randomAlphabetic(50));
 
+        Product product = new Product();
+        product.setVendor(vendor);
+
+        Product otherProduct = new Product();
+        final Vendor vendor1 = new Vendor();
+        vendor1.setId(RandomUtils.nextLong());
+        otherProduct.setVendor(vendor1);
+
         final Order vendorOrder = new Order();
         vendorOrder.setOrderNumber(RandomUtils.nextLong());
         vendorOrder.setUser(customer);
-        vendorOrder.setLines(List.of(new OrderLine(RandomUtils.nextInt(), String.valueOf(vendorOrder.getOrderNumber()), new Product(), RandomUtils.nextInt()), new OrderLine(RandomUtils.nextInt(), String.valueOf(vendorOrder.getOrderNumber()), new Product(), RandomUtils.nextInt()), new OrderLine(RandomUtils.nextInt(), String.valueOf(vendorOrder.getOrderNumber()), new Product(), RandomUtils.nextInt())));
+        vendorOrder.setLines(List.of(new OrderLine(RandomUtils.nextInt(), String.valueOf(vendorOrder.getOrderNumber()), product, RandomUtils.nextInt()),
+                new OrderLine(RandomUtils.nextInt(), String.valueOf(vendorOrder.getOrderNumber()), otherProduct, RandomUtils.nextInt()),
+                new OrderLine(RandomUtils.nextInt(), String.valueOf(vendorOrder.getOrderNumber()), otherProduct, RandomUtils.nextInt())));
 
         final List<Order> vendorOrders = List.of(vendorOrder);
         when(orderRepository.findByLinesProductVendor(vendor)).thenReturn(vendorOrders);
