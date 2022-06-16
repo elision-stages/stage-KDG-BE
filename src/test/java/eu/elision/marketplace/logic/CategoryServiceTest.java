@@ -1,82 +1,103 @@
 package eu.elision.marketplace.logic;
 
 import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
-import eu.elision.marketplace.domain.product.category.attributes.Type;
+import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.logic.services.product.CategoryService;
 import eu.elision.marketplace.repositories.CategoryRepository;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
+import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class CategoryServiceTest {
-    @Autowired
-    Controller controller;
-    @Autowired
+class CategoryServiceTest
+{
+    @InjectMocks
     CategoryService categoryService;
     @Mock
     private CategoryRepository categoryRepository;
 
     @Test
-    void findAll() {
+    void findAll()
+    {
+        final ArrayList<Category> allCategories = new ArrayList<>();
+        when(categoryRepository.findAll()).thenReturn(allCategories);
+
         assertThat(categoryService.findAll()).isNotNull();
+        assertThat(categoryService.findAll()).isEqualTo(allCategories);
     }
 
     @Test
-    void testSave() {
+    void testSave()
+    {
         Category category = new Category();
+        category.setId(RandomUtils.nextLong());
+        category.setName(RandomStringUtils.randomAlphabetic(5));
 
-        String name = RandomStringUtils.randomAlphabetic(5);
-
-        category.setName(name);
+        when(categoryRepository.save(category)).thenReturn(category);
         long id = categoryService.save(category).getId();
 
+        when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
         Category repoCategory = categoryService.findById(id);
         assertThat(repoCategory).isNotNull();
-        assertThat(repoCategory.getName()).hasToString(name);
+        assertThat(repoCategory.getName()).hasToString(category.getName());
     }
 
     @Test
-    void testSaveWithParent() {
+    void testSaveWithParent()
+    {
         Category parent = new Category();
+        parent.setId(RandomUtils.nextLong(1L, 100L));
+        parent.setName(RandomStringUtils.randomAlphabetic(5));
         Category child = new Category();
+        child.setId(RandomUtils.nextLong(100L, 200L));
+        child.setName(RandomStringUtils.randomAlphabetic(5));
+        child.setParent(parent);
 
-        String parentName = RandomStringUtils.randomAlphabetic(5);
-        String childName = RandomStringUtils.randomAlphabetic(5);
+        parent.getSubCategories().add(child);
+        when(categoryRepository.save(parent)).thenReturn(parent);
+        when(categoryRepository.save(child)).thenReturn(child);
 
-        parent.setName(parentName);
-        child.setName(childName);
+        when(categoryRepository.findById(parent.getId())).thenReturn(Optional.of(parent));
+        when(categoryRepository.findById(child.getId())).thenReturn(Optional.of(child));
 
         long parentId = categoryService.save(parent).getId();
-        categoryService.save(child, parentId);
+        final CategoryMakeDto childCategoryDto = new CategoryMakeDto(child.getName(), parentId, new ArrayList<>());
+        categoryService.save(childCategoryDto);
+
 
         Category repoParent = categoryService.findById(parentId);
         assertThat(repoParent).isNotNull();
         assertThat(repoParent.getSubCategories()).hasSize(1);
+        assertThat(parent.getSubCategories().stream().findFirst().orElse(null)).isEqualTo(child);
+
+        Category repoChild = categoryService.findById(child.getId());
+        assertThat(repoChild).isNotNull();
     }
 
     @Test
-    void findByName() {
+    void findByName()
+    {
         Category category = new Category();
 
         String name = RandomStringUtils.randomAlphabetic(5);
 
         category.setName(name);
-        categoryService.save(category);
+
+        when(categoryRepository.findCategoryByName(category.getName())).thenReturn(category);
 
         Category repoCategory = categoryService.findByName(name);
         assertThat(repoCategory).isNotNull();
@@ -85,36 +106,39 @@ class CategoryServiceTest {
 
     @Test
     void assertParentNotFound() {
-        Category child = new Category();
         final long parentId = RandomUtils.nextLong();
+        when(categoryRepository.findById(parentId)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> categoryService.save(child, parentId));
+        final CategoryMakeDto categoryMakeDto = new CategoryMakeDto(RandomStringUtils.randomAlphabetic(10), parentId, new ArrayList<>());
+        Exception exception = assertThrows(NotFoundException.class, () -> categoryService.save(categoryMakeDto));
+
+        assertThat(exception.getMessage()).isEqualTo(String.format("Category with id %s not found", parentId));
     }
 
     @Test
-    void toCategoryDto() {
-        final Category cat1 = new Category();
-        final String name = RandomStringUtils.randomAlphabetic(4);
-        cat1.setName(name);
+    void testEditCategory() {
+        Category parent = new Category();
+        parent.setId(RandomUtils.nextLong());
 
-        final DynamicAttribute dynamicAttribute = new DynamicAttribute();
-        dynamicAttribute.setRequired(RandomUtils.nextBoolean());
-        dynamicAttribute.setType(Type.DECIMAL);
-        dynamicAttribute.setName(RandomStringUtils.randomAlphabetic(4));
-        cat1.getCharacteristics().add(dynamicAttribute);
+        Category category = new Category();
+        category.setId(RandomUtils.nextLong());
+        category.setParent(parent);
 
-        final DynamicAttribute dynamicAttribute2 = new DynamicAttribute();
-        dynamicAttribute2.setRequired(RandomUtils.nextBoolean());
-        dynamicAttribute2.setType(Type.STRING);
-        dynamicAttribute2.setName(RandomStringUtils.randomAlphabetic(4));
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setId(category.getId());
+        categoryDto.setName(RandomStringUtils.randomAlphabetic(50));
+        categoryDto.setParentId(parent.getId());
+        categoryDto.setCharacteristics(new ArrayList<>());
 
-        final PickList pickList = new PickList();
-        pickList.setItems(new ArrayList<>(List.of(new PickListItem())));
-        cat1.getCharacteristics().add(dynamicAttribute2);
+        when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(parent.getId())).thenReturn(Optional.of(parent));
+        when(categoryRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
 
-        CategoryDto categoryDto = categoryService.toCategoryDto(cat1);
+        assertThat(categoryService.editCategory(categoryDto, category.getCharacteristics())).isEqualTo(category);
+    }
 
-        assertThat(categoryDto.name()).isEqualTo(name);
-        assertThat(categoryDto.characteristics()).hasSize(2);
+    @Test
+    void testFindById0() {
+        assertThat(categoryService.findById(0L)).isNull();
     }
 }

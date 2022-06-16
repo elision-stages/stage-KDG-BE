@@ -1,8 +1,7 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.logic.Controller;
-import eu.elision.marketplace.web.api.vat.Business;
-import eu.elision.marketplace.web.api.vat.VATClient;
+import eu.elision.marketplace.logic.services.vat.Business;
 import eu.elision.marketplace.web.dtos.TokenDto;
 import eu.elision.marketplace.web.dtos.users.VendorPageDto;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import java.security.Principal;
 @RequestMapping("/vendor")
 public class VendorController
 {
-    VATClient vatClient = new VATClient();
     final
     Controller controller;
 
@@ -37,10 +35,7 @@ public class VendorController
     @ResponseBody
     ResponseEntity<Business> checkVat(@PathVariable("vat") String vat)
     {
-        Business result = vatClient.checkVatService(vat);
-
-        if (result == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(controller.checkVat(vat), HttpStatus.OK);
     }
 
     /**
@@ -52,7 +47,7 @@ public class VendorController
     @GetMapping("/{id}")
     public ResponseEntity<VendorPageDto> getVendorPageInfo(@PathVariable("id") long id)
     {
-        return ResponseEntity.ok(controller.getVendorById(id));
+        return ResponseEntity.ok(controller.findVendorById(id));
     }
 
     /**

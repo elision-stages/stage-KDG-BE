@@ -3,14 +3,13 @@ package eu.elision.marketplace.logic.services.product;
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
 import eu.elision.marketplace.domain.product.category.attributes.value.*;
+import eu.elision.marketplace.exceptions.InvalidDataException;
+import eu.elision.marketplace.exceptions.NotFoundException;
+import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.repositories.DynamicAttributeRepository;
 import eu.elision.marketplace.web.dtos.attributes.AttributeValue;
 import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,14 +21,12 @@ import java.util.Collection;
 @Service
 public class DynamicAttributeService
 {
-
     private final DynamicAttributeRepository dynamicAttributeRepository;
-    Logger logger = LoggerFactory.getLogger(DynamicAttributeService.class);
 
     /**
-     * DynamicAttributeService
+     * Public constructor
      *
-     * @param dynamicAttributeRepository DynamicAttributeRepository
+     * @param dynamicAttributeRepository the dynamic attribute repository that the service needs to use
      */
     public DynamicAttributeService(DynamicAttributeRepository dynamicAttributeRepository)
     {
@@ -78,39 +75,10 @@ public class DynamicAttributeService
     {
         if (dynamicAttributeRepository.existsByName(dynamicAttribute.getName()))
         {
-            logger.warn("Dynamic attribute with name {} already exists, not saving instance", dynamicAttribute.getName());
+            dynamicAttribute.setId(dynamicAttributeRepository.findDynamicAttributeByName(dynamicAttribute.getName()).getId());
+            dynamicAttributeRepository.save(dynamicAttribute);
         }
         return dynamicAttributeRepository.save(dynamicAttribute);
-    }
-
-    /**
-     * Convert a DynamicAttributeDto to a DynamicAttribute
-     *
-     * @param dynamicAttributeDto DynamicAttributeDto to convert to a DynamicAttribute
-     * @param category            the category that needs to be set to the attribute
-     * @return The DynamicAttribute
-     */
-    public DynamicAttribute toDynamicAttribute(DynamicAttributeDto dynamicAttributeDto, Category category)
-    {
-        DynamicAttribute dynamicAttribute = new DynamicAttribute();
-        dynamicAttribute.setName(dynamicAttributeDto.name());
-        dynamicAttribute.setRequired(dynamicAttributeDto.required());
-        dynamicAttribute.setType(dynamicAttributeDto.type());
-        dynamicAttribute.setCategory(category);
-
-        return dynamicAttribute;
-    }
-
-    /**
-     * Convert a collection of DynamicAttributeDto to DynamicAttribute
-     *
-     * @param dynamicAttributeDtos Collection of DTOs
-     * @param category             the category that needs to be set to the attributes
-     * @return Collection of DynamicAttribute
-     */
-    public Collection<DynamicAttribute> toDynamicAttributes(Collection<DynamicAttributeDto> dynamicAttributeDtos, Category category)
-    {
-        return dynamicAttributeDtos.stream().map(dynamicAttributeDto -> toDynamicAttribute(dynamicAttributeDto, category)).toList();
     }
 
     /**
@@ -122,12 +90,12 @@ public class DynamicAttributeService
      */
     public Collection<DynamicAttribute> renewAttributes(CategoryDto editCategoryDto, Category category)
     {
-        checkDoubles(editCategoryDto.characteristics());
+        checkDoubles(editCategoryDto.getCharacteristics());
 
         final Collection<DynamicAttribute> allByCategoryId = dynamicAttributeRepository.findAllByCategory(category);
         dynamicAttributeRepository.deleteAll(allByCategoryId);
 
-        final Collection<DynamicAttribute> entities = toDynamicAttributes(editCategoryDto.characteristics(), category);
+        final Collection<DynamicAttribute> entities = Mapper.toDynamicAttributes(editCategoryDto.getCharacteristics(), category);
         return dynamicAttributeRepository.saveAll(entities);
     }
 
@@ -135,8 +103,8 @@ public class DynamicAttributeService
     {
         for (DynamicAttributeDto characteristic : characteristics)
         {
-            if (characteristics.stream().filter(dynamicAttributeDto -> dynamicAttributeDto.name().equals(characteristic.name())).count() > 1L)
-                throw new InvalidDataException(String.format("Characteristics have duplicate name %s", characteristic.name()));
+            if (characteristics.stream().filter(dynamicAttributeDto -> dynamicAttributeDto.getName().equals(characteristic.getName())).count() > 1L)
+                throw new InvalidDataException(String.format("Characteristics have duplicate name %s", characteristic.getName()));
         }
     }
 }

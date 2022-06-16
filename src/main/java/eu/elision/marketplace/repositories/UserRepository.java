@@ -2,10 +2,12 @@ package eu.elision.marketplace.repositories;
 
 import eu.elision.marketplace.domain.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Jpa repository for users
  */
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Find a users by email

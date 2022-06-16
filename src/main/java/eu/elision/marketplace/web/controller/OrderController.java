@@ -38,7 +38,7 @@ public class OrderController {
      */
     @GetMapping
     public ResponseEntity<Collection<OrderDto>> getVendorOrders(Principal principal) {
-        return ResponseEntity.ok(controller.getOrders(principal.getName()));
+        return ResponseEntity.ok(controller.findUserOrders(principal.getName()));
     }
 
     /**
@@ -51,6 +51,6 @@ public class OrderController {
     @GetMapping("{id}")
     @Secured({"ROLE_CUSTOMER", "ROLE_VENDOR", "ROLE_ADMIN"})
     public ResponseEntity<CustomerOrderDto> getOrder(Principal principal, @PathVariable long id) {
-        return ResponseEntity.ok(controller.getOrder(principal.getName(), id));
+        return ResponseEntity.ok(controller.findOrder(principal.getName(), id));
     }
 }

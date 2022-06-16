@@ -1,6 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
+import eu.elision.marketplace.logic.Controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AlgoliaController
 {
-    private final AlgoliaIndexerService algoliaIndexerService;
+    private final Controller controller;
 
     /**
      * Public constructor
      *
-     * @param algoliaIndexerService the indexer that the controller needs to use
+     * @param controller the controller that the controller needs to use
      */
-    public AlgoliaController(AlgoliaIndexerService algoliaIndexerService)
+    public AlgoliaController(Controller controller)
     {
-        this.algoliaIndexerService = algoliaIndexerService;
+        this.controller = controller;
     }
 
     @PostMapping("/updatealgolia")
     ResponseEntity<String> updateAlgolia()
     {
-        algoliaIndexerService.indexAllProducts();
+        controller.indexAllProducts();
         return ResponseEntity.ok("{\"status\": \"ok\"}");
     }
 }

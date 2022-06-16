@@ -1,5 +1,6 @@
 package eu.elision.marketplace.web.api.vat;
 
+import eu.elision.marketplace.logic.services.vat.Business;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 

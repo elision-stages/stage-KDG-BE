@@ -1,7 +1,6 @@
 package eu.elision.marketplace.repositories;
 
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.domain.users.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,10 +21,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>
     Collection<Product> findAllByVendorId(Long id);
 
     /**
-     * Find all products from given vendor id
+     * Find products by the vendor's email
      *
-     * @param vendor given vendor
-     * @return the products of given vendor
+     * @param email the email of the vendor
+     * @return a collection of products owned by vendor with given email
      */
-    Collection<Product> findProductsByVendor(Vendor vendor);
+    Collection<Product> findByVendorEmail(String email);
+
 }

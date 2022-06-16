@@ -1,9 +1,9 @@
 package eu.elision.marketplace.domain.product.category;
 
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
-import eu.elision.marketplace.domain.product.category.attributes.PickList;
-import eu.elision.marketplace.domain.product.category.attributes.PickListItem;
 import eu.elision.marketplace.domain.product.category.attributes.Type;
+import eu.elision.marketplace.domain.product.category.attributes.picklist.PickList;
+import eu.elision.marketplace.domain.product.category.attributes.picklist.PickListItem;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

@@ -72,61 +72,6 @@ class OrderLineTest
     }
 
     @Test
-    void testToString()
-    {
-        OrderLine ol = new OrderLine();
-        final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
-        final String name = RandomStringUtils.random(10);
-        final String description = RandomStringUtils.random(10);
-        final int orderLineNumber = RandomUtils.nextInt(1, 100);
-        final int quantity = RandomUtils.nextInt(1, 100);
-        final double price = RandomUtils.nextDouble(1, 100);
-        final long id = RandomUtils.nextLong(1, 100);
-
-        ol.setOrderNumber(orderNumber);
-        ol.setQuantity(quantity);
-        ol.setProduct(new Product(id, price, name, null, null, description, new ArrayList<>(), new ArrayList<>()));
-        ol.setOrderLineNumber(orderLineNumber);
-
-        assertThat(ol.toString()).hasToString(String.format("OrderLine(orderLineNumber=%s, orderNumber=%s, product=Product(id=%s, price=%s, title=%s, category=null, vendor=null, description=%s, images=[], attributes=[]), quantity=%s)",
-                orderLineNumber, orderNumber, id, price, name, description, quantity));
-    }
-
-    @Test
-    void testEquals()
-    {
-        Product product = new Product();
-
-        final String orderNumber = String.valueOf(RandomUtils.nextInt(1, 100));
-        final int orderLineNumber = RandomUtils.nextInt(1, 100);
-        final int quantity = RandomUtils.nextInt(1, 100);
-
-        OrderLine ol1 = new OrderLine(orderLineNumber, orderNumber, product, quantity);
-        OrderLine ol2 = new OrderLine(orderLineNumber, orderNumber, product, quantity);
-
-        assertThat(ol1.equals(ol2)).isTrue();
-
-        ol2.setOrderLineNumber(RandomUtils.nextInt(1, 100));
-        assertThat(ol1.equals(ol2)).isFalse();
-
-        ol2.setOrderLineNumber(orderLineNumber);
-        ol2.setQuantity(RandomUtils.nextInt(1, 100));
-        assertThat(ol1.equals(ol2)).isFalse();
-
-        ol2.setQuantity(quantity);
-        final Product product1 = new Product();
-        product1.setDescription(RandomStringUtils.random(10));
-        ol2.setProduct(product1);
-        assertThat(ol1.equals(ol2)).isFalse();
-
-        ol2.setProduct(product);
-        final Vendor vendor1 = new Vendor();
-        vendor1.setFirstName(RandomStringUtils.random(10));
-        vendor1.setLastName(RandomStringUtils.random(10));
-        assertThat(ol1.equals(ol2)).isTrue();
-    }
-
-    @Test
     void testHashCode()
     {
         OrderLine ol = new OrderLine();

@@ -4,14 +4,16 @@ import eu.elision.marketplace.domain.users.Admin;
 import eu.elision.marketplace.domain.users.Customer;
 import eu.elision.marketplace.domain.users.User;
 import eu.elision.marketplace.domain.users.Vendor;
+import eu.elision.marketplace.exceptions.InvalidDataException;
+import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.logic.services.users.UserService;
+import eu.elision.marketplace.logic.services.vat.VATService;
 import eu.elision.marketplace.repositories.UserRepository;
-import eu.elision.marketplace.web.webexceptions.InvalidDataException;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,34 +46,31 @@ class UserServiceTest
     Validator validator;
     @Mock
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Mock
+    VATService vatService;
 
     @Test
     void testSaveUser()
     {
         final Customer customer = new Customer();
 
-        final String firstName = RandomStringUtils.randomAlphabetic(5);
-        final String lastName = RandomStringUtils.randomAlphabetic(5);
-        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        customer.setId(RandomUtils.nextLong());
+        customer.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        customer.setLastName(RandomStringUtils.randomAlphabetic(50));
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
+        customer.setPassword(RandomStringUtils.randomAlphabetic(50));
 
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setEmail(email);
-        customer.setPassword(password);
-
-        Customer toReturn = new Customer();
-        toReturn.setId(RandomUtils.nextLong());
-        when(userRepository.save(customer)).thenReturn(toReturn);
-        customer.setId(userService.save(customer).getId());
-
+        when(userRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
         when(userRepository.findById(customer.getId())).thenReturn(Optional.of(customer));
+        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
+
         final User userWithId = userService.findUserById(customer.getId());
         assertThat(userWithId).isNotNull();
 
-        assertThat(userWithId.getEmail()).hasToString(email);
-        assertThat(userWithId.getFirstName()).hasToString(firstName);
-        assertThat(userWithId.getLastName()).hasToString(lastName);
+        assertThat(userWithId.getEmail()).hasToString(customer.getEmail());
+        assertThat(userWithId.getFirstName()).hasToString(customer.getFirstName());
+        assertThat(userWithId.getLastName()).hasToString(customer.getLastName());
+        assertThat(userWithId.getPassword()).hasToString(customer.getPassword());
 
     }
 
@@ -159,36 +158,28 @@ class UserServiceTest
     {
         final Customer customer = new Customer();
 
-        final String firstName = RandomStringUtils.randomAlphabetic(5);
-        final String lastName = RandomStringUtils.randomAlphabetic(5);
-        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setEmail(email);
-        customer.setPassword(password);
+        customer.setId(RandomUtils.nextLong());
+        customer.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        customer.setLastName(RandomStringUtils.randomAlphabetic(50));
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
+        customer.setPassword(RandomStringUtils.randomAlphabetic(50));
 
         when(validator.validate(customer)).thenReturn(new HashSet<>());
-
-        Customer toReturn = new Customer();
-        toReturn.setId(RandomUtils.nextLong());
-        when(userRepository.save(customer)).thenReturn(toReturn);
-
-        customer.setId(userService.save(customer).getId());
-
-        customer.setFirstName(RandomStringUtils.randomAlphabetic(6));
-        customer.setLastName(RandomStringUtils.randomAlphabetic(6));
-        customer.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
-
-        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
+        when(userRepository.save(any())).then(AdditionalAnswers.returnsFirstArg());
         when(userRepository.findById(customer.getId())).thenReturn(Optional.of(customer));
-        userService.editUser(customer);
-        Customer fromRepo = (Customer) userService.findUserByEmail(customer.getEmail());
+        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
 
-        assertThat(firstName).isNotEqualTo(fromRepo.getFirstName());
-        assertThat(lastName).isNotEqualTo(fromRepo.getLastName());
-        assertThat(password).isNotEqualTo(fromRepo.getPassword());
+        Customer edit = new Customer();
+        edit.setId(customer.getId());
+        edit.setEmail(customer.getEmail());
+        edit.setFirstName(RandomStringUtils.randomAlphabetic(6));
+        edit.setLastName(RandomStringUtils.randomAlphabetic(6));
+        edit.setPassword(String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT)));
+
+        Customer fromRepo = (Customer) userService.editUser(edit);
+        assertThat(customer.getFirstName()).isNotEqualTo(fromRepo.getFirstName());
+        assertThat(customer.getLastName()).isNotEqualTo(fromRepo.getLastName());
+        assertThat(customer.getPassword()).isNotEqualTo(fromRepo.getPassword());
     }
 
     @Test
@@ -202,17 +193,15 @@ class UserServiceTest
     {
         final Customer customer = new Customer();
 
-        final String firstName = RandomStringUtils.randomAlphabetic(5);
-        final String lastName = RandomStringUtils.randomAlphabetic(5);
-        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
+        customer.setId(RandomUtils.nextLong());
+        customer.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        customer.setLastName(RandomStringUtils.randomAlphabetic(50));
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
+        customer.setPassword(RandomStringUtils.randomAlphabetic(50));
 
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setEmail(email);
-        customer.setPassword(password);
+        when(userRepository.findById(customer.getId())).thenReturn(Optional.of(customer));
 
-        assertThrows(InvalidDataException.class, () -> userService.editUser(customer));
+        assertThrows(NotFoundException.class, () -> userService.editUser(customer));
     }
 
     @Test
@@ -220,20 +209,12 @@ class UserServiceTest
     {
         final Customer customer = new Customer();
 
-        final String firstName = RandomStringUtils.randomAlphabetic(5);
-        final String lastName = RandomStringUtils.randomAlphabetic(5);
-        final String email = String.format("%s@%s.%s", RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomAlphabetic(2));
-        final String password = String.format("%s%s%s", RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT), RandomUtils.nextInt(1, 100), RandomStringUtils.randomAlphabetic(2).toUpperCase(Locale.ROOT));
-
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setEmail(email);
-        customer.setPassword(password);
-
-        userService.save(customer);
         customer.setId(RandomUtils.nextLong());
+        customer.setFirstName(RandomStringUtils.randomAlphabetic(50));
+        customer.setLastName(RandomStringUtils.randomAlphabetic(50));
+        customer.setEmail(RandomStringUtils.randomAlphabetic(50));
+        customer.setPassword(RandomStringUtils.randomAlphabetic(50));
 
-        when(userRepository.findByEmail(customer.getEmail())).thenReturn(customer);
         assertThrows(NotFoundException.class, () -> userService.editUser(customer));
     }
 
@@ -314,7 +295,7 @@ class UserServiceTest
     @Test
     void testSaveNullUser()
     {
-        assertThat(userService.save((User) null)).isNull();
+        assertThat(userService.save(null)).isNull();
     }
 
     @Test
@@ -326,26 +307,24 @@ class UserServiceTest
         when(userRepository.findByEmail(vendor.getEmail())).thenReturn(vendor);
 
         Exception exception = assertThrows(InvalidDataException.class, () -> userService.save(vendor));
-        assertThat(exception.getMessage()).isEqualTo("An account with this e-mail exists already");
+        assertThat(exception.getMessage()).isEqualTo(String.format("User with email %s already exists", vendor.getEmail()));
     }
 
     @Test
     void testSaveUserInvalidVat()
     {
         Vendor vendor = new Vendor();
-        vendor.setId(RandomUtils.nextLong());
-        vendor.setFirstName(RandomStringUtils.randomAlphabetic(50));
-        vendor.setLastName(RandomStringUtils.randomAlphabetic(50));
         vendor.setEmail(RandomStringUtils.randomAlphabetic(50));
-        vendor.setValidated(RandomUtils.nextBoolean());
         vendor.setVatNumber(RandomStringUtils.randomAlphabetic(10));
 
+        when(userRepository.findById(vendor.getId())).thenReturn(Optional.of(vendor));
         when(userRepository.findByEmail(vendor.getEmail())).thenReturn(null);
         when(validator.validate(vendor)).thenReturn(new HashSet<>());
+        when(vatService.checkVatService(vendor.getVatNumber())).thenReturn(null);
 
         Exception exception = assertThrows(InvalidDataException.class, () -> userService.save(vendor));
 
-        assertThat(exception.getMessage()).isEqualTo("VAT check failed");
+        assertThat(exception.getMessage()).isEqualTo("The vat number was incorrect");
     }
 
     @Test

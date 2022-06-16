@@ -1,5 +1,6 @@
 package eu.elision.marketplace.domain.product.category.attributes;
 
+import eu.elision.marketplace.domain.product.category.attributes.picklist.PickListItem;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Test;

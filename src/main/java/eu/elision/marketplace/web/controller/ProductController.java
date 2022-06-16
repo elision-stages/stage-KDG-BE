@@ -1,7 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
 import eu.elision.marketplace.domain.product.Product;
-import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.logic.helpers.Mapper;
 import eu.elision.marketplace.logic.services.algolia.AlgoliaIndexerService;
@@ -56,40 +55,23 @@ public class ProductController
     @PostMapping("/addProduct")
     ResponseEntity<ResponseDto> addProduct(Principal principal, @RequestHeader(value = "X-API-User", required = false) String apiVendorMail, @RequestHeader(value = "X-API-Key", required = false) String apiToken, @RequestBody ProductDto productDto)
     {
-        try
-        {
             controller.saveProduct(principal != null ? principal.getName() : apiVendorMail, productDto, apiToken);
             return ResponseEntity.ok(new ResponseDto(SUCCESS));
-        } catch (Exception ex)
-        {
-            return ResponseEntity.internalServerError().body(new ResponseDto(String.format("error adding product: principal:%s productDto:%s %n error %s", principal != null ? principal.toString() : apiVendorMail, productDto.toString(), ex)));
-        }
 
-    }
-
-    @GetMapping("/getAllProducts")
-    ResponseEntity<Collection<Product>> getAllProducts()
-    {
-        return new ResponseEntity<>(controller.findAllProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/getMyProducts")
     @Secured("ROLE_VENDOR")
     ResponseEntity<Collection<SmallProductDto>> getMyProducts(Principal principal)
     {
-        Vendor vendor = (Vendor) userService.loadUserByUsername(principal.getName());
-        Collection<Product> products = controller.findProductsByVendor(vendor);
-
-        return new ResponseEntity<>(products.stream().map(Mapper::toSmallProductDto).toList(), HttpStatus.OK);
+        return new ResponseEntity<>(controller.findProductsByVendor(principal.getName()).stream()
+                .map(Mapper::toSmallProductDto).toList(), HttpStatus.OK);
     }
 
-    @GetMapping("/product/{ids}")
-    ResponseEntity<Product> getProduct(@PathVariable String ids)
+    @GetMapping("/product/{id}")
+    ResponseEntity<Product> getProduct(@PathVariable long id)
     {
-        long id = Long.parseLong(ids);
-        Product product = controller.findProduct(id);
-        if (product == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return new ResponseEntity<>(controller.findProductById(id), HttpStatus.OK);
     }
 
     @Secured("ROLE_VENDOR")
@@ -104,9 +86,7 @@ public class ProductController
     @PostMapping("/editProduct")
     ResponseEntity<ResponseDto> editProduct(@RequestBody EditProductDto editProductDto, Principal principal)
     {
-        Product product = controller.editProduct(editProductDto, principal.getName());
-
-        algoliaIndexerService.indexProduct(product);
+        controller.editProduct(editProductDto, principal.getName());
         return ResponseEntity.ok(new ResponseDto(SUCCESS));
     }
 

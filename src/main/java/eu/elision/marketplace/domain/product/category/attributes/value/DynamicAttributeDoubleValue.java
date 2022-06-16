@@ -15,12 +15,25 @@ public class DynamicAttributeDoubleValue extends DynamicAttributeValue<Double>
 {
     private double value;
 
+    /**
+     * Public constructor to set all the fields
+     *
+     * @param id            the id of the attribute value
+     * @param attributeName the name of the attribute value
+     * @param value         the value of the attribute value
+     */
     public DynamicAttributeDoubleValue(Long id, String attributeName, double value)
     {
         super(id, attributeName);
         this.value = value;
     }
 
+    /**
+     * Public constructor
+     *
+     * @param attributeName the name of the attribute value
+     * @param value         the value of the attribute value
+     */
     public DynamicAttributeDoubleValue(String attributeName, double value)
     {
         super(attributeName);

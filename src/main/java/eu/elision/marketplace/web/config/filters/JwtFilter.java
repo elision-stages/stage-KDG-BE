@@ -6,7 +6,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,44 +22,65 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Filter used by jwt
+ */
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter
+{
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
     private static final Log log = LogFactory.getLog(JwtFilter.class);
 
+    /**
+     * Public constructor
+     *
+     * @param userDetailsService the user detail service that the jwt filter has to use
+     * @param jwtService         the jwt service that the jwt filter has to use
+     */
+    public JwtFilter(UserDetailsService userDetailsService, JwtService jwtService)
+    {
+        this.userDetailsService = userDetailsService;
+        this.jwtService = jwtService;
+    }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
-            final Cookie tokenCookie = Arrays.stream(cookies)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
+    {
+        if (request.getCookies() != null)
+        {
+            final Cookie tokenCookie = Arrays.stream(request.getCookies())
                     .filter(cookie -> cookie.getName().equals("jwt"))
                     .findFirst()
                     .orElse(null);
             final String jwtToken = tokenCookie == null ? "" : tokenCookie.getValue();
 
             String username = null;
-            try {
+            try
+            {
                 username = jwtService.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException | MalformedJwtException | SignatureException | ExpiredJwtException e) {
+            } catch (IllegalArgumentException | MalformedJwtException | SignatureException | ExpiredJwtException e)
+            {
                 log.info("JWT Token is invalid or has expired");
             }
 
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null)
+            {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-                try {
-                    if (Boolean.TRUE.equals(jwtService.validateToken(jwtToken, userDetails))) {
+                try
+                {
+                    if (Boolean.TRUE.equals(jwtService.validateToken(jwtToken, userDetails)))
+                    {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
-                } catch (NullPointerException e) {
+                } catch (NullPointerException e)
+                {
                     // This occurs when a user has changed his username and uses his old jwt token to authenticate instead of the newly generated one.
                     log.info("Valid bearer token with invalid claims");
                 }

@@ -2,11 +2,10 @@ package eu.elision.marketplace.logic.services.product;
 
 import eu.elision.marketplace.domain.product.category.Category;
 import eu.elision.marketplace.domain.product.category.attributes.DynamicAttribute;
+import eu.elision.marketplace.exceptions.NotFoundException;
 import eu.elision.marketplace.repositories.CategoryRepository;
-import eu.elision.marketplace.web.dtos.attributes.DynamicAttributeDto;
 import eu.elision.marketplace.web.dtos.category.CategoryDto;
 import eu.elision.marketplace.web.dtos.category.CategoryMakeDto;
-import eu.elision.marketplace.web.webexceptions.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,31 +19,23 @@ import java.util.List;
  * Service for categories
  */
 @Service
-public class CategoryService {
+public class CategoryService
+{
     private final CategoryRepository categoryRepository;
-    private final DynamicAttributeService attributeService;
     private final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     /**
      * Category Service
      *
      * @param categoryRepository CategoryRepository (autowired)
-     * @param attributeService   AttributeService (autowired)
      */
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository, DynamicAttributeService attributeService) {
+    public CategoryService(CategoryRepository categoryRepository)
+    {
         this.categoryRepository = categoryRepository;
-        this.attributeService = attributeService;
     }
 
-    /**
-     * Get all the categories
-     *
-     * @return List with all the categories
-     */
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
-    }
+    //--------------------------------------------- save / edit categories
 
     /**
      * Save a category with a CategoryMakeDto
@@ -52,7 +43,8 @@ public class CategoryService {
      * @param categoryMakeDto DTO of category to save
      * @return Saved Category
      */
-    public Category save(CategoryMakeDto categoryMakeDto) {
+    public Category save(CategoryMakeDto categoryMakeDto)
+    {
         return categoryRepository.save(toCategory(categoryMakeDto));
     }
 
@@ -62,26 +54,40 @@ public class CategoryService {
      * @param category Category to save
      * @return Saved category
      */
-    public Category save(Category category) {
+    public Category save(Category category)
+    {
+        category.getCharacteristics().forEach(dynamicAttribute -> dynamicAttribute.setCategory(category));
         return categoryRepository.save(category);
     }
 
     /**
-     * Save a category as a child of another category
+     * Edit a category
      *
-     * @param category Category to save
-     * @param parentId ID of parent category
+     * @param editCategoryDto   the global info of the category that needs to be edited
+     * @param dynamicAttributes a collection of saved dynamic attributes
+     * @return The edited category
      */
-    public void save(Category category, long parentId) {
-        if (parentId != 0L) {
-            Category parent =
-                    categoryRepository.findById(parentId).orElse(null);
-            if (parent == null) {
-                throw new NotFoundException(String.format("Parent category with id %s not found", parentId));
-            }
-            category.setParent(parent);
-        }
-        categoryRepository.save(category);
+    public Category editCategory(CategoryDto editCategoryDto, Collection<DynamicAttribute> dynamicAttributes)
+    {
+        Category category = findById(editCategoryDto.getId());
+
+        category.setParent(findById(editCategoryDto.getParentId()));
+        category.setName(editCategoryDto.getName());
+        category.setCharacteristics(new ArrayList<>(dynamicAttributes.stream().toList()));
+
+        return categoryRepository.save(category);
+    }
+
+    //--------------------------------------------- find categories
+
+    /**
+     * Get all the categories
+     *
+     * @return List with all the categories
+     */
+    public List<Category> findAll()
+    {
+        return categoryRepository.findAll();
     }
 
     /**
@@ -90,7 +96,8 @@ public class CategoryService {
      * @param name Name of category to look for
      * @return The found category
      */
-    public Category findByName(String name) {
+    public Category findByName(String name)
+    {
         return categoryRepository.findCategoryByName(name);
     }
 
@@ -100,52 +107,24 @@ public class CategoryService {
      * @param id ID of category to look for
      * @return The found category, null if the id is 0. If there is no category with given id, a not found exception will be thrown.
      */
-    public Category findById(long id) {
-        if (id == 0L) {
+    public Category findById(long id)
+    {
+        // When categories don't have a parent, the web controller will pass on 0L as value. Without this check, an exception woul be thrown
+        if (id == 0L)
+        {
             logger.debug("Not looking for category with id 0");
             return null;
         }
 
         final Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null) {
-            logger.error("Category with id {} not found", id);
+        if (category == null)
+        {
             throw new NotFoundException(String.format("Category with id %s not found", id));
         }
         return category;
     }
 
-    /**
-     * Get all categories as DTOs
-     *
-     * @return A list with all the categories as DTO
-     */
-    public Collection<CategoryDto> findAllDto() {
-        return categoryRepository.findAll().stream().map(this::toCategoryDto).toList();
-    }
-
-    /**
-     * Convert a category to a category DTO
-     *
-     * @param category A category
-     * @return The category DTO
-     */
-    public CategoryDto toCategoryDto(Category category) {
-        Collection<DynamicAttributeDto> characteristics = new ArrayList<>();
-
-        for (DynamicAttribute characteristic : category.getCharacteristics()) {
-            characteristics.add(
-                    new DynamicAttributeDto(characteristic.getName(),
-                            characteristic.isRequired(),
-                            characteristic.getType()));
-        }
-
-        return new CategoryDto(
-                category.getId(),
-                category.getName(),
-                (category.getParent() == null ? null : category.getParent().getId()),
-                characteristics
-        );
-    }
+    //-------------------------------------------------------- converters
 
     /**
      * Convert a categoryDTO to a category
@@ -153,55 +132,14 @@ public class CategoryService {
      * @param categoryMakeDto DTO of a category
      * @return A category
      */
-    private Category toCategory(CategoryMakeDto categoryMakeDto) {
+    private Category toCategory(CategoryMakeDto categoryMakeDto)
+    {
         final Category category = new Category();
         category.setName(categoryMakeDto.name());
-        if (categoryMakeDto.parentId() > 0) category.setParent(categoryRepository.getById(categoryMakeDto.parentId()));
 
-        return category;
-    }
+        if (categoryMakeDto.parentId() > 0)
+            category.setParent(findById(categoryMakeDto.parentId()));
 
-    /**
-     * Save a category with attributes
-     *
-     * @param category          the category that needs to be saved
-     * @param dynamicAttributes Collection of dynamic attributes
-     * @return Saved category
-     */
-    public Category save(Category category, Collection<DynamicAttribute> dynamicAttributes) {
-        category.setCharacteristics(dynamicAttributes.stream().toList());
-        for (DynamicAttribute attr : dynamicAttributes) {
-            attr.setCategory(category);
-            attributeService.save(attr);
-        }
-        return category;
-    }
-
-    /**
-     * Edit a category
-     *
-     * @param editCategoryDto   the global info of the category that needs to be edited
-     * @param dynamicAttributes a collection of saved dynamic attributes
-     */
-    public void editCategory(CategoryDto editCategoryDto, Collection<DynamicAttribute> dynamicAttributes) {
-        Category category = findById(editCategoryDto.id());
-
-        category.setParent(findById(editCategoryDto.parentId()));
-        category.setName(editCategoryDto.name());
-        category.setCharacteristics(new ArrayList<>(dynamicAttributes.stream().toList()));
-
-        categoryRepository.save(category);
-    }
-
-    /**
-     * Retrieves a specific category by ID
-     *
-     * @param id The ID to search for
-     * @return The requested category
-     */
-    public Category getCategory(long id) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null) throw new NotFoundException();
         return category;
     }
 }

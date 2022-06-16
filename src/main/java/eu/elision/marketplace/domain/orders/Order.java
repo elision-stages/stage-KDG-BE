@@ -1,7 +1,8 @@
 package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.users.Customer;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -13,10 +14,12 @@ import java.util.List;
 /**
  * The order class contains the orderNumber, orderLines and shipping address of an order. When the user is a vendor the orderLines should only be of products from the vendor.
  */
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "orders")
-public class Order {
+public class Order
+{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long orderNumber;
@@ -28,9 +31,10 @@ public class Order {
     private final LocalDate createdDate;
 
     /**
-     * Public no args constructor. Initialises the orderlines array
+     * Public no args constructor. Initialises the orderlines array and created date
      */
-    public Order() {
+    public Order()
+    {
         lines = new ArrayList<>();
         createdDate = LocalDate.now();
     }
@@ -40,11 +44,13 @@ public class Order {
      *
      * @return the total price of an order
      */
-    public double getTotalPrice() {
+    public double getTotalPrice()
+    {
         return lines.stream().mapToDouble(OrderLine::getTotalPrice).sum();
     }
 
-    public int getProductCount() {
-        return lines.stream().map(OrderLine::getQuantity).reduce(0, Integer::sum);
+    public int getProductCount()
+    {
+        return lines.stream().mapToInt(OrderLine::getQuantity).sum();
     }
 }

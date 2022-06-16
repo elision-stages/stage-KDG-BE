@@ -5,10 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class contains all the extra information of a customer
@@ -21,7 +18,7 @@ public class Customer extends User {
     private Cart cart;
 
     /**
-     * No args constructor. Initialises other adresses array and cart
+     * No args constructor. Initialises cart
      */
     public Customer() {
         this.cart = new Cart();

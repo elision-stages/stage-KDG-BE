@@ -1,14 +1,16 @@
 package eu.elision.marketplace.domain.orders;
 
 import eu.elision.marketplace.domain.product.Product;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 /**
- * An orderline contains the product and the quantity and the ordernumber of the order it belongs to.
+ * An order line contains the product and the quantity and the order number of the order it belongs to.
  */
-@Data
+@Getter
+@Setter
 @Entity
 public class OrderLine
 {
@@ -23,9 +25,8 @@ public class OrderLine
     /**
      * All args constructor.
      *
-     * @param orderLineNumber the number of the orderline. Is the id in the database
-     * @param vendor          the vendor of the product
-     * @param orderNumber     the ordernumber the order line is connected to
+     * @param orderLineNumber the number of the order line. Is the id in the database
+     * @param orderNumber     the order number the order line is connected to
      * @param product         the product in the
      * @param quantity        the quantity of the product
      */

@@ -4,15 +4,17 @@ import eu.elision.marketplace.logic.Controller;
 import eu.elision.marketplace.web.dtos.ResponseDto;
 import eu.elision.marketplace.web.dtos.users.CustomerDto;
 import eu.elision.marketplace.web.dtos.users.VendorDto;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Rest controller to handle calls about users
+ */
 @RestController
 @RequestMapping("register")
 public class UserController
@@ -20,13 +22,19 @@ public class UserController
     final
     Controller controller;
 
+    /**
+     * Public constructor
+     *
+     * @param controller the controller that needs to be used
+     */
     public UserController(Controller controller)
     {
         this.controller = controller;
     }
 
     @PostMapping("customer")
-    ResponseEntity<ResponseDto> registerCustomer(@RequestBody @Valid CustomerDto customerDto) {
+    ResponseEntity<ResponseDto> registerCustomer(@RequestBody @Valid CustomerDto customerDto)
+    {
         controller.saveCustomer(customerDto);
         return ResponseEntity.ok(new ResponseDto("success"));
     }
@@ -37,17 +45,4 @@ public class UserController
         return ResponseEntity.ok(new ResponseDto("success"));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public Map<String, String> handleValidationExceptions(ConstraintViolationException ex)
-    {
-        Map<String, String> errors = new HashMap<>();
-
-        for (var constraintViolation : ex.getConstraintViolations())
-        {
-            errors.put(constraintViolation.getPropertyPath().toString(), constraintViolation.getMessage());
-        }
-
-        return errors;
-    }
 }

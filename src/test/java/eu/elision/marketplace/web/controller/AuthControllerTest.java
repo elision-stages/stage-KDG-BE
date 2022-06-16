@@ -1,9 +1,6 @@
 package eu.elision.marketplace.web.controller;
 
-import eu.elision.marketplace.domain.product.category.Category;
-import eu.elision.marketplace.domain.users.Vendor;
 import eu.elision.marketplace.web.dtos.AuthRequestDto;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

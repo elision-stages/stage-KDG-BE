@@ -61,7 +61,7 @@ class CategoriesControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
-    //@Test
+   // @Test
     void createCategory() {
         Category category = new Category();
 
