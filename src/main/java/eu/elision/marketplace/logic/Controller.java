@@ -284,6 +284,7 @@ public class Controller
     {
         final Category category = categoryService.save(categoryMakeDto);
         category.setCharacteristics(Mapper.toDynamicAttributes(categoryMakeDto.characteristics(), category));
+        category.getCharacteristics().forEach(dynamicAttributeService::save);
         return categoryService.save(category);
     }
 
