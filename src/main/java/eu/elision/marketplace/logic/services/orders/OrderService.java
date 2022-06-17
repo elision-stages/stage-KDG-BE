@@ -14,10 +14,7 @@ import eu.elision.marketplace.web.dtos.order.CustomerOrderDto;
 import eu.elision.marketplace.web.dtos.order.OrderDto;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * Service for orders
@@ -80,18 +77,18 @@ public record OrderService(OrderRepository repository)
 
         for (Order order : orders)
         {
-            for (OrderLine orderLine : order.getLines())
+            for (OrderLine orderLine :
+                    filterOrder(vendor, order))
             {
-                Optional<OrderDto> vendorOrder = vendorOrders.stream().filter(vendorOrderDto -> String.valueOf(vendorOrderDto.getOrderNumber()).equalsIgnoreCase(orderLine.getOrderNumber())).findAny();
-
-                if (vendorOrder.isEmpty())
+                final Optional<OrderDto> any = vendorOrders.stream().filter(orderDto -> String.valueOf(orderDto.getOrderNumber()).equals(orderLine.getOrderNumber())).findAny();
+                if (any.isPresent())
                 {
-                    final OrderDto voDto = new OrderDto(Long.parseLong(orderLine.getOrderNumber()), order.getUser().getFullName(), Date.valueOf(order.getCreatedDate()).toString(), orderLine.getTotalPrice(), orderLine.getQuantity());
-                    vendorOrders.add(voDto);
+                    final OrderDto orderDto = any.get();
+                    orderDto.setTotalPrice((orderDto.getTotalPrice() + orderLine.getTotalPrice()));
+                    orderDto.setNumberProducts(orderDto.getNumberProducts() + orderLine.getQuantity());
                 } else
                 {
-                    vendorOrder.get().setTotalPrice(vendorOrder.get().getTotalPrice() + orderLine.getTotalPrice());
-                    vendorOrder.get().setNumberProducts(vendorOrder.get().getNumberProducts() + orderLine.getQuantity());
+                    vendorOrders.add(new OrderDto(Long.parseLong(orderLine.getOrderNumber()), order.getUser().getFullName(), order.getCreatedDate().toString(), orderLine.getTotalPrice(), orderLine.getQuantity()));
                 }
             }
         }
@@ -135,21 +132,15 @@ public record OrderService(OrderRepository repository)
                         !(user instanceof Vendor vendor && orderHasVendorProducts(vendor, order)))
             throw new UnauthorisedException("This isn't your order");
 
-        Supplier<Stream<OrderLine>> orderLines = filterOrder(user, order);
-        return new CustomerOrderDto(order.getOrderNumber(), order.getUser().getEmail(), order.getUser().getFullName(), orderLines.get().map(Mapper::toOrderLineDto).toList(), orderLines.get().mapToDouble(OrderLine::getTotalPrice).sum(), order.getCreatedDate());
+        Collection<OrderLine> orderLines = filterOrder(user, order);
+        return new CustomerOrderDto(order.getOrderNumber(), order.getUser().getEmail(), order.getUser().getFullName(), orderLines.stream().map(Mapper::toOrderLineDto).toList(), orderLines.stream().mapToDouble(OrderLine::getTotalPrice).sum(), order.getCreatedDate());
     }
 
-    private Supplier<Stream<OrderLine>> filterOrder(User user, Order order)
+    private Collection<OrderLine> filterOrder(User user, Order order)
     {
-        Supplier<Stream<OrderLine>> orderLines;
         if (user instanceof Vendor)
-        {
-            orderLines = () -> order.getLines().stream().filter(line -> line.getProduct().getVendor().getId().equals(user.getId()));
-        } else
-        {
-            orderLines = () -> order.getLines().stream();
-        }
-        return orderLines;
+            return order.getLines().stream().filter(line -> line.getProduct().getVendor().getId().equals(user.getId())).toList();
+        return order.getLines();
     }
 
     private boolean orderHasVendorProducts(Vendor user, Order order)

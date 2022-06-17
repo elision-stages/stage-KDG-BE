@@ -57,6 +57,7 @@ public class CategoryService
     public Category save(Category category)
     {
         category.getCharacteristics().forEach(dynamicAttribute -> dynamicAttribute.setCategory(category));
+        category.setCharacteristics(new ArrayList<>(category.getCharacteristics()));
         return categoryRepository.save(category);
     }
 
