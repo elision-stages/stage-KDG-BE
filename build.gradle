@@ -32,7 +32,7 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: "$springfoxVersion"
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
     implementation 'com.algolia:algoliasearch-core:3.16.5'
-    implementation 'com.algolia:algoliasearch-java-net:3.16.5'
+    implementation 'com.algolia:algoliasearch-java-net:3.16.6'
     implementation group: 'mysql', name: 'mysql-connector-java'
     implementation 'org.jsoup:jsoup:1.15.1'
     testImplementation 'junit:junit:4.13.2'
